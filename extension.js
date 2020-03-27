@@ -9,6 +9,7 @@ const filbert = require("filbert");
 /**
  * @param {vscode.ExtensionContext} context
  */
+
 function activate(context) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -20,10 +21,15 @@ function activate(context) {
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('extension.parsecode', function () 
 	{
-		console.log('parsecode method is executed!');
 		const pcode = "print('Hello world!')";
-		const ast = filbert.parse(pcode);
-		console.log(ast.body[0].expression.arguments[0].value);
+		const ast = filbert.parse(pcode, { locations: true, ranges: true });
+		
+		console.log(ast);
+		interateThroughObject(ast);
+
+
+		// filbert.tokenize(pcode);
+		// console.log(filbert.tokenize(ast));
 
 		vscode.window.showInformationMessage('Your code is being parsed!');
 		vscode.window.showInformationMessage('0 smell found code!');
@@ -32,6 +38,23 @@ function activate(context) {
 
 	context.subscriptions.push(disposable);
 }
+
+
+function interateThroughObject(obj)
+{
+	for(let key in obj)
+	{
+		let value = obj[key];
+		console.log("key: "+key+" value: "+value);
+		vscode.window.showInformationMessage("key: "+key+" value: "+value);
+		
+		if(typeof value === 'object') interateThroughObject(value);
+		else if(Array.isArray(value)) interateThroughObject(value);
+	}
+}
+
+
+
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
