@@ -1,8 +1,9 @@
 {
 	"name": "pssd",
+	"publisher": "Miran",
 	"displayName": "python-security-smell-detection",
 	"description": "security smell detection in python code",
-	"version": "0.0.1",
+	"version": "0.0.21",
 	"engines": {
 		"vscode": "^1.43.0"
 	},
@@ -10,7 +11,9 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.parsecode"
+		"onLanguage:python",
+		"onCommand:extension.parsecode",
+		"onCommand:extension.greetings"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -18,6 +21,10 @@
 			{
 				"command": "extension.parsecode",
 				"title": "Parse Code"
+			},
+			{
+				"command": "extension.greetings",
+				"title": "Greetings"
 			}
 		]
 	},

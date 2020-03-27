@@ -1,65 +1,33 @@
-# pssd README
+# Python Security Smell Detection
 
-This is the README for your extension "pssd". After writing up a brief description, we recommend including the following sections.
+### This is an experimental extension for detecting security smells in python code. The identified security issues are listed below.
 
-## Features
+### The smells are -
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+1. **Exec Statement**
 
-For example if there is an image subfolder under your extension project workspace:
+2. **Bad File Permission**
 
-\!\[feature X\]\(images/feature-x.png\)
+3. **Hard-coded Secret**
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+4. **Empty Password**
 
-## Requirements
+5. **Hard-coded IP Address Binding**
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+6. **Hard-coded tmp Directory**
 
-## Extension Settings
+7. **Ignore Except Block**
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+8. **Debug Set to True in Deployment**
 
-For example:
+9. **Use of HTTP without TLS**
 
-This extension contributes the following settings:
+10. **No Certificate Validation**
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+11. **No Integrity Check**
 
-## Known Issues
+12. **Command Injections**
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+13. **Constructing SQL upon Input**
 
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+**Press `ctrl+alt+p` and run **Parse Code** command.**
