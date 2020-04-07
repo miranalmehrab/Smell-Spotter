@@ -1,7 +1,7 @@
-const vscode = require('vscode');
 var fs = require('fs');
-const filbert = require('filbert');
-const filbert_loose = require('filbert/filbert_loose');
+const vscode = require('vscode');
+//const Smell = require('./detection/Smell');
+import {Smell} from './Smell';
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -29,6 +29,8 @@ function activate(context) {
 			{
 				console.log(tokensArr);
 				writeTokenToFile(tokensArr);
+				const tokens = readToken();
+
 			}
 		}
 		else window.showErrorMessage("Please select python source code!");
@@ -42,6 +44,19 @@ function activate(context) {
 	context.subscriptions.push(parsecode);
 	context.subscriptions.push(greetings);
 }
+
+function readToken() {
+	var tokens = "";
+	fs.readFile(__dirname + '/output/output.txt', {encoding: 'utf-8'},(err, data) => {
+	  if (err) {
+		console.error(err);
+	  }
+	  tokens = data;
+	  console.log(data);
+	});
+	return tokens;
+  }
+
 
 function writeTokenToFile(tokensArr)
 {
@@ -65,7 +80,7 @@ function removeUnwantedCharacter(word)
 {
 	console.log(word);
 	const charLength = word.length;
-	const unwantedChars = ["'"];
+	const unwantedChars = ["'",'"'];
 	const unwantedCharsCount = unwantedChars.length;
 
 	for(let i=0;i<charLength;i++)
@@ -110,14 +125,18 @@ function runLexer(pcode)
 	return tokensArr;
 }
 
-function createAST(pcode)
-{
-	//var ast = "";
-	//const ast = filbert.parse(pcode, { locations: true, ranges: true });
-	//ast = filbert.parse(pcode);
-	//var ast_damn = filbert_loose.parse_dammit(pcode);
-	//if(ast != null)traverseAST(ast);
-}
+// const filbert = require('filbert');
+//const filbert_loose = require('filbert/filbert_loose');
+
+
+// function createAST(pcode)
+// {
+// 	//var ast = "";
+// 	//const ast = filbert.parse(pcode, { locations: true, ranges: true });
+// 	//ast = filbert.parse(pcode);
+// 	//var ast_damn = filbert_loose.parse_dammit(pcode);
+// 	//if(ast != null)traverseAST(ast);
+// }
 
 
 function traverseAST(obj)

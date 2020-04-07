@@ -1,2 +1,2 @@
-variable,user,Miran
-variable,password,12345
+variable,username,user
+variable,password,password
