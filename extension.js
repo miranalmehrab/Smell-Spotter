@@ -91,7 +91,6 @@ function hardCodedSecret(token)
 	if(isVarible(type) && (isCommonPassword(name) || isCommonUserName(name)) && !isLengthZero(value)){
 		console.log('hardcoded secret!');
 		vscode.window.showWarningMessage('Hard coded secret at line '+ lineNumber);
-	
 	}
 }
 
