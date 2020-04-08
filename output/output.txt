@@ -1,2 +1,3 @@
-variable,username,user
-variable,password,password
+1,variable,username,user
+2,variable,password,password
+3,variable,user,miran

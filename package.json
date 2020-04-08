@@ -1,6 +1,6 @@
 {
 	"name": "pssd",
-	"publisher": "Miran",
+	"publisher": "Miran AL Mehrab",
 	"displayName": "python-security-smell-detection",
 	"description": "security smell detection in python code",
 	"version": "0.0.21",

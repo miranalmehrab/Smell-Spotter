@@ -1,7 +1,6 @@
 var fs = require('fs');
 const vscode = require('vscode');
-//const Smell = require('./detection/Smell');
-import {Smell} from './Smell';
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -27,9 +26,8 @@ function activate(context) {
 			
 			if(tokensArr) 
 			{
-				console.log(tokensArr);
 				writeTokenToFile(tokensArr);
-				const tokens = readToken();
+				readToken();
 
 			}
 		}
@@ -45,25 +43,88 @@ function activate(context) {
 	context.subscriptions.push(greetings);
 }
 
-function readToken() {
-	var tokens = "";
-	fs.readFile(__dirname + '/output/output.txt', {encoding: 'utf-8'},(err, data) => {
-	  if (err) {
-		console.error(err);
-	  }
-	  tokens = data;
-	  console.log(data);
-	});
-	return tokens;
-  }
+function isVarible(type)
+{
+	return type == "variable" ? true : false;
+}
 
+function isLengthZero(word)
+{
+    return word.length>0 ? false : true;
+}
+
+function isCommonUserName(word)
+{
+	const commonUserNames = ['user','usr','username','name'];
+	const count = commonUserNames.length;
+	for(let i=0;i<count;i++)
+	{
+		if(word.includes(commonUserNames[i])) return true;
+	}
+	return false;
+}
+
+function isCommonPassword(word)
+{
+	const commonPasswords = ['pass','pwd','password','pass1234'];
+	const count = commonPasswords.length;
+	for(let i=0;i<count;i++)
+	{
+		if(word.includes(commonPasswords[i])) return true;
+	}
+	return false;
+}
+
+function hardCodedSecret(token)
+{
+	const splittedToken = token.split(',');
+	const lineNumber = splittedToken[0];
+	const type = splittedToken[1];
+	const name = splittedToken[2];
+	const value = splittedToken[3];
+	
+	console.log(isVarible(type));
+	console.log(isCommonUserName(name));
+	console.log(isCommonPassword(name));
+	console.log(isLengthZero(value));
+
+	if(isVarible(type) && (isCommonPassword(name) || isCommonUserName(name)) && !isLengthZero(value)){
+		console.log('hardcoded secret!');
+		vscode.window.showWarningMessage('Hard coded secret at line '+ lineNumber);
+	
+	}
+}
+
+function detectSmell(tokens)
+{
+	const tokensArr = tokens.split("\n");
+	console.log(tokensArr);
+	const count = tokensArr.length;
+
+	for(let i=0;i<count;i++)
+	{
+		hardCodedSecret(tokensArr[i]);
+	}
+
+
+}
+
+
+function readToken() {
+	var tokens = fs.readFile(__dirname + '/output/output.txt', {encoding: 'utf-8'},(err, data) => {
+	  if (err) console.error(err);
+	  detectSmell(data);
+	});
+	
+}
+	
 
 function writeTokenToFile(tokensArr)
 {
-	fs.writeFile(__dirname+'/output/output.txt', '', ()=>{console.log('done')})
+	fs.writeFile(__dirname+'/output/output.txt', '', ()=>{})
 	
 	tokensArr.forEach(token => {
-		const value = token.type+","+token.name+","+token.value+"\n";
+		const value = token.line+","+token.type+","+token.name+","+token.value+"\n";
 		fs.appendFile(__dirname+'/output/output.txt', value, (err) => { 
 			if (err)
 			{
@@ -78,7 +139,6 @@ function writeTokenToFile(tokensArr)
 
 function removeUnwantedCharacter(word)
 {
-	console.log(word);
 	const charLength = word.length;
 	const unwantedChars = ["'",'"'];
 	const unwantedCharsCount = unwantedChars.length;
@@ -99,7 +159,7 @@ function runLexer(pcode)
 	//const builtInFunctions = ['','','','','','','',''];
 
 	let tokensArr = [];
-	let linesArr = pcode.split('\n');
+	let linesArr = pcode.split("\n");
 	const lineCount = linesArr.length;
 	
 	for(let i=0;i<lineCount;i++)
@@ -116,7 +176,7 @@ function runLexer(pcode)
 				const name = words[j-1];
 				const value = removeUnwantedCharacter(words[j+1]);
 				const type = 'variable';
-				const token = {type:type,name:name, value:value};
+				const token = {line:i+1,type:type,name:name, value:value};
 				tokensArr.push(token);
 			}
 		}
