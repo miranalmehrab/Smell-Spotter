@@ -20,7 +20,7 @@
 		"commands": [
 			{
 				"command": "extension.parsecode",
-				"title": "Parse Code"
+				"title": "Detect Smell"
 			},
 			{
 				"command": "extension.greetings",

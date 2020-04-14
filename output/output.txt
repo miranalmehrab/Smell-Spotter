@@ -1,2 +1,0 @@
-1,variable,username,user
-2,variable,password,password
