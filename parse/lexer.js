@@ -1,30 +1,42 @@
 var lexer = {
-    run: (pcode)=> {
 
-        let tokensArr = [];
-        let linesArr = pcode.split("\n");
-        const lineCount = linesArr.length;
+    run: (pcode)=>{
+
+        let tokens = [];
+        let lines = pcode.split("\n"); 
+        const lineCount = lines.length;
         
         for(let i=0;i<lineCount;i++)
         {
-            const line = linesArr[i];
-            const words = line.split(' ');
-            const wordsCount = words.length; 
-            
-            for(let j=0;j<wordsCount;j++)
+            const line = lines[i];
+             
+            if(line.split(' ').includes("="))
             {
-                const word = words[j];
-                if(word == '=')
+                const words = line.split('=');
+                
+                var type = 'var';
+                var name = words[0].trim();
+                var value = words[1].trim();
+                var valsrc = "initialized";
+
+                const re = /input\(+[\s\S]+\)/g;
+                
+                if(re.test(value))var valsrc = "user input";
+                else 
                 {
-                    const name = words[j-1];
-                    const value = lexer.refine(words[j+1]);
-                    const type = 'variable';
-                    const token = {line:i+1,type:type,name:name, value:value};
-                    tokensArr.push(token);
+                    const listre = /\[+[\s\S]+\]/g;
+                    const tuplere = /\(+[\s\S]+\)/g;
+
+                    if(listre.test(value)) type = "list";
+                    else if(tuplere.test(value)) type = "tuple";
+                    else value = lexer.refine(value);
                 }
+                const token = {line:i+1,type:type,name:name,value:value,source:valsrc};
+                tokens.push(token);
             }
+            
         }
-        return tokensArr;
+        return tokens;
     },
     refine: (word) => {
 

@@ -1,3 +1,4 @@
-1,variable,user,Miran
-2,variable,password,12345
-3,variable,user,miran
+1,var,user,miran,initialized
+2,var,x,input("here"),user input
+3,list,hardcoded_tmp_directory,["/tmp","/var/tmp","/dev/shm"],initialized
+4,tuple,hardcoded_tmp_directory,("/tmp","/var/tmp","/dev/shm"),initialized

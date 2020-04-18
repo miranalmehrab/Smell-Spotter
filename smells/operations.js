@@ -1,34 +1,37 @@
 var operations = {
 
     isVarible: (type )=> {
-        return type == "variable" ? true : false;
+        return type == "var" ? true : false;
     },
-    
-    isLengthZero: (word) => {
-        return word.length>0 ? false : true;
+    isObjectAttribute:(type) => {
+        return type == "obj" ? true : false;
     },
-
-    isCommonUserName: (word) => {
+    isDictionaryKey:(type) => {
+        return type == "key" ? true : false;
+    },
+    isCommonUserName: (name) => {
         
         const commonUserNames = ['user','usr','username','name'];
-        const count = commonUserNames.length;
-        for(let i=0;i<count;i++)
-        {
-            if(word.includes(commonUserNames[i])) return true;
-        }
-        return false;
+        return commonUserNames.includes(name);
     },
     
-    isCommonPassword: (word) => {
-     
+    isCommonPassword: (name) => {
         const commonPasswords = ['pass','pwd','password','pass1234'];
-        const count = commonPasswords.length;
-        for(let i=0;i<count;i++)
-        {
-            if(word.includes(commonPasswords[i])) return true;
-        }
-        return false;
+        return commonPasswords.includes(name);
+    },
+    isCommonIDName:() => {
+        
+    },
+    isCommonTokenName:() => {
+
+    },
+    isCommonKeyName:() => {
+
+    },
+    isLengthZero: (word) => {
+        return word.length>0 ? false : true;
     }
+
 }
 
 module.exports = operations;
