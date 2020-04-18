@@ -1,6 +1,6 @@
 const fs = require('fs');
 const hardcodedsecret = require('../smells/hardcodedsecret'); 
-const debug = require('../smells/debugflag');
+const debugsettrue = require('../smells/debugflag');
 
 var detection = {
 
@@ -23,11 +23,11 @@ var detection = {
         for(let i=0;i<count;i++)
         {
             const token = tokens[i];
-            const tokenobj = JSON.parse(token);
-            console.log(tokenobj);
+            const obj = JSON.parse(token);
+            console.log(obj);
             
-            // hardcodedsecret.detect(tokenobj);
-            // debug.detect(tokenobj);
+            hardcodedsecret.detect(obj);
+            debugsettrue.detect(obj);
 
         }
     }

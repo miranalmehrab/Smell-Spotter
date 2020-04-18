@@ -5,22 +5,51 @@ var smell = {
 
     detect : (token) => {
         
-        const words = token.split(',');
-        const line = words[0];
-        const type = words[1];
-        const name = words[2];
-        const value = words[3];
+        const line =  token.line;
+        const type =  token.type;
+
+        if(token.hasOwnProperty("name")) var name =  token.name;
+        if(token.hasOwnProperty("value")) var value = token.value;
+        if(token.hasOwnProperty("params")) var params = token.params;
         
-        if(operations.isVarible(type) &&  smell.checkName(name) && smell.checkValue(value)){
-            console.log('Debug set true!');
-            vscode.window.showWarningMessage('Debug set true at line '+ line);
+
+        if(value)
+        {
+            console.log(name+" "+value);
+            if((operations.isVarible(type) || operations.isObjectAttribute(type)) && smell.name(name) && smell.value(value))
+            {
+                console.log('Debug set true!');
+                vscode.window.showWarningMessage('Debug set true at line '+ line);
+            }
+            
         }
+        else if(params)
+        {
+            if(operations.isVarible(type) || operations.isObjectAttribute(type))
+            {
+                params.map((val,index) => {
+
+                    var duo = val.split("=");
+                    var name = duo[0];
+                    var value = duo[1];
+
+                    console.log(name+"  "+value);
+                    
+                    if(smell.name(name) && smell.value(value))
+                    {
+                        console.log('Debug set true!');
+                        vscode.window.showWarningMessage('Debug set true at line '+ line);
+                    }
+                });
+            }
+        }
+            
     },
-    checkName:(name) => {
+    name:(name) => {
         const restrictedNames = ['debug','DEBUG','DEBUG_PROPAGATE_EXCEPTIONS'];
         return restrictedNames.includes(name);
     },
-    checkValue:(value) => {
+    value:(value) => {
         return value == "True";
     }
 }

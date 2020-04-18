@@ -47,14 +47,12 @@ var lexer = {
                     const params = funcCall.substring(funcCall.indexOf("(")+1,funcCall.length-1);
                     const parameters = params.split(",");
                     
-                    const totalFuncName = moduleName+"."+funcName;
-                    var token = {line:i+1,type:"obj",name:totalFuncName};
-                    parameters.map((val,index)=>{
-                        var param = "param"+(index+1);
-                        token[param] = val.trim();
-                        console.log(val.trim());
-                        
+                    parameters.map((val,index) => {
+                        parameters[index] = val.trim();
                     });
+                    
+                    const totalFuncName = moduleName+"."+funcName;
+                    var token = {line:i+1,type:"obj",method:totalFuncName,params:parameters};
                     
                     tokens.push(token);
                 }

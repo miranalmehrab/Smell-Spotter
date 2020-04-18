@@ -2,23 +2,25 @@
 {
   "line": 1,
   "type": "var",
-  "name": "x",
-  "value": "input('enter')",
-  "source": "user input"
+  "name": "password",
+  "value": "pass",
+  "source": "initialized"
 }
 <obj>
 {
   "line": 2,
-  "type": "obj",
-  "name": "app.run",
-  "param1": "debug=True",
-  "param2": "set=False"
+  "type": "var",
+  "name": "debug",
+  "value": "True",
+  "source": "initialized"
 }
 <obj>
 {
   "line": 3,
   "type": "obj",
-  "name": "app.run",
-  "param1": "debug=True",
-  "param2": "set=False"
+  "method": "app.run",
+  "params": [
+    "debug=True",
+    "set=False"
+  ]
 }
