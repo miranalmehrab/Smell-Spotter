@@ -14,15 +14,20 @@ var detection = {
     
     detect:(tokenStr) => {
         
-        const tokens = tokenStr.split("\n");
+        var tokens = tokenStr.split("<obj>");
+        tokens.shift();
+        
+        console.log(tokens);
         const count = tokens.length;
 
         for(let i=0;i<count;i++)
         {
             const token = tokens[i];
+            const tokenobj = JSON.parse(token);
+            console.log(tokenobj);
             
-            hardcodedsecret.detect(token);
-            debug.detect(token);
+            // hardcodedsecret.detect(tokenobj);
+            // debug.detect(tokenobj);
 
         }
     }

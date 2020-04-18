@@ -1,7 +1,6 @@
 const vscode = require('vscode');
 
 var lexer = require('./parse/lexer');
-var write = require('./parse/savetokens');
 var detection = require('./detection/detection');
 
 /**
@@ -22,7 +21,7 @@ function activate(context)
 			
 			if(tokens) 
 			{
-			  	write.save(tokens,__dirname+'/output/editor.txt');
+			  	lexer.save(tokens,__dirname+'/output/editor.txt');
 			  	detection.read(__dirname+'/output/editor.txt');
 			}
 		}

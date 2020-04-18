@@ -9,12 +9,9 @@ var smell = {
         const name = words[2];
         const value = words[3];
         
-        console.log(operations.isVarible(type));
-        console.log(operations.isCommonUserName(name));
-        console.log(operations.isCommonPassword(name));
-        console.log(operations.isLengthZero(value));
-
-        if(operations.isVarible(type) && (operations.isCommonPassword(name) || operations.isCommonUserName(name)) && !operations.isLengthZero(value)){
+        if(operations.isVarible(type) && (operations.isCommonPassword(name) 
+        || operations.isCommonUserName(name)) && !operations.isLengthZero(value))
+        {
             console.log('hardcoded secret!');
             vscode.window.showWarningMessage('Hard coded secret at line '+ line);
         }

@@ -1,4 +1,24 @@
-1,var,user,miran,initialized
-2,var,x,input("here"),user input
-3,list,hardcoded_tmp_directory,["/tmp","/var/tmp","/dev/shm"],initialized
-4,tuple,hardcoded_tmp_directory,("/tmp","/var/tmp","/dev/shm"),initialized
+<obj>
+{
+  "line": 1,
+  "type": "var",
+  "name": "x",
+  "value": "input('enter')",
+  "source": "user input"
+}
+<obj>
+{
+  "line": 2,
+  "type": "obj",
+  "name": "app.run",
+  "param1": "debug=True",
+  "param2": "set=False"
+}
+<obj>
+{
+  "line": 3,
+  "type": "obj",
+  "name": "app.run",
+  "param1": "debug=True",
+  "param2": "set=False"
+}
