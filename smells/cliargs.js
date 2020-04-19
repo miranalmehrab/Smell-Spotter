@@ -4,14 +4,15 @@ var operations = require('./operations');
 var smell = {
 
     detect : (token) => {
-        const words = token.split(',');
-        const line = words[0];
-        const type = words[1];
-        const name = words[2];
-        const value = words[3];
+
+        const line =  token.line;
+        if(token.hasOwnProperty("method")) var methodname = token.method;
+        if(token.hasOwnProperty("params")) var params = token.params;
         
-        const cliArgsFuncNames = ['sys.argv','ArgumentParser','argparse'];
-        if(cliArgsFuncNames.includes(name))
+        console.log(methodname);
+        
+        const cliArgsFuncNames = ['sys.argv','ArgumentParser','argparse','exec'];
+        if(cliArgsFuncNames.includes(methodname))
         {
             console.log('Use of CLI args!');
             vscode.window.showWarningMessage('Use of CLI args at line '+ line);

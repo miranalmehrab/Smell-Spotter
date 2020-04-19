@@ -1,6 +1,10 @@
 const fs = require('fs');
-const hardcodedsecret = require('../smells/hardcodedsecret'); 
+
+const cliargs = require('../smells/cliargs');
+const httponly = require('../smells/httponly');
 const debugsettrue = require('../smells/debugflag');
+const emptypassword = require('../smells/emptypassword');
+const hardcodedsecret = require('../smells/hardcodedsecret'); 
 
 var detection = {
 
@@ -26,8 +30,11 @@ var detection = {
             const obj = JSON.parse(token);
             console.log(obj);
             
-            hardcodedsecret.detect(obj);
-            debugsettrue.detect(obj);
+            // hardcodedsecret.detect(obj);
+            // emptypassword.detect(obj);
+            // debugsettrue.detect(obj);
+            // cliargs.detect(obj);
+            httponly.detect(obj);
 
         }
     }

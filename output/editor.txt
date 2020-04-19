@@ -1,26 +1,29 @@
 <obj>
 {
   "line": 1,
-  "type": "var",
-  "name": "password",
-  "value": "pass",
-  "source": "initialized"
+  "type": "obj",
+  "method": "requests.get",
+  "params": [
+    "'www.gmail.com'",
+    "verify=True"
+  ]
 }
 <obj>
 {
   "line": 2,
-  "type": "var",
-  "name": "debug",
-  "value": "True",
-  "source": "initialized"
+  "type": "obj",
+  "method": "requests.get",
+  "params": [
+    "'www.gmail.com'"
+  ]
 }
 <obj>
 {
   "line": 3,
   "type": "obj",
-  "method": "app.run",
+  "method": "requests.get",
   "params": [
-    "debug=True",
-    "set=False"
+    "'www.gmail.com'",
+    "verify=False"
   ]
 }
