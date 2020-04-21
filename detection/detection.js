@@ -21,12 +21,11 @@ var detection = {
         
         var tokens = tokenStr.split("<obj>");
         tokens.shift();
-        
-        console.log(tokens);
         const count = tokens.length;
+        
 
         for(let i=0;i<count;i++)
-        {
+        {   
             const token = tokens[i];
             const obj = JSON.parse(token);
             console.log(obj);
@@ -34,10 +33,11 @@ var detection = {
             // hardcodedsecret.detect(obj);
             // emptypassword.detect(obj);
             // debugsettrue.detect(obj);
-            // cliargs.detect(obj);
+            cliargs.detect(obj);
             //httponly.detect(obj);
             //nointeg.detect(obj);
         }
+        
     }
 }
 

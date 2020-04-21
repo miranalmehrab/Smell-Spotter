@@ -1,7 +1,18 @@
 <obj>
 {
   "line": 1,
-  "type": "import",
-  "ciel": "numpy.math.ceil",
-  "pi": "numpy.math.pi"
+  "type": "var",
+  "name": "x",
+  "value": "input('hello')",
+  "source": "input"
+}
+<obj>
+{
+  "line": 2,
+  "type": "obj",
+  "method": "sys.argv",
+  "params": [
+    "x"
+  ],
+  "source": "input"
 }

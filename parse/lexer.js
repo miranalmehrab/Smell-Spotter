@@ -8,6 +8,10 @@ var lexer = {
         let lines = pcode.split("\n"); 
         const lineCount = lines.length;
         
+        var inputs = [];
+        var imports = [];
+
+
         for(let i=0;i<lineCount;i++){
             
             const line = lines[i];
@@ -73,22 +77,39 @@ var lexer = {
             {
                 const words = line.split('=');
                 
-                var type = 'var';
-                var name = words[0].trim();
-                var value = words[1].trim();
-                var valsrc = "initialized";
+                let type = 'var';
+                let name = words[0].trim();
+                let value = words[1].trim();
+                let valsrc = "initialized";
 
-                const re = /input\(+[\s\S]+\)/g;
+                const listre = /\[+[\s\S]+\]/g;
+                const tuplere = /\(+[\s\S]+\)/g;
+                const inputre = /input\([\s\S]*\)/g;
+
+                console.log(value);
                 
-                if(re.test(value))var valsrc = "user input";
+                if(inputre.test(value))
+                {
+                    console.log("input");
+                    
+                    valsrc = "input";
+                    inputs.push(name);
+                }
+                else if(listre.test(value)) type = "list";
+                else if(tuplere.test(value)) type = "tuple";
                 else 
                 {
-                    const listre = /\[+[\s\S]+\]/g;
-                    const tuplere = /\(+[\s\S]+\)/g;
+                    if(value.includes("+"))
+                    {
+                        var strParts = value.split("+");
+                        strParts.map(part => {
+                            if(inputs.includes(part.trim())) valsrc = "input";
+                        });
+                    }
+                    // aro onek kisu add hobe .... join() , .format() , % eigula
+                    // ar eigula check kora lagbe regex diye (type cast gula baad deya lagbe int(input()) option theke or "hello"+str(x) theke)
 
-                    if(listre.test(value)) type = "list";
-                    else if(tuplere.test(value)) type = "tuple";
-                    else value = lexer.refine(value);
+                    //value = lexer.refine(value);
                 }
                 const token = {line:i+1,type:type,name:name,value:value,source:valsrc};
                 tokens.push(token);
@@ -101,13 +122,27 @@ var lexer = {
                 const funcName = funcCall.substring(0,funcCall.indexOf("(")); 
                 const params = funcCall.substring(funcCall.indexOf("(")+1,funcCall.length-1);
                 const parameters = params.split(",");
-                
+                let valsrc = "initialized";
+
                 parameters.map((val,index) => {
                     parameters[index] = val.trim();
                 });
+
+                parameters.map(val=>{
+                    if(inputs.includes(val))valsrc = "input";
+                    else if(val.includes("+"))
+                    {
+                        var paramParts = val.split("+");
+                        paramParts.map(part => {
+                            if(inputs.includes(part.trim())) valsrc = "input";
+                        });
+                    }
+                });
+
+
                 
                 const totalFuncName = moduleName+"."+funcName;
-                var token = {line:i+1,type:"obj",method:totalFuncName,params:parameters};
+                var token = {line:i+1,type:"obj",method:totalFuncName,params:parameters,source:valsrc};
                 
                 tokens.push(token);
 
