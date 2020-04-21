@@ -3,6 +3,7 @@ const fs = require('fs');
 const cliargs = require('../smells/cliargs');
 const httponly = require('../smells/httponly');
 const debugsettrue = require('../smells/debugflag');
+const nointeg = require('../smells/nointegritycheck');
 const emptypassword = require('../smells/emptypassword');
 const hardcodedsecret = require('../smells/hardcodedsecret'); 
 
@@ -34,8 +35,8 @@ var detection = {
             // emptypassword.detect(obj);
             // debugsettrue.detect(obj);
             // cliargs.detect(obj);
-            httponly.detect(obj);
-
+            //httponly.detect(obj);
+            //nointeg.detect(obj);
         }
     }
 }

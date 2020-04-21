@@ -1,29 +1,7 @@
 <obj>
 {
   "line": 1,
-  "type": "obj",
-  "method": "requests.get",
-  "params": [
-    "'www.gmail.com'",
-    "verify=True"
-  ]
-}
-<obj>
-{
-  "line": 2,
-  "type": "obj",
-  "method": "requests.get",
-  "params": [
-    "'www.gmail.com'"
-  ]
-}
-<obj>
-{
-  "line": 3,
-  "type": "obj",
-  "method": "requests.get",
-  "params": [
-    "'www.gmail.com'",
-    "verify=False"
-  ]
+  "type": "import",
+  "ciel": "numpy.math.ceil",
+  "pi": "numpy.math.pi"
 }

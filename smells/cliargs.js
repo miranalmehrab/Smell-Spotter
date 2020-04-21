@@ -1,5 +1,4 @@
 const vscode = require('vscode');
-var operations = require('./operations');
 
 var smell = {
 
@@ -11,7 +10,7 @@ var smell = {
         
         console.log(methodname);
         
-        const cliArgsFuncNames = ['sys.argv','ArgumentParser','argparse','exec'];
+        const cliArgsFuncNames = ['sys.argv','ArgumentParser','argparse','subprocess.Popen'];
         if(cliArgsFuncNames.includes(methodname))
         {
             console.log('Use of CLI args!');

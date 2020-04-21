@@ -30,6 +30,21 @@ var operations = {
     },
     isLengthZero: (word) => {
         return word.length>0 ? false : true;
+    },
+    refine: (word) => {
+
+        const charLength = word.length;
+        const unwantedChars = ["'",'"'];
+        const unwantedCharsCount = unwantedChars.length;
+
+        for(let i=0;i<charLength;i++)
+        {
+            for(let j=0;j<unwantedCharsCount;j++){
+                const unwanted = unwantedChars[j];
+                if(word.includes(unwanted)) word = word.replace(unwanted,'');
+            }
+        }
+        return word;
     }
 
 }

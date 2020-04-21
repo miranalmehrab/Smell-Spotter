@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const operations = require('../smells/operations');
 
 var smell = {
 
@@ -10,61 +11,31 @@ var smell = {
         
         if(smell.httpcall(method))
         {
-            if(params!=undefined && smell.hasVerify(params))
+            if(params)
             {
-                params.map((val) => {
-                
-                    if(val.includes("="))
-                    {
-                        let name = val.split("=")[0];
-                        let value = val.split("=")[1];
-                    
-                        if(!smell.TLSUsed(name,value))
-                        {
-                            console.log('Http without TLS!');
-                            vscode.window.showWarningMessage('Http without TLS at line '+ line);
-                        }
-                    }
-                });
-            }
-            else{
-                console.log('Http without TLS!');
-                vscode.window.showWarningMessage('Http without TLS at line '+ line);        
+                if(!smell.tls(params[0]))
+                {
+                    console.log('Http without TLS!');
+                    vscode.window.showWarningMessage('Http without TLS at line '+ line);
+                }
+        
             }
         }
     },
-    httpcall: (methodname)=>
-    {
+    httpcall: (methodname) => {
         const libs = ['httplib','urllib','requests'];
         const libname = methodname.split(".")[0];
       
         if(libs.includes(libname)) return true;
         else return false;
     },
-    TLSUsed: (param,value) => 
-    {
-        const params = ['verify'];
-
-        if(params.includes(param) && value=="False") return false;
-        else return true;
-    },
-    hasVerify:(params) => {
+    tls: (param) => {
+        param = operations.refine(param);
+        var scheme = param.split("://")[0];
+        console.log(scheme);
         
-        var found = false;      
-        params.map( val => {
-            
-            if(val.includes("=")) {
-                let name = val.split("=")[0];
-                if(name == "verify") 
-                {
-                    console.log("name found!");
-                    found = true;
-                }
-            }
-        });
-        
-        //console.log("found = "+found);
-        return found;
+        if(scheme == "https") return true;
+        else return false;
     }
 }
 

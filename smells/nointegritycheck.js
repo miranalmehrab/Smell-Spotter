@@ -1,24 +1,46 @@
 const vscode = require('vscode');
-var operations = require('./operations');
+const operation = require('../smells/operations');
 
 var smell = {
-
     detect : (token) => {
+    
+        const line = token.line;
+        if(token.hasOwnProperty("method")) var method =  token.method;
+        if(token.hasOwnProperty("params")) var params = token.params;
         
-        const words = token.split(',');
-        const line = words[0];
-        const type = words[1];
-        const name = words[2];
-        const value = words[3];
-        
-        console.log(operations.isVarible(type));
-        console.log(operations.isCommonPassword(name));
-        console.log(operations.isLengthZero(value));
-
-        if(operations.isVarible(type) && operations.isCommonPassword(name) && !operations.isLengthZero(value)){
-            console.log('Empty password!');
-            vscode.window.showWarningMessage('Empty password at line '+ line);
+        if(smell.httpcall(method))
+        {
+            if(params)
+            {
+               if(smell.checkintegrity(params[0]))
+               {
+                   console.log('No Integrity check!');
+                   vscode.window.showWarningMessage('No Integrity check at line '+ line);
+               } 
+                
+            }
         }
+    },
+    httpcall: (methodname)=>
+    {
+        const libs = ['urllib.urlretrieve','urllib2.urlopen','requests.get','wget.download'];
+        
+        if(libs.includes(methodname)) return true;
+        else return false;
+    },
+    checkintegrity: (param) =>{
+        var download = ['iso', 'tar', 'tar.gz', 'tar.bzip2', 'zip', 'rar', 'gzip', 'gzip2', 'deb', 'rpm', 'sh', 'run', 'bin', 'exe', 'zip', 'rar', '7zip', 'msi', 'bat']
+        
+        var urls = operation.refine(param).split(".");
+        var extension = urls[urls.length-1];
+              
+        if(download.includes(extension))
+        {
+            //check exisitng imports if haslib or pygpgme not found then tell no checking!
+            console.log(extension);
+        }
+        return true;
+        
     }
 }
 
