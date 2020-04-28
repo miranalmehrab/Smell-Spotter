@@ -8,7 +8,9 @@
 {
   "line": 2,
   "type": "obj",
-  "method": "exec",
-  "params": "'init 0'",
-  "source": "initialized"
+  "method": "execution.query",
+  "params": [
+    "'select * from table'+x"
+  ],
+  "source": "input"
 }

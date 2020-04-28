@@ -2,10 +2,12 @@ const fs = require('fs');
 
 const exec = require('../smells/exec');
 const cliargs = require('../smells/cliargs');
+const sql = require('../smells/sqlinjection');
 const httponly = require('../smells/httponly');
 const debugsettrue = require('../smells/debugflag');
 const nointeg = require('../smells/nointegritycheck');
 const emptypassword = require('../smells/emptypassword');
+const cmdinjection = require('../smells/commandinjection');
 const hardcodedsecret = require('../smells/hardcodedsecret'); 
 
 var detection = {
@@ -46,7 +48,9 @@ var detection = {
                 //cliargs.detect(obj);
                 //nointeg.detect(obj);
                 //httponly.detect(obj);
-                exec.detect(obj);
+                //exec.detect(obj);
+                cmdinjection.detect(obj);
+                sql.detect(obj);
             }
             //debugsettrue.detect(obj);
             
