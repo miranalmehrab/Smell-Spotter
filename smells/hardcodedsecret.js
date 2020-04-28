@@ -12,6 +12,7 @@ var smell = {
 
         if (token.hasOwnProperty("params")) params = token.params;
         if (operations.isVarible(type) 
+            && token.source == "initialized"
             && (operations.isCommonPassword(name) || operations.isCommonUserName(name)) 
             && !operations.isLengthZero(value)) { 
 

@@ -4,16 +4,15 @@ var lexer = {
 
     run: (pcode)=>{
         
+        var inputs = [];
+        var imports = [];
+     
         let tokens = [];
         let lines = pcode.split("\n"); 
         const lineCount = lines.length;
         
-        var inputs = [];
-        var imports = [];
-
-
-        for(let i=0;i<lineCount;i++){
-            
+        for(let i=0;i<lineCount;i++)
+        {    
             const line = lines[i];
             
             if(line.split(' ')[0] == "import")
@@ -36,8 +35,11 @@ var lexer = {
                         let libname = val.split("as")[0].trim();
                         let aliasname = val.split("as")[1].trim();
                         importsObj[aliasname] = libname;
+
+                        imports.push(libname);
                     }
-                    else importsObj[val] = val;    
+                    else importsObj[val] = val;
+                    imports.push(val);    
                 }
                 tokens.push(importsObj);
             }
@@ -53,22 +55,35 @@ var lexer = {
                 importsObj['module'] = modulename;
 
                 let funcnames = line.split("import")[1];
-                if(funcnames.includes(","))funcnames = funcnames.split(",");
+                funcnames = funcnames.trim();
                 
-                for(let j=0;j<funcnames.length;j++)
+                if(funcnames.includes(","))
                 {
-                    funcnames[j] = funcnames[j].trim();
-                    var val = funcnames[j];
-
-                    if(val.includes("as"))
+                    funcnames = funcnames.split(",");
+                
+                    for(let j=0;j<funcnames.length;j++)
                     {
-                        var libname = val.split("as")[0].trim();
-                        var aliasname = val.split("as")[1].trim();
-                        importsObj[aliasname] = modulename+'.'+libname;
-                    }
-                    else importsObj[val] = modulename+'.'+val;
-                }
+                        funcnames[j] = funcnames[j].trim();
+                        var val = funcnames[j];
 
+                        if(val.includes("as"))
+                        {
+                            var libname = val.split("as")[0].trim();
+                            var aliasname = val.split("as")[1].trim();
+                            importsObj[aliasname] = modulename+'.'+libname;
+
+                            imports.push(modulename+'.'+libname);
+                        }
+                        else importsObj[val] = modulename+'.'+val;
+                        imports.push(modulename+'.'+val);
+                    }
+                }
+                else
+                {
+                    let modname = modulename+"."+funcnames;
+                    importsObj[modname] = modname;
+                    imports.push(modname);
+                }
                 console.log(importsObj);
                 tokens.push(importsObj);
 
@@ -85,12 +100,10 @@ var lexer = {
                 const listre = /\[+[\s\S]+\]/g;
                 const tuplere = /\(+[\s\S]+\)/g;
                 const inputre = /input\([\s\S]*\)/g;
-
-                console.log(value);
                 
                 if(inputre.test(value))
                 {
-                    console.log("input");
+                    //console.log("input");
                     
                     valsrc = "input";
                     inputs.push(name);
@@ -149,6 +162,10 @@ var lexer = {
             }
             
         }
+        //write inputs and imports in file
+        lexer.save(inputs, __dirname+'/output/inputs.txt');
+        lexer.save(imports,__dirname+'/output/imports.txt');
+
         return tokens;
     },
     refine: (word) => {
@@ -170,7 +187,7 @@ var lexer = {
 
         fs.writeFileSync(filename,'');
         tokens.map( token => {
-            fs.appendFileSync(filename, "<obj>"+"\n"+JSON.stringify(token, null, 2)+"\n" , 'utf-8');
+            fs.appendFileSync(filename,JSON.stringify(token, null, 2)+"\n" , 'utf-8');
         });
     }
 }

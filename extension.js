@@ -21,8 +21,8 @@ function activate(context)
 			
 			if(tokens) 
 			{
-			  	lexer.save(tokens,__dirname+'/output/editor.txt');
-			  	detection.read(__dirname+'/output/editor.txt');
+			  	lexer.save(tokens,__dirname+'/parse/output/editor.txt');
+			  	detection.read(__dirname+'/parse/output/editor.txt');
 			}
 		}
 		else vscode.window.showErrorMessage("Please select python source code!");

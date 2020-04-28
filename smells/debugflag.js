@@ -12,7 +12,6 @@ var smell = {
         if(token.hasOwnProperty("value")) var value = token.value;
         if(token.hasOwnProperty("params")) var params = token.params;
         
-
         if(value)
         {
             console.log(name+" "+value);

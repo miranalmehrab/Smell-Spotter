@@ -19,23 +19,35 @@ var detection = {
     
     detect:(tokenStr) => {
         
-        var tokens = tokenStr.split("<obj>");
+        var tokens = tokenStr.split("{");
+        tokens.map((val,index) => {
+            tokens[index] = ("{"+val).trim();
+        }); 
         tokens.shift();
-        const count = tokens.length;
-        
 
+        console.log(tokens);
+        const count = tokens.length;
+        console.log(count);
+        
         for(let i=0;i<count;i++)
         {   
             const token = tokens[i];
             const obj = JSON.parse(token);
             console.log(obj);
+
+            if(obj.type == "var")
+            {
+                hardcodedsecret.detect(obj);
+                emptypassword.detect(obj);
+            }
+            else if(obj.type == "obj")
+            {
+                cliargs.detect(obj);
+                nointeg.detect(obj);
+                httponly.detect(obj);
+            }
+            debugsettrue.detect(obj);
             
-            // hardcodedsecret.detect(obj);
-            // emptypassword.detect(obj);
-            // debugsettrue.detect(obj);
-            cliargs.detect(obj);
-            //httponly.detect(obj);
-            //nointeg.detect(obj);
         }
         
     }
