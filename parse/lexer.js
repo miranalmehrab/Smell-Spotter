@@ -160,6 +160,32 @@ var lexer = {
                 tokens.push(token);
 
             }
+            else
+            {
+                if(line.includes("(") && line.includes(")"))
+                {
+                    let libname = line.split("(")[0].trim();
+                    let params = line.split("(")[1].trim();
+                    params = params.split(")")[0].trim();
+                    let parameters = lexer.parseparams(params);
+                    
+                    console.log(parameters);
+
+                    let valsrc = "initialized";
+                    if(typeof parameters == "object")
+                    {
+                        parameters.map(val =>{
+                            if(inputs.includes(val)) valsrc = "input";
+                        });
+                    }   
+                    else if(inputs.includes(parameters)) valsrc = "input";
+
+                    console.log(libname);
+                    
+                    let token = {line:i+1,type:"obj",method:libname,params:parameters,source:valsrc};
+                    tokens.push(token);
+                }
+            }
             
         }
         //write inputs and imports in file
@@ -167,6 +193,30 @@ var lexer = {
         lexer.save(imports,__dirname+'/output/imports.txt');
 
         return tokens;
+    },
+    parseparams: (params)=>
+    {
+        params = params.trim();
+        let parameters = params;
+
+        if(params.includes(","))parameters = params.split(",");
+        else if(params.includes("+")) parameters = params.split("+");
+        else if(params.includes("{") && params.includes("}")) 
+        {
+            parameters = params.split("{")[1];
+            parameters = parameters.split("}")[0];
+        }
+
+        if(typeof parameters == "object")
+        {
+            parameters.map((val,index) => {
+                parameters[index] = val.trim();
+                console.log(val.trim());
+            });
+        }
+        console.log(parameters);
+        
+        return parameters;
     },
     refine: (word) => {
 

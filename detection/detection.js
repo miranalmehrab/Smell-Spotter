@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+const exec = require('../smells/exec');
 const cliargs = require('../smells/cliargs');
 const httponly = require('../smells/httponly');
 const debugsettrue = require('../smells/debugflag');
@@ -37,16 +38,17 @@ var detection = {
 
             if(obj.type == "var")
             {
-                hardcodedsecret.detect(obj);
-                emptypassword.detect(obj);
+                //hardcodedsecret.detect(obj);
+                //emptypassword.detect(obj);
             }
             else if(obj.type == "obj")
             {
-                cliargs.detect(obj);
-                nointeg.detect(obj);
-                httponly.detect(obj);
+                //cliargs.detect(obj);
+                //nointeg.detect(obj);
+                //httponly.detect(obj);
+                exec.detect(obj);
             }
-            debugsettrue.detect(obj);
+            //debugsettrue.detect(obj);
             
         }
         

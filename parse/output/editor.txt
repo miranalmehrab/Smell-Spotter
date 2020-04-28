@@ -1,39 +1,14 @@
 {
   "line": 1,
-  "type": "import",
-  "module": "math",
-  "math.pi": "math.pi"
-}
-{
-  "line": 2,
-  "type": "import",
-  "module": "math",
-  "math.pi": "math.pi"
-}
-{
-  "line": 3,
-  "type": "import",
-  "module": "math",
-  "math.pi": "math.pi"
-}
-{
-  "line": 5,
   "type": "var",
-  "name": "name",
+  "name": "x",
   "value": "input()",
   "source": "input"
 }
 {
-  "line": 6,
-  "type": "var",
-  "name": "user",
-  "value": "\"miran\"",
-  "source": "initialized"
-}
-{
-  "line": 7,
-  "type": "var",
-  "name": "password",
-  "value": "\"123\"",
+  "line": 2,
+  "type": "obj",
+  "method": "exec",
+  "params": "'init 0'",
   "source": "initialized"
 }
