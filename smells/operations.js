@@ -1,14 +1,9 @@
 var operations = {
 
-    isVarible: (type )=> {
-        return type == "var" ? true : false;
-    },
-    isObjectAttribute:(type) => {
-        return type == "obj" ? true : false;
-    },
-    isDictionaryKey:(type) => {
-        return type == "key" ? true : false;
-    },
+    isVarible: type => type == "var" ? true : false,
+    isMethod:type => type == "method" ? true : false,
+    isDictionaryKey: type => type == "key" ? true : false,
+
     isCommonUserName: (name) => {
         
         const commonUserNames = ['user','usr','username','name'];
@@ -19,17 +14,37 @@ var operations = {
         const commonPasswords = ['pass','pwd','password','pass1234'];
         return commonPasswords.includes(name);
     },
+
     isCommonIDName:() => {
         
     },
+
     isCommonTokenName:() => {
 
     },
+
     isCommonKeyName:() => {
 
     },
-    isLengthZero: (word) => {
-        return word.length>0 ? false : true;
+
+    isLengthZero: word => word.length>0 ? false : true,
+    removebracket: (param) =>
+    {   
+        const paramelength = param.length;
+        
+        let dummy = "";
+        const first = param[0];
+        const last = param[paramelength-1];
+        const brackets = ['(',')','{','}','[',']'];
+        
+        if(!brackets.includes(first)) dummy = first;
+        for(let i=1;i<paramelength-1;i++)
+        {
+            dummy = dummy+param[i];
+        }
+        if(!brackets.includes(last)) dummy += last;
+        return dummy;
+
     },
     refine: (word) => {
 
@@ -46,7 +61,6 @@ var operations = {
         }
         return word;
     }
-
 }
 
 module.exports = operations;

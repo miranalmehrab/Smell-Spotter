@@ -1,13 +1,18 @@
 const fs = require('fs');
 
+
 const exec = require('../smells/exec');
+const tempdir = require('../smells/tempdir');
 const cliargs = require('../smells/cliargs');
 const sql = require('../smells/sqlinjection');
 const httponly = require('../smells/httponly');
 const debugsettrue = require('../smells/debugflag');
+const ignexcept = require('../smells/ignexcept.js');
+const ipbinding = require('../smells/ipbinding.js');
 const nointeg = require('../smells/nointegritycheck');
 const emptypassword = require('../smells/emptypassword');
 const cmdinjection = require('../smells/commandinjection');
+const filepermission = require('../smells/filepermission');
 const hardcodedsecret = require('../smells/hardcodedsecret'); 
 
 var detection = {
@@ -38,19 +43,26 @@ var detection = {
             const obj = JSON.parse(token);
             console.log(obj);
 
-            if(obj.type == "var")
+            if(obj.type == "var" || obj.type == "list")
             {
                 //hardcodedsecret.detect(obj);
                 //emptypassword.detect(obj);
+                //tempdir.detect(obj);
             }
-            else if(obj.type == "obj")
+            else if(obj.type == "method")
             {
                 //cliargs.detect(obj);
                 //nointeg.detect(obj);
                 //httponly.detect(obj);
                 //exec.detect(obj);
-                cmdinjection.detect(obj);
-                sql.detect(obj);
+                //cmdinjection.detect(obj);
+                //sql.detect(obj);
+                //ipbinding.detect(obj);
+                //filepermission.detect(obj);
+            }
+            else if(obj.type == "statement")
+            {
+                ignexcept.detect(obj);
             }
             //debugsettrue.detect(obj);
             

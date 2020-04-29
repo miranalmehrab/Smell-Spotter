@@ -6,7 +6,8 @@ var lexer = {
         
         var inputs = [];
         var imports = [];
-     
+        var variables = [];
+
         let tokens = [];
         let lines = pcode.split("\n"); 
         const lineCount = lines.length;
@@ -103,13 +104,11 @@ var lexer = {
                 
                 if(inputre.test(value))
                 {
-                    //console.log("input");
-                    
                     valsrc = "input";
                     inputs.push(name);
                 }
                 else if(listre.test(value)) type = "list";
-                else if(tuplere.test(value)) type = "tuple";
+                //else if(tuplere.test(value)) type = "tuple";
                 else 
                 {
                     if(value.includes("+"))
@@ -124,12 +123,16 @@ var lexer = {
 
                     //value = lexer.refine(value);
                 }
+                
+                let variable = {name:name,value:value};
+                variables.push(variable);
+
                 const token = {line:i+1,type:type,name:name,value:value,source:valsrc};
                 tokens.push(token);
             }
             else if(line.includes(".")) 
             {
-                const moduleName = line.substring(0,line.indexOf("."));
+                let moduleName = line.substring(0,line.indexOf("."));
                 
                 const funcCall = line.substring(line.indexOf(".")+1);
                 const funcName = funcCall.substring(0,funcCall.indexOf("(")); 
@@ -151,43 +154,51 @@ var lexer = {
                         });
                     }
                 });
-
-
                 
+                variables.map(variable => {
+                    if(moduleName == variable.name) moduleName = variable.value;
+                });
                 const totalFuncName = moduleName+"."+funcName;
-                var token = {line:i+1,type:"obj",method:totalFuncName,params:parameters,source:valsrc};
+                var token = {line:i+1,type:"method",method:totalFuncName,params:parameters,source:valsrc};
                 
                 tokens.push(token);
 
             }
-            else
+            else if(line.includes("(") && line.includes(")"))
             {
-                if(line.includes("(") && line.includes(")"))
+                let libname = line.split("(")[0].trim();
+                let params = line.split("(")[1].trim();
+                params = params.split(")")[0].trim();
+                let parameters = lexer.parseparams(params);
+                
+                console.log(parameters);
+
+                let valsrc = "initialized";
+                if(typeof parameters == "object")
                 {
-                    let libname = line.split("(")[0].trim();
-                    let params = line.split("(")[1].trim();
-                    params = params.split(")")[0].trim();
-                    let parameters = lexer.parseparams(params);
-                    
-                    console.log(parameters);
-
-                    let valsrc = "initialized";
-                    if(typeof parameters == "object")
-                    {
-                        parameters.map(val =>{
-                            if(inputs.includes(val)) valsrc = "input";
-                        });
-                    }   
-                    else if(inputs.includes(parameters)) valsrc = "input";
-
-                    console.log(libname);
-                    
-                    let token = {line:i+1,type:"obj",method:libname,params:parameters,source:valsrc};
-                    tokens.push(token);
-                }
+                    parameters.map(val =>{
+                        if(inputs.includes(val)) valsrc = "input";
+                    });
+                }   
+                else if(inputs.includes(parameters)) valsrc = "input";
+                
+                variables.map(variable => {
+                    if(libname == variable.name) libname = variable.value;
+                });
+                console.log(libname);
+                
+                let token = {line:i+1,type:"method",method:libname,params:parameters,source:valsrc};
+                tokens.push(token);
             }
-            
-        }
+            else if(line.split(' ')[0].includes("else"))
+            {
+                let block = line.split(':')[1];
+                console.log(block);
+
+                let token = {line:i+1,type:"statement",statement:"except",block:block};
+                tokens.push(token);                
+            }
+        }   
         //write inputs and imports in file
         lexer.save(inputs, __dirname+'/output/inputs.txt');
         lexer.save(imports,__dirname+'/output/imports.txt');

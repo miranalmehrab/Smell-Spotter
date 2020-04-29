@@ -15,7 +15,7 @@ var smell = {
         if(value)
         {
             console.log(name+" "+value);
-            if((operations.isVarible(type) || operations.isObjectAttribute(type)) && smell.name(name) && smell.value(value))
+            if((operations.isVarible(type) || operations.isMethod(type)) && smell.name(name) && smell.value(value))
             {
                 console.log('Debug set true!');
                 vscode.window.showWarningMessage('Debug set true at line '+ line);
@@ -24,9 +24,9 @@ var smell = {
         }
         else if(params)
         {
-            if(operations.isVarible(type) || operations.isObjectAttribute(type))
+            if(operations.isVarible(type) || operations.isMethod(type))
             {
-                params.map((val,index) => {
+                params.map( val => {
 
                     var duo = val.split("=");
                     var name = duo[0];

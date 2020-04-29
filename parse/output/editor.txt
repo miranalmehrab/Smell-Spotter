@@ -1,16 +1,13 @@
 {
   "line": 1,
-  "type": "var",
-  "name": "x",
-  "value": "input()",
-  "source": "input"
+  "type": "method",
+  "method": "try: something",
+  "params": "",
+  "source": "initialized"
 }
 {
   "line": 2,
-  "type": "obj",
-  "method": "execution.query",
-  "params": [
-    "'select * from table'+x"
-  ],
-  "source": "input"
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
 }
