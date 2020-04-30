@@ -14,6 +14,8 @@ const cmdinjection = require('../smells/commandinjection');
 const filepermission = require('../smells/filepermission');
 const hardcodedsecret = require('../smells/hardcodedsecret'); 
 
+const operations = require('../smells/operations');
+
 var detection = {
 
     read:(filename) => {
@@ -32,10 +34,9 @@ var detection = {
         }); 
         tokens.shift();
 
-        console.log(tokens);
         const count = tokens.length;
-        console.log(count);
-        
+        operations.clearsmelllog();
+
         for(let i=0;i<count;i++)
         {   
             const token = tokens[i];

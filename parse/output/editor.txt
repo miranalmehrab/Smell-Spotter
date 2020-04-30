@@ -4,3 +4,51 @@
   "statement": "except",
   "block": " continue"
 }
+{
+  "line": 3,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 4,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 7,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 8,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 9,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 12,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 13,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}
+{
+  "line": 14,
+  "type": "statement",
+  "statement": "except",
+  "block": " continue"
+}

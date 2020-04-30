@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const operation = require('../smells/operations.js');
+const operation = require('./operations.js');
 
 
 var smell = {
@@ -20,8 +20,10 @@ var smell = {
         
         if(unwantedmethod.includes(methodname) && unwantedparam.includes(param))
         {
-            console.log('Bad file permission!');
-            vscode.window.showWarningMessage('Bad file permission at line '+ line);
+            const warning = 'possible bad file permission at line '+ line;
+            
+            operation.writesmelllog(warning);
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

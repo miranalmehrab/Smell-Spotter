@@ -9,6 +9,8 @@ var detection = require('./detection/detection');
 
 function activate(context) 
 {
+	const color = new vscode.ThemeColor('pssd.warning');
+
 	let parsecode = vscode.commands.registerCommand('extension.parsecode', function () 
 	{	
 		const pcode = vscode.window.activeTextEditor.document.getText();

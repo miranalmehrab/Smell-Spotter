@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const operations = require('../smells/operations');
+const operations = require('./operations');
 
 var smell = {
 
@@ -15,8 +15,10 @@ var smell = {
             {
                 if(!smell.tls(params[0]))
                 {
-                    console.log('Http without TLS!');
-                    vscode.window.showWarningMessage('Http without TLS at line '+ line);
+                    const warning = 'possible use of HTTP without TLS at line '+ line;
+                    
+                    operations.writesmelllog(warning);
+                    vscode.window.showWarningMessage(warning);
                 }
         
             }

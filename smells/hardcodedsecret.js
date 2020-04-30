@@ -15,8 +15,10 @@ var smell = {
             && (operations.isCommonPassword(name) || operations.isCommonUserName(name)) 
             && !operations.isLengthZero(value)) { 
 
-            console.log('hardcoded secret!');
-            vscode.window.showWarningMessage('Hard coded secret at line '+ line);
+                const warning = 'possible hardcoded secret at line '+ line;
+            
+                operations.writesmelllog(warning);
+                vscode.window.showWarningMessage(warning);
         }
     }
 }

@@ -14,8 +14,10 @@ var smell = {
         if((operations.isVarible(type) || operations.isObjectAttribute(type)) && operations.isCommonPassword(name) 
             && operations.isLengthZero(value)) {
             
-            console.log('Empty password!');
-            vscode.window.showWarningMessage('Empty password at line '+ line);
+                const warning = 'possible empty password at line '+ line;
+            
+                operations.writesmelllog(warning);
+                vscode.window.showWarningMessage(warning);
         }
     }
 }

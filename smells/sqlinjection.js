@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const operations = require('./operations');
 
 var smell = {
 
@@ -12,8 +13,10 @@ var smell = {
         const unwanted = ['execution.query'];
         if(unwanted.includes(methodname) && ( params || src == "input"))
         {
-            console.log('SQL injection!');
-            vscode.window.showWarningMessage('SQL injection at line '+ line);
+            const warning = 'possible SQL injection at line '+ line;
+            
+            operations.writesmelllog(warning);
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

@@ -1,4 +1,6 @@
 const vscode = require('vscode');
+const operations = require('./operations');
+const color = new vscode.ThemeColor('pssd.warning');
 
 var smell = {
 
@@ -12,8 +14,10 @@ var smell = {
         
         if(statement == "except" &&  unwantedblock.includes(block.trim()) )
         {
-            console.log('Ignore except block statement!');
-            vscode.window.showWarningMessage('Ignore except block at line '+ line);
+            const warning = 'possible ignore except block at line '+ line;
+            
+            operations.writesmelllog(warning);
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

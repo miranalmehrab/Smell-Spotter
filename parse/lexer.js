@@ -199,8 +199,6 @@ var lexer = {
             else if(line.split(' ')[0].includes("else"))
             {
                 let block = line.split(':')[1];
-                console.log(block);
-
                 let token = {line:i+1,type:"statement",statement:"except",block:block};
                 tokens.push(token);                
             }

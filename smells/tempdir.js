@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const operations = require('./operations');
 
 var smell = {
 
@@ -17,8 +18,10 @@ var smell = {
         
         if(unwantednames.includes(name))
         {
-            console.log('Possible harcoded temp directory!');
-            vscode.window.showWarningMessage('Possible harcoded temp directory at line -'+ line);
+            const warning = 'possible hardcoded temporary directory at line '+ line;
+            
+            operations.writesmelllog(warning);
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

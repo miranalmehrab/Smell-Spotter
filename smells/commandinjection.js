@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const operations = require('./operations');
 
 var smell = {
 
@@ -12,8 +13,10 @@ var smell = {
         const unwanted = ['subprocess.Popen'];
         if(unwanted.includes(methodname) && ( params || src == "input"))
         {
-            console.log('Command Line injection!');
-            vscode.window.showWarningMessage('Command Line injection at line '+ line);
+            const warning = 'possible cmd injection at line '+ line;
+            
+            operations.writesmelllog(warning);
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

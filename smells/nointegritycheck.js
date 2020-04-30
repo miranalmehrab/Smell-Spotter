@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const operation = require('../smells/operations');
+const operations = require('./operations');
 
 var smell = {
     detect : (token) => {
@@ -14,8 +14,10 @@ var smell = {
             {
                if(smell.checkintegrity(params[0]))
                {
-                   console.log('No Integrity check!');
-                   vscode.window.showWarningMessage('No Integrity check at line '+ line);
+                const warning = 'possible no integrity check at line '+ line;
+                
+                operations.writesmelllog(warning);
+                vscode.window.showWarningMessage(warning);
                } 
                 
             }

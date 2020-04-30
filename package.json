@@ -26,6 +26,17 @@
 				"command": "extension.greetings",
 				"title": "Greetings"
 			}
+		],
+		"colors": [
+			{
+				"id": "pssd.warning",
+				"description": "Warning color for pssd.",
+				"defaults": {
+					"dark": "errorForeground",
+					"light": "errorForeground",
+					"highContrast": "#010203"
+				}
+			}
 		]
 	},
 	"scripts": {

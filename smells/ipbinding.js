@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const operations = require('../smells/operations');
+const operations = require('./operations');
 var smell = {
 
     detect : (token) => {
@@ -18,8 +18,10 @@ var smell = {
         
         if(unwantedmethod.includes(methodname) && unwantedparam.includes(param))
         {
-            console.log('Hardcoded IP binding!');
-            vscode.window.showWarningMessage('Hardcoded IP binding at line '+ line);
+            const warning = 'possible harcoded ip address binding at line '+ line;
+            
+            operations.writesmelllog(warning);
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

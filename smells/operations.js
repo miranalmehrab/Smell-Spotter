@@ -1,3 +1,7 @@
+var fs = require('fs');
+const warninglog = __dirname+"/../parse/output/log.txt";
+
+
 var operations = {
 
     isVarible: type => type == "var" ? true : false,
@@ -60,6 +64,12 @@ var operations = {
             }
         }
         return word;
+    },
+    writesmelllog: warning => {
+        fs.appendFileSync(warninglog,warning+"\n",'utf-8');
+    },
+    clearsmelllog: () => {
+        fs.writeFileSync(warninglog,'');
     }
 }
 
