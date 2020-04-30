@@ -1,11 +1,4 @@
 {
-  "line": 1,
-  "type": "method",
-  "method": "try: something",
-  "params": "",
-  "source": "initialized"
-}
-{
   "line": 2,
   "type": "statement",
   "statement": "except",

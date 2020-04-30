@@ -1,6 +1,5 @@
 const fs = require('fs');
 
-
 const exec = require('../smells/exec');
 const tempdir = require('../smells/tempdir');
 const cliargs = require('../smells/cliargs');
@@ -45,28 +44,29 @@ var detection = {
 
             if(obj.type == "var" || obj.type == "list")
             {
-                //hardcodedsecret.detect(obj);
-                //emptypassword.detect(obj);
-                //tempdir.detect(obj);
+                hardcodedsecret.detect(obj);
+                emptypassword.detect(obj);
+                tempdir.detect(obj);
             }
             else if(obj.type == "method")
             {
-                //cliargs.detect(obj);
-                //nointeg.detect(obj);
-                //httponly.detect(obj);
-                //exec.detect(obj);
-                //cmdinjection.detect(obj);
-                //sql.detect(obj);
-                //ipbinding.detect(obj);
-                //filepermission.detect(obj);
+                cliargs.detect(obj);
+                nointeg.detect(obj);
+                httponly.detect(obj);
+                exec.detect(obj);
+                cmdinjection.detect(obj);
+                sql.detect(obj);
+                ipbinding.detect(obj);
+                filepermission.detect(obj);
             }
             else if(obj.type == "statement")
             {
                 ignexcept.detect(obj);
             }
-            //debugsettrue.detect(obj);
-            
+            debugsettrue.detect(obj);
         }
+        console.log('detection finished!');
+        
         
     }
 }

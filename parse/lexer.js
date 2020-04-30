@@ -166,29 +166,35 @@ var lexer = {
             }
             else if(line.includes("(") && line.includes(")"))
             {
-                let libname = line.split("(")[0].trim();
-                let params = line.split("(")[1].trim();
-                params = params.split(")")[0].trim();
-                let parameters = lexer.parseparams(params);
-                
-                console.log(parameters);
+                if(line.includes(":")) var colonpos = line.indexOf(":");
+                var parenthesispos = line.indexOf("(");
 
-                let valsrc = "initialized";
-                if(typeof parameters == "object")
+                if(parenthesispos < colonpos)
                 {
-                    parameters.map(val =>{
-                        if(inputs.includes(val)) valsrc = "input";
+                    let libname = line.split("(")[0].trim();
+                    let params = line.split("(")[1].trim();
+                    params = params.split(")")[0].trim();
+                    let parameters = lexer.parseparams(params);
+                    
+                    let valsrc = "initialized";
+                    if(typeof parameters == "object")
+                    {
+                        parameters.map(val =>{
+                            if(inputs.includes(val)) valsrc = "input";
+                        });
+                    }   
+                    else if(inputs.includes(parameters)) valsrc = "input";
+                    
+                    variables.map(variable => {
+                        if(libname == variable.name) libname = variable.value;
                     });
-                }   
-                else if(inputs.includes(parameters)) valsrc = "input";
-                
-                variables.map(variable => {
-                    if(libname == variable.name) libname = variable.value;
-                });
-                console.log(libname);
-                
-                let token = {line:i+1,type:"method",method:libname,params:parameters,source:valsrc};
-                tokens.push(token);
+                    console.log(libname);
+                    console.log('here');
+                    
+                    let token = {line:i+1,type:"method",method:libname,params:parameters,source:valsrc};
+                    tokens.push(token);
+                }
+
             }
             else if(line.split(' ')[0].includes("else"))
             {
@@ -198,7 +204,9 @@ var lexer = {
                 let token = {line:i+1,type:"statement",statement:"except",block:block};
                 tokens.push(token);                
             }
-        }   
+        }
+        
+        
         //write inputs and imports in file
         lexer.save(inputs, __dirname+'/output/inputs.txt');
         lexer.save(imports,__dirname+'/output/imports.txt');
@@ -225,7 +233,6 @@ var lexer = {
                 console.log(val.trim());
             });
         }
-        console.log(parameters);
         
         return parameters;
     },
