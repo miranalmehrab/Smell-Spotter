@@ -1,39 +1,33 @@
 const fs = require('fs');
 const vscode = require('vscode');
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
+var detection = require('./detection/detection');
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 
-function activate(context) 
-{
+function activate(context) {
 	// const color = new vscode.ThemeColor('pssd.warning');
-
 	let parsecode = vscode.commands.registerCommand('extension.parsecode', function () {
 
 		const pcode = vscode.window.activeTextEditor.document.getText();
 		const codeLang = vscode.window.activeTextEditor.document.languageId;
-		
-		if(codeLang === 'python') {
-			
-			if(pcode!=null) {
+
+		if (codeLang === 'python') {
+			if (pcode != null) {
 				
-				try {
-					const python = spawn('python3.8', [__dirname+'/py/main.py',pcode]);
-					python.stdout.on('data', data => data ? console.log('data from python script ...'+data.toString()): 'no data from python script');		
-					python.on('close', code => code? console.log(`child process close all stdio with code ${code}`): 'python script exit code not found');
-					
-				} catch (error) {
-					console.error(error);
-				}
+				const script = spawn('python3.8', [__dirname + '/py/main.py', pcode]);
+				script.stdout.on('data', data => data? startDetection(data.toString()) : console.log('No data from script!'));
+
+				script.on('close', code => code ? console.log(`main script close all stdio with code ${code}`) : 'main script exit code not found');
 			}
 			else vscode.window.showErrorMessage("Empty source code!");
 		}
 		else vscode.window.showErrorMessage("Please select python source code!");
 	});
 
-	let greetings = vscode.commands.registerCommand('extension.greetings', function(){
+	let greetings = vscode.commands.registerCommand('extension.greetings', function () {
 		vscode.window.showInformationMessage('Hello python programmers!');
 	});
 
@@ -41,16 +35,18 @@ function activate(context)
 	context.subscriptions.push(greetings);
 }
 
+const startDetection = tokens => {
+	fs.writeFileSync(__dirname+'/logs/tokens.txt', tokens);
+	
+	const data = fs.readFileSync(__dirname+'/logs/tokens.txt', {encoding:'utf8', flag:'r'}); 
+	detection.detect(data.split('\n'))
+} 
 
 exports.activate = activate;
 
-function deactivate() 
-{
+function deactivate() {
 	// this method is called when your extension is deactivated
 	//Extension should clean up the resources that it has consumed during operation.
 }
 
-module.exports = {
-	activate,
-	deactivate
-}
+module.exports = { activate, deactivate}

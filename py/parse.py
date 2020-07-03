@@ -51,9 +51,9 @@ class Analyzer(ast.NodeVisitor):
             variable["name"] = target.id
 
         if isinstance(node.value, ast.Constant):
-            variable["value"] = node.value.value
+            variable["value"] = str(node.value.value)
             variable["valueSrc"] = "initialized"
-            variable["isInput"] = False
+            variable["isInput"] = str(False)
 
         elif isinstance(node.value, ast.Call):
             funcName = self.getFunctionName(node)
@@ -62,10 +62,10 @@ class Analyzer(ast.NodeVisitor):
             variable["funcArgs"] = []
 
             if(funcName == "input"):
-                variable["isInput"] = True
+                variable["isInput"] = str(True)
                 self.inputs.append(variable["name"])
             else:
-                variable["isInput"] = False
+                variable["isInput"] = str(False)
 
             for arg in node.value.args:
                 variable["funcArgs"].append(arg.id)
@@ -75,7 +75,7 @@ class Analyzer(ast.NodeVisitor):
             variable["values"] = []
             for value in node.value.elts:
                 if isinstance(value,ast.Constant):
-                    variable["values"].append(value.value)
+                    variable["values"].append(str(value.value))
 
         self.statements.append(variable)
         self.generic_visit(node)
@@ -119,7 +119,7 @@ class Analyzer(ast.NodeVisitor):
             elif isinstance(arg,ast.Attribute): funcCall["args"].append(self.functionAttr(arg)+'.'+arg.attr)
         
         funcCall["keywords"] = []
-        funcCall["hasInputs"] = False
+        funcCall["hasInputs"] = str(False)
         
         for keyword in node.value.keywords:
             karg = keyword.arg
@@ -164,31 +164,30 @@ class Analyzer(ast.NodeVisitor):
         if attr: name = name+'.'+attr
         return(name)
 
-
-
-    def report(self):
-        for statement in self.statements:
-            print(statement)
-
-        # print('')
-        # for user_input in self.inputs:
-        #     print("user input: "+user_input)
-        f = open("tokens.txt", "w")
-        for statement in self.statements:
-            json.dump(statement, f)
-            f.write("\n")
-        f.close()
-
-
     def findUserInputInFunction(self):
         for statement in self.statements:
             if statement["type"] == "function_call":
                 for arg in statement["args"]:
                     if arg in self.inputs:
-                        statement["hasInputs"] = True
+                        statement["hasInputs"] = str(True)
                         break
 
                     for user_input in self.inputs:
                         if user_input in str(arg):
-                            statement["hasInputs"] = True
+                            statement["hasInputs"] = str(True)
                             break
+    
+    def report(self):
+        for statement in self.statements:
+            print(json.dumps(statement))
+
+        # print('')
+        # for user_input in self.inputs:
+        #     print("user input: "+user_input)
+        
+        f = open("tokens.txt", "w")
+        for statement in self.statements:
+            json.dump(statement, f)
+            f.write("\n")
+        f.close()
+    

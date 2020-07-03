@@ -1,7 +1,6 @@
 import ast
 import sys
 from parse import Analyzer
-from detection.detection import detection
 
 def main():
     srcCode = sys.argv[1]
@@ -13,9 +12,8 @@ def main():
     analyzer.visit(tree)
     analyzer.findUserInputInFunction()
     analyzer.report()
-
-    # f = open("tokens.txt", "r")
-    # detection(f.read())
+    exit(0)
+    # sys.stdout.flush()
     # print(ast.dump(tree,include_attributes=True))
 
 

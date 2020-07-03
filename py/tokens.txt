@@ -1,0 +1,28 @@
+{'type': 'variable', 'line': 3, 'name': 'file_name', 'value': None, 'valueSrc': 'input', 'funcArgs': [], 'isInput': True}
+{'type': 'function_call', 'line': 4, 'name': 'exec', 'args': ['sudo mkdir {file_name}'], 'keywords': [], 'hasInputs': True}
+{'type': 'function_call', 'line': 6, 'name': 'os.chmod', 'args': ['/etc/hosts', 1911], 'keywords': [], 'hasInputs': False}
+{'type': 'function_call', 'line': 7, 'name': 'os.chmod', 'args': ['/etc/hosts', 'stat.S_IRWXO'], 'keywords': [], 'hasInputs': False}
+{'type': 'function_call', 'line': 8, 'name': 'os.chmod', 'args': ['/etc/hosts', 'stat.S_IROTH'], 'keywords': [], 'hasInputs': False}
+{'type': 'function_call', 'line': 9, 'name': 'os.chmod', 'args': ['/etc/hosts', 'stat.S_IWOTH'], 'keywords': [], 'hasInputs': False}
+{'type': 'function_call', 'line': 10, 'name': 'os.chmod', 'args': ['/etc/hosts', 'stat.S_IXOTH'], 'keywords': [], 'hasInputs': False}
+{'type': 'variable', 'line': 12, 'name': 'DEBUG_PROPAGATE_EXCEPTIONS', 'value': True, 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'function_call', 'line': 13, 'name': 'app.run', 'args': [], 'keywords': [['debug', True], ['start', True]], 'hasInputs': False}
+{'type': 'variable', 'line': 14, 'name': 'password', 'value': 'pass', 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'variable', 'line': 15, 'name': 'password', 'value': '', 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'variable', 'line': 16, 'name': 'password', 'value': None, 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'variable', 'line': 17, 'name': 'name', 'value': 'root', 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'variable', 'line': 18, 'name': 'pwd', 'value': 'root123', 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'variable', 'line': 20, 'name': 'x', 'value': 'abc', 'valueSrc': 'initialized', 'isInput': False}
+{'type': 'function_call', 'line': 21, 'name': 'urllib.urlretrieve', 'args': ['192.168.10.1/example.iso'], 'keywords': [], 'hasInputs': False}
+{'type': 'variable', 'line': 23, 'name': 'user_input', 'value': None, 'valueSrc': 'input', 'funcArgs': [], 'isInput': True}
+{'type': 'function_call', 'line': 24, 'name': 'execution.query', 'args': ['user_input'], 'keywords': [], 'hasInputs': True}
+{'type': 'variable', 'line': 26, 'name': 'result', 'value': None, 'valueSrc': 'connection.execute', 'funcArgs': ['user_input'], 'isInput': False}
+{'type': 'function_call', 'line': 27, 'name': 'sys.argv', 'args': ['sudo mkdir {user_input}'], 'keywords': [], 'hasInputs': True}
+{'type': 'function_call', 'line': 30, 'name': 'logIn', 'args': [], 'keywords': [], 'hasInputs': False}
+{'type': 'list', 'line': 32, 'name': 'hardcoded_tmp_directory', 'values': ['/tmp', '/var/tmp']}
+{'type': 'function_call', 'line': 33, 'name': 'requests.get', 'args': ['http://abc.com'], 'keywords': [], 'hasInputs': False}
+{'type': 'function_call', 'line': 35, 'name': 'connection.execute', 'args': ['hello'], 'keywords': [], 'hasInputs': False}
+{'type': 'function_call', 'line': 36, 'name': 'connection.execute', 'args': ['user_input'], 'keywords': [], 'hasInputs': True}
+{'type': 'function_call', 'line': 37, 'name': 'socket.socket.bind', 'args': ['0.0.0.0', 3000], 'keywords': [], 'hasInputs': False}
+{'type': 'except_statement', 'line': 41, 'arg': 'continue'}
+{'type': 'variable', 'line': 39, 'name': 'x', 'value': 2, 'valueSrc': 'initialized', 'isInput': False}

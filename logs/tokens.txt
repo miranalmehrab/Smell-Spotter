@@ -1,0 +1,1 @@
+{"type": "function_call", "line": 34, "name": "requests.get", "args": ["http://abc.com"], "keywords": [], "hasInputs": "False"}
