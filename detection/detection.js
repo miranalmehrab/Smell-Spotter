@@ -18,7 +18,9 @@ const hardcodedsecret = require('../smells/hardcodedsecret');
 var detection = {
 
     detect: (tokens) => {
+        tokens.pop();
         console.log(tokens);
+
 
         try {
             tokens.map((token, index) => {
@@ -33,15 +35,15 @@ var detection = {
                     // exec.detect(token);
                     // filepermission.detect(token);
                     // hardcodedsecret.detect(token);
-                    httponly.detect(token);
+                    // httponly.detect(token);
+                    // ignexcept.detect(token);
+                    // ipbinding.detect(token);
+                    // nointeg.detect(token);
+                    // sql.detect(token);
+                    tempdir.detect(token);
                     
 
                     
-                    // tempdir.detect(token);
-                    // nointeg.detect(token);
-                    // sql.detect(token);
-                    // ipbinding.detect(token);
-                    // ignexcept.detect(token);
                 }
             });
             console.log('detection finished!');

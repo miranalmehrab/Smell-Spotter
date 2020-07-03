@@ -3,18 +3,18 @@ const vscode = require('vscode');
 var smell = {
 
     detect : (token) => {
+        
+        if(token.hasOwnProperty("line")) var lineno = token.line;
+        if(token.hasOwnProperty("type")) var tokenType = token.type;
+        if(token.hasOwnProperty("name")) var name= token.name;
+        if(token.hasOwnProperty("args")) var args= token.args;
+        if(token.hasOwnProperty("hasInputs")) var hasInputs= token.hasInputs;
+        
+        const unwantedMethods = ['execution.query'];
+        
+        if(tokenType == "function_call" && unwantedMethods.includes(name) && args && hasInputs == "True" ) {
 
-        const line =  token.line;
-        if(token.hasOwnProperty("method")) var methodname = token.method;
-        if(token.hasOwnProperty("params")) var params = token.params;
-        if(token.hasOwnProperty("source")) var src = token.source;
-
-        const unwanted = ['execution.query'];
-        if(unwanted.includes(methodname) && ( params || src == "input"))
-        {
-            const warning = 'possible SQL injection at line '+ line;
-            
-            operations.writesmelllog(warning);
+            const warning = 'possible SQL injection at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }
     }

@@ -4,24 +4,24 @@ var smell = {
 
     detect : (token) => {
 
-        const line = token.line;
-        if(token.hasOwnProperty("params")) var params = token.params;
-        if(token.hasOwnProperty("method")) var methodname = token.method;
-        
-        const unwantedmethod = ['socket.socket(socket.AF_INET, socket.SOCK_STREAM).bind'];
-        const unwantedparam = ['0.0.0.0','192.168.0.1'];
-        let param = operations.refine(operations.removebracket(params[0]));
+        if(token.hasOwnProperty("line")) var lineno = token.line;
+        if(token.hasOwnProperty("type")) var tokenType = token.type;
+        if(token.hasOwnProperty("name")) var name= token.name;
+        if(token.hasOwnProperty("args")) var args= token.args;
 
-        console.log(methodname);
-        console.log(params);
-        console.log(param);
-        
-        if(unwantedmethod.includes(methodname) && unwantedparam.includes(param))
-        {
-            const warning = 'possible harcoded ip address binding at line '+ line;
+        const unwantedMethods = ['socket.socket.bind'];
+        const unwantedParams = ['0.0.0.0','192.168.0.1'];
+         
+        if(tokenType == "function_call" &&  unwantedMethods.includes(name)){
             
-            operations.writesmelllog(warning);
-            vscode.window.showWarningMessage(warning);
+            args.map(arg => {
+
+                if(unwantedParams.includes(arg)){
+
+                    const warning = 'possible harcoded ip address binding at line '+ lineno;        
+                    vscode.window.showWarningMessage(warning);
+                }
+            });
         }
     }
 }

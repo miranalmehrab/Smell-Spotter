@@ -1,21 +1,18 @@
 const vscode = require('vscode');
-const color = new vscode.ThemeColor('pssd.warning');
 
 var smell = {
 
     detect : (token) => {
 
-        const line =  token.line;
-        if(token.hasOwnProperty("statement")) var statement = token.statement;
-        if(token.hasOwnProperty("block")) var block = token.block;
+        if(token.hasOwnProperty("line")) var lineno = token.line;
+        if(token.hasOwnProperty("type")) var tokenType = token.type;
+        if(token.hasOwnProperty("arg")) var arg = token.arg;
+
+        const unwantedBlocks = ['continue','pass'];
         
-        const unwantedblock = ['continue','pass'];
-        
-        if(statement == "except" &&  unwantedblock.includes(block.trim()) )
-        {
-            const warning = 'possible ignore except block at line '+ line;
-            
-            operations.writesmelllog(warning);
+        if(tokenType == "except_statement" &&  unwantedBlocks.includes(arg)) {
+
+            const warning = 'possible ignore except block at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }
     }

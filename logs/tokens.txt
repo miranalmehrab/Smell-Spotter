@@ -1,1 +1,1 @@
-{"type": "function_call", "line": 34, "name": "requests.get", "args": ["http://abc.com"], "keywords": [], "hasInputs": "False"}
+{"type": "list", "line": 33, "name": "hardcoded_tmp_directory", "values": ["/tmp", "/var/tmp"]}
