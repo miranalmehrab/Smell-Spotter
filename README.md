@@ -30,4 +30,4 @@
 
 13. **Constructing SQL upon Input**
 
-**Press `ctrl+alt+p` and run **Parse Code** command.**
+**Press `ctrl+alt+p` and run **Detect Smell** command.**

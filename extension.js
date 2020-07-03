@@ -1,7 +1,6 @@
+const fs = require('fs');
 const vscode = require('vscode');
-
-var lexer = require('./parse/lexer');
-var detection = require('./detection/detection');
+const {spawn} = require('child_process');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -9,29 +8,32 @@ var detection = require('./detection/detection');
 
 function activate(context) 
 {
-	const color = new vscode.ThemeColor('pssd.warning');
+	// const color = new vscode.ThemeColor('pssd.warning');
 
-	let parsecode = vscode.commands.registerCommand('extension.parsecode', function () 
-	{	
+	let parsecode = vscode.commands.registerCommand('extension.parsecode', function () {
+
 		const pcode = vscode.window.activeTextEditor.document.getText();
 		const codeLang = vscode.window.activeTextEditor.document.languageId;
-		if(codeLang === 'python') 
-		{
-			let tokens = [];
-			if(pcode!=null) tokens = lexer.run(pcode);
-			else vscode.window.showErrorMessage("Empty source code!");
+		
+		if(codeLang === 'python') {
 			
-			if(tokens) 
-			{
-			  	lexer.save(tokens,__dirname+'/parse/output/editor.txt');
-			  	detection.read(__dirname+'/parse/output/editor.txt');
+			if(pcode!=null) {
+				
+				try {
+					const python = spawn('python3.8', [__dirname+'/py/main.py',pcode]);
+					python.stdout.on('data', data => data ? console.log('data from python script ...'+data.toString()): 'no data from python script');		
+					python.on('close', code => code? console.log(`child process close all stdio with code ${code}`): 'python script exit code not found');
+					
+				} catch (error) {
+					console.error(error);
+				}
 			}
+			else vscode.window.showErrorMessage("Empty source code!");
 		}
 		else vscode.window.showErrorMessage("Please select python source code!");
 	});
 
-	let greetings = vscode.commands.registerCommand('extension.greetings', function()
-	{
+	let greetings = vscode.commands.registerCommand('extension.greetings', function(){
 		vscode.window.showInformationMessage('Hello python programmers!');
 	});
 
