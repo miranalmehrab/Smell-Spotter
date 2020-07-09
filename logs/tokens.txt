@@ -1,1 +1,6 @@
-{"type": "list", "line": 33, "name": "hardcoded_tmp_directory", "values": ["/tmp", "/var/tmp"]}
+{"type": "comparison", "line": 36, "pairs": [["username", "root"], ["password", ""]]}
+{"type": "function_call", "line": 37, "name": "logIn", "args": [], "keywords": [], "hasInputs": false}
+{"type": "comparison", "line": 39, "pairs": [[1, "username"]]}
+{"type": "function_call", "line": 40, "name": "print", "args": ["1 is equal to 1"], "keywords": [], "hasInputs": false}
+{"type": "comparison", "line": 41, "pairs": [["username", 1]]}
+{"type": "function_call", "line": 42, "name": "print", "args": ["1 is equal to 1"], "keywords": [], "hasInputs": false}

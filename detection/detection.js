@@ -20,31 +20,26 @@ var detection = {
     detect: (tokens) => {
         tokens.pop();
         console.log(tokens);
-
-
+        
         try {
             tokens.map((token, index) => {
 
-                if (token != "") {
-                    token = JSON.parse(token);
+                token = JSON.parse(token);
 
-                    // cliargs.detect(token);
-                    // cmdinjection.detect(token);
-                    // debugsettrue.detect(token);
-                    // emptypassword.detect(token);
-                    // exec.detect(token);
-                    // filepermission.detect(token);
-                    // hardcodedsecret.detect(token);
-                    // httponly.detect(token);
-                    // ignexcept.detect(token);
-                    // ipbinding.detect(token);
-                    // nointeg.detect(token);
-                    // sql.detect(token);
-                    tempdir.detect(token);
-                    
+                cliargs.detect(token);
+                cmdinjection.detect(token);
+                debugsettrue.detect(token);
+                emptypassword.detect(token);
+                exec.detect(token);
+                filepermission.detect(token);
+                hardcodedsecret.detect(token);
+                httponly.detect(token);
+                ignexcept.detect(token);
+                ipbinding.detect(token);
+                nointeg.detect(token);
+                sql.detect(token);
+                tempdir.detect(token);
 
-                    
-                }
             });
             console.log('detection finished!');
         }

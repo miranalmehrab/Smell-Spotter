@@ -19,6 +19,23 @@ var smell = {
             const warning = 'possible empty password at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }
+        else if(tokenType == "comparison"){
+
+            if(token.hasOwnProperty("pairs")) var pairs = token.pairs;
+            
+            Object.values(pairs).map(pair => {
+                if(commonPasswords.includes(pair[0].toString()) && (pair[1].toString()).length == 0){
+
+                    const warning = 'possible empty password at line '+ lineno;
+                    vscode.window.showWarningMessage(warning);
+                }
+                else if(commonPasswords.includes(pair[1].toString()) && (pair[0].toString()).length == 0){
+
+                    const warning = 'possible empty password at line '+ lineno;
+                    vscode.window.showWarningMessage(warning);
+                }
+            });  
+        }
 
     }
 }

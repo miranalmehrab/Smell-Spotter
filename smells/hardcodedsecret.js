@@ -17,6 +17,24 @@ var smell = {
                 const warning = 'possible hardcoded secret at line '+ lineno;
                 vscode.window.showWarningMessage(warning);
         }
+
+        else if(tokenType == "comparison"){
+
+            if(token.hasOwnProperty("pairs")) var pairs = token.pairs;
+            
+            Object.values(pairs).map(pair => {
+                if((commonUserNames.includes(pair[0].toString()) || commonPasswords.includes(pair[0].toString())) && (pair[1].toString()).length > 0){
+
+                    const warning = 'possible hardcoded secret at line '+ lineno;
+                    vscode.window.showWarningMessage(warning);
+                }
+                else if((commonUserNames.includes(pair[1].toString()) || commonPasswords.includes(pair[1].toString())) && (pair[0].toString()).length > 0){
+
+                    const warning = 'possible hardcoded secret at line '+ lineno;
+                    vscode.window.showWarningMessage(warning);
+                }
+            });  
+        }
     }
 }
 
