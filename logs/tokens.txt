@@ -1,6 +1,19 @@
-{"type": "comparison", "line": 36, "pairs": [["username", "root"], ["password", ""]]}
-{"type": "function_call", "line": 37, "name": "logIn", "args": [], "keywords": [], "hasInputs": false}
-{"type": "comparison", "line": 39, "pairs": [[1, "username"]]}
-{"type": "function_call", "line": 40, "name": "print", "args": ["1 is equal to 1"], "keywords": [], "hasInputs": false}
-{"type": "comparison", "line": 41, "pairs": [["username", 1]]}
-{"type": "function_call", "line": 42, "name": "print", "args": ["1 is equal to 1"], "keywords": [], "hasInputs": false}
+
+{"type": "comparison", "line": 98, "pairs": [["__name__", "__main__"]]}
+{"type": "variable", "line": 101, "name": "bar", "value": false, "valueSrc": "initialized", "isInput": false}
+{"type": "import", "line": 109, "og": "matplotlib.pyplot", "alias": "plt"}
+{"type": "import", "line": 110, "og": "numpy", "alias": "np"}
+{"type": "variable", "line": 112, "name": "N", "value": 1000, "valueSrc": "initialized", "isInput": false}
+{"type": "variable", "line": 113, "name": "z", "value": null, "valueSrc": "np.linspace", "args": [1, 500, 1000], "isInput": false}
+{"type": "function_def", "line": 116, "name": "clamp", "args": ["a", "amin", "amax"], "defaults": [], "return": "np.max", "returnArgs": ["amin", "np.min"]}
+{"type": "function_def", "line": 120, "name": "equation7", "args": ["z"], "defaults": [], "return": "np.max", "returnArgs": ["val", 0.01, 3000.0]}
+{"type": "variable", "line": 121, "name": "zabs", "value": null, "valueSrc": "np.abs", "args": ["z"], "isInput": false}
+{"type": "variable", "line": 122, "name": "val", "value": 10.00001, "valueSrc": "initialized", "isInput": false}
+{"type": "function_def", "line": 126, "name": "equation8", "args": ["z"], "defaults": [], "return": "np.max", "returnArgs": [10.00001, 0.01, 3000.0]}
+{"type": "variable", "line": 127, "name": "zabs", "value": null, "valueSrc": "np.abs", "args": ["z"], "isInput": false}
+{"type": "variable", "line": 128, "name": "val", "value": 10.00001, "valueSrc": "initialized", "isInput": false}
+{"type": "function_def", "line": 132, "name": "equation9", "args": ["z"], "defaults": [], "return": "np.max", "returnArgs": [10.00001, 0.01, 3000.0]}
+{"type": "variable", "line": 133, "name": "val", "value": 0.00101, "valueSrc": "initialized", "isInput": false}
+{"type": "variable", "line": 137, "name": "zw", "value": null, "valueSrc": "np.array", "args": [], "isInput": false}
+{"type": "function_call", "line": 139, "name": "plt.loglog", "args": ["zw"], "keywords": [], "hasInputs": false}
+{"type": "function_call", "line": 140, "name": "plt.xlim", "args": [1, 1000], "keywords": [], "hasInputs": false}

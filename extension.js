@@ -27,12 +27,7 @@ function activate(context) {
 		else vscode.window.showErrorMessage("Please select python source code!");
 	});
 
-	let greetings = vscode.commands.registerCommand('extension.greetings', function () {
-		vscode.window.showInformationMessage('Hello python programmers!');
-	});
-
 	context.subscriptions.push(parsecode);
-	context.subscriptions.push(greetings);
 }
 
 const startDetection = tokens => {

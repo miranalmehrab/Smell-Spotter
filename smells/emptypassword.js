@@ -11,11 +11,11 @@ var smell = {
 
         const commonPasswords = ['password','pass','pwd','userPassword','PASSWORD','PASS','PWD','USERPWD'];    
         
-        if(tokenType == "variable" && commonPasswords.includes(name) && value.length == 0){    
+        if(tokenType == "variable" && commonPasswords.includes(name) && value == null){    
             const warning = 'possible empty password at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }
-        else if(tokenType == "variable" && commonPasswords.includes(name) && value == null){
+        else if(tokenType == "variable" && commonPasswords.includes(name) && value.length == 0){
             const warning = 'possible empty password at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }
