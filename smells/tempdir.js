@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const { isToken } = require('typescript');
 
 var smell = {
 
@@ -16,17 +17,20 @@ var smell = {
 
         const unwantedValues = ['/tmp','/var/tmp','/dev/shm'];
         
-        if(tokenType == "list" && unwantedDirNames.includes(name)) {
-            
-            values.map(value => {
-                
-                if(unwantedValues.includes(value))
-                {
-                    const warning = 'possible hardcoded temporary directory at line '+ lineno;
-                    vscode.window.showWarningMessage(warning);
-                }
-            });
-            
+        if((tokenType == "list" || tokenType == "set") && unwantedDirNames.includes(name.toLowerString())) 
+        {
+            if(token.hasOwnProperty('values')) var values = token.values;
+            if(values.length > 0) 
+            {
+                const warning = 'possible hardcoded temporary directory at line '+ lineno;
+                vscode.window.showWarningMessage(warning);
+            }           
+        }
+
+        else if(tokenType == "variable" && unwantedDirNames.includes(name.toLowerString()) && token.value != null)
+        {
+            const warning = 'possible hardcoded temporary directory at line '+ lineno;
+            vscode.window.showWarningMessage(warning);
         }
     }
 }

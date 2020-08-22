@@ -21,10 +21,6 @@
 			{
 				"command": "extension.parsecode",
 				"title": "Detect Smell"
-			},
-			{
-				"command": "extension.greetings",
-				"title": "Greetings"
 			}
 		],
 		"colors": [
@@ -36,6 +32,18 @@
 					"light": "errorForeground",
 					"highContrast": "#010203"
 				}
+			}
+		],
+		"tokenColors":[
+			{
+				"name": "Function declarations",
+				"scope":[
+					"entity.name.Function"
+				],
+				"settings":{
+					"foreground": "FFFF00"
+				}
+		
 			}
 		]
 	},

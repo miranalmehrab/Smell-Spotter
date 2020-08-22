@@ -2,7 +2,6 @@ const fs = require('fs');
 
 const exec = require('../smells/exec');
 const tempdir = require('../smells/tempdir');
-const cliargs = require('../smells/cliargs');
 const sql = require('../smells/sqlinjection');
 const httponly = require('../smells/httponly');
 const debugsettrue = require('../smells/debugflag');
@@ -14,20 +13,18 @@ const cmdinjection = require('../smells/commandinjection');
 const filepermission = require('../smells/filepermission');
 const hardcodedsecret = require('../smells/hardcodedsecret');
 
-
 var detection = {
 
-    detect: (tokens) => {
-        tokens.pop();
-        console.log(tokens);
+    detect: (tokens, imports) => {
         
-        try {
-            tokens.map(token => {
-
-                if(token != ""){
+        tokens.pop();
+        tokens.map(token => {
+            
+            if(token.length != 0)
+            {
+                try{
                     token = JSON.parse(token);
-
-                    cliargs.detect(token);
+                    
                     cmdinjection.detect(token);
                     debugsettrue.detect(token);
                     emptypassword.detect(token);
@@ -37,16 +34,17 @@ var detection = {
                     httponly.detect(token);
                     ignexcept.detect(token);
                     ipbinding.detect(token);
-                    nointeg.detect(token);
+                    nointeg.detect(token, imports);
                     sql.detect(token);
                     tempdir.detect(token);
                 }
-            });
-            console.log('detection finished!');
-        }
-        catch (error) {
-            console.log(error);
-        }
+                catch (error) {
+                    console.log(error);
+                }
+            }
+        });
+
+        console.log('detection finished!');    
     }
 }
 

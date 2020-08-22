@@ -7,26 +7,28 @@ var smell = {
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
         
+        const insecureMethods = ['marshal.load', 'marshal.loads'];
+
         if(tokenType == "variable")
         {
             if(token.hasOwnProperty("args")) var args = token.args;
             if(token.hasOwnProperty("valueSrc")) var valueSrc = token.valueSrc;
             
-            if(valueSrc == 'exec' && args.length > 0) 
+            if(insecureMethods.includes(valueSrc) && args.length > 0) 
             {
-                const warning = 'possible command injection at line '+ lineno;
+                const warning = 'possible empty password at line '+ lineno;
                 vscode.window.showWarningMessage(warning);
                 // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
             }
         }
         else if(tokenType == "function_call")
         {
-            if(token.hasOwnProperty("name")) var name = token.name;
+            if(token.hasOwnProperty("args")) var name = token.name;
             if(token.hasOwnProperty("args")) var args = token.args;
             
-            if(name == 'exec' && args.length > 0)
+            if(insecureMethods.includes(name) && args.length > 0) 
             {
-                const warning = 'possible command injection at line '+ lineno;
+                const warning = 'possible empty password at line '+ lineno;
                 vscode.window.showWarningMessage(warning);
                 // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
             }
@@ -36,9 +38,9 @@ var smell = {
             if(token.hasOwnProperty("return")) var funcReturn = token.return;
             if(token.hasOwnProperty("returnArgs")) var returnArgs = token.returnArgs;
             
-            if(funcReturn == 'exec' && returnArgs.length > 0) 
+            if(insecureMethods.includes(funcReturn) && returnArgs.length > 0) 
             {
-                const warning = 'possible command injection at line '+ lineno;
+                const warning = 'possible empty password at line '+ lineno;
                 vscode.window.showWarningMessage(warning);
                 // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
             }

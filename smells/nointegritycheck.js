@@ -1,7 +1,7 @@
 const vscode = require('vscode');
 
 var smell = {
-    detect: (token) => {
+    detect: (token, imports) => {
 
         if (token.hasOwnProperty("line")) var lineno = token.line;
         if (token.hasOwnProperty("type")) var tokenType = token.type;
@@ -9,16 +9,20 @@ var smell = {
         if (token.hasOwnProperty("args")) var args = token.args;
 
         const libs = ['urllib.urlretrieve', 'urllib2.urlopen', 'requests.get', 'wget.download'];
-        const download = ['iso', 'tar', 'tar.gz', 'tar.bzip2', 'zip', 'rar', 'gzip', 'gzip2', 'deb', 'rpm', 'sh', 'run', 'bin', 'exe', 'zip', 'rar', '7zip', 'msi', 'bat']
+        const extensions = ['iso', 'tar', 'tar.gz', 'tar.bzip2', 'zip', 'rar', 'gzip', 'gzip2', 'deb', 'rpm', 'sh', 'run', 'bin', 'exe', 'zip', 'rar', '7zip', 'msi', 'bat']
 
-        if (tokenType == "function_call" && libs.includes(name) && args != null) {
-            
+        if (tokenType == "function_call" && libs.includes(name) && args.length > 0) 
+        {    
             let urls = args[0].split(".");
             let extension = urls[urls.length - 1];
 
-            if (download.includes(extension)) {
-                const warning = 'possible no integrity check at line ' + lineno;
-                vscode.window.showWarningMessage(warning);
+            if (extensions.includes(extension)) 
+            {
+                if(imports.includes('hashlib') == false)
+                {
+                    const warning = 'possible no integrity check at line ' + lineno;
+                    vscode.window.showWarningMessage(warning);
+                }
             }
         }
     }

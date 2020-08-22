@@ -10,10 +10,22 @@ var smell = {
         if(token.hasOwnProperty("args")) var args= token.args;
         if(token.hasOwnProperty("hasInputs")) var hasInputs= token.hasInputs;
         
-        const unwantedMethods = ['execution.query'];
+        const unwantedMethods = ['execution.query', 'connection.cursor.execute'];
         
-        if(tokenType == "function_call" && unwantedMethods.includes(name) && args && hasInputs == "True" ) {
+        if(tokenType == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args'))
+        {
+            var args = token['args']
+            var valueSrc = token['valueSrc']
 
+            if(unwantedMethods.includes(valueSrc.toLowerCase()) && args.length > 0)
+            {
+                const warning = 'possible SQL injection at line '+ lineno;
+                vscode.window.showWarningMessage(warning);    
+            }
+
+        }
+        else if(tokenType == "function_call" && unwantedMethods.includes(name.toLowerCase()) && args.length > 0) 
+        {
             const warning = 'possible SQL injection at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }

@@ -6,12 +6,12 @@ var smell = {
 
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
-        if(token.hasOwnProperty("arg")) var arg = token.arg;
+        if(token.hasOwnProperty("exceptionHandler")) var handler = token.arg;
 
-        const unwantedBlocks = ['continue','pass'];
+        const unwantedHandlers = ['continue','pass'];
         
-        if(tokenType == "except_statement" &&  unwantedBlocks.includes(arg)) {
-
+        if(tokenType == "except_statement" &&  unwantedHandlers.includes(handler)) 
+        {
             const warning = 'possible ignore except block at line '+ lineno;
             vscode.window.showWarningMessage(warning);
         }

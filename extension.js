@@ -1,5 +1,6 @@
 const fs = require('fs');
 const vscode = require('vscode');
+// import * from 
 const { spawn } = require('child_process');
 var detection = require('./detection/detection');
 
@@ -9,8 +10,9 @@ var detection = require('./detection/detection');
 
 function activate(context) {
 	// const color = new vscode.ThemeColor('pssd.warning');
+	// vscode.window.showQuickPick.arguments(2);
 	let parsecode = vscode.commands.registerCommand('extension.parsecode', function () {
-
+		
 		const pcode = vscode.window.activeTextEditor.document.getText();
 		const codeLang = vscode.window.activeTextEditor.document.languageId;
 
@@ -34,7 +36,24 @@ const startDetection = tokens => {
 	fs.writeFileSync(__dirname+'/logs/tokens.txt', tokens);
 	
 	const data = fs.readFileSync(__dirname+'/logs/tokens.txt', {encoding:'utf8', flag:'r'}); 
-	detection.detect(data.split('\n'))
+	var actualTokens = data.split('\n');
+	var imports = [];
+	
+	actualTokens.map(token => {
+		try{
+			var obj = JSON.parse(token)
+			if(obj.type == "import")
+			{
+				imports.push(obj.og)
+			}
+		}
+		catch(error)
+		{
+			console.log(console.error());
+		}
+	})
+
+	detection.detect(actualTokens, imports)
 } 
 
 exports.activate = activate;
