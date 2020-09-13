@@ -17,7 +17,8 @@ var smell = {
                 if(unwantedParams.includes(arg))
                 {
                     const warning = 'possible bad file permission at line '+ lineno;
-                    vscode.window.showWarningMessage(warning,{modal:true});
+                    vscode.window.showWarningMessage(warning);
+                    // vscode.window.showWarningMessage(warning,{modal:true});
                 }
             });
         }
@@ -28,7 +29,8 @@ var smell = {
                 if(unwantedMethods.includes(arg))
                 {
                     const warning = 'possible bad file permission at line '+ lineno;
-                    vscode.window.showWarningMessage(warning,{modal:true});
+                    vscode.window.showWarningMessage(warning);
+                    // vscode.window.showWarningMessage(warning,{modal:true});
                 }
             });
         }

@@ -1,6 +1,9 @@
 const fs = require('fs');
 
-const exec = require('../smells/exec');
+const xss = require('../smells/xss');
+const cipher = require('../smells/cipher');
+const deserialization = require('../smells/datadesrialization');
+const dynamiccode = require('../smells/dynamiccode');
 const tempdir = require('../smells/tempdir');
 const sql = require('../smells/sqlinjection');
 const httponly = require('../smells/httponly');
@@ -25,10 +28,12 @@ var detection = {
                 try{
                     token = JSON.parse(token);
                     
+                    cipher.detect(token);
                     cmdinjection.detect(token);
                     debugsettrue.detect(token);
                     emptypassword.detect(token);
-                    exec.detect(token);
+                    dynamiccode.detect(token);
+                    deserialization.detect(token)
                     filepermission.detect(token);
                     hardcodedsecret.detect(token);
                     httponly.detect(token);
@@ -37,6 +42,8 @@ var detection = {
                     nointeg.detect(token, imports);
                     sql.detect(token);
                     tempdir.detect(token);
+                    xss.detect(token);
+
                 }
                 catch (error) {
                     console.log(error);
