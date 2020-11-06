@@ -1,11 +1,6 @@
-{"type": "function_def", "line": 1, "name": "grant_access", "args": ["username", "password"], "defaults": ["guest", "guest"], "return": null}
+{"type": "function_def", "line": 1, "name": "grant_access", "args": ["name", "pwd"], "defaults": ["unknown", "unknown"], "return": null}
 {"type": "variable", "line": 5, "name": "username", "value": "admin", "valueSrc": "initialization", "isInput": false}
 {"type": "variable", "line": 6, "name": "password", "value": "admin", "valueSrc": "initialization", "isInput": false}
 {"type": "comparison", "line": 8, "pairs": [["username", "admin"], ["password", "admin"]], "test": []}
 {"type": "function_call", "line": 9, "name": "grant_access", "args": ["admin", "admin"], "keywords": [], "hasInputs": false}
-{"type": "function_call", "line": 10, "name": "grant_access", "args": [], "keywords": [["username", "admin"], ["password", "admin"]], "hasInputs": false}
-{"type": "function_def", "line": 26, "name": "logIn", "args": ["username", "password"], "defaults": ["sdnsjnd", "whwdgwgdb"], "return": "logged in"}
-{"type": "function_call", "line": 29, "name": "logIn", "args": [], "keywords": [["password", "12123"], ["username", "asasd"]], "hasInputs": false}
-{"type": "list", "line": 31, "name": "passwords", "value": null, "valueSrc": "initialization", "isInput": false, "values": ["abc123", "xyz321"]}
-{"type": "dict", "line": 32, "name": "myDict", "value": null, "valueSrc": "initialization", "isInput": false, "keys": ["password", "token", "debug"], "values": ["12234", "12i1gjhwbejsqdguayg2367t276", true]}
-{"type": "set", "line": 33, "name": "username", "value": null, "valueSrc": "initialization", "isInput": false, "values": ["apple", "banana", "cherry"]}
+{"type": "function_call", "line": 10, "name": "grant_access", "args": [], "keywords": [["name", "guest"], ["pwd", "guest"]], "hasInputs": false}

@@ -1,6 +1,6 @@
 import ast
 import sys
-from parse import Analyzer
+from analyzer import Analyzer
 
 def parse_code(code):
     try:
@@ -11,10 +11,6 @@ def parse_code(code):
         analyzer = Analyzer()
         analyzer.visit(tree)
 
-        analyzer.checkUserInputsInFunctionArguments()
-        analyzer.refineTokens()
-        # analyzer.makeTokensByteFree()
-        
         analyzer.printStatements()
         
     except Exception as error:

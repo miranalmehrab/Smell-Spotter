@@ -1,20 +1,20 @@
 const fs = require('fs');
 
-const xss = require('../smells/xss');
-const cipher = require('../smells/cipher');
-const deserialization = require('../smells/datadesrialization');
-const dynamiccode = require('../smells/dynamiccode');
-const tempdir = require('../smells/tempdir');
-const sql = require('../smells/sqlinjection');
-const httponly = require('../smells/httponly');
-const debugsettrue = require('../smells/debugflag');
-const ignexcept = require('../smells/ignexcept.js');
-const ipbinding = require('../smells/ipbinding.js');
-const nointeg = require('../smells/nointegritycheck');
-const emptypassword = require('../smells/emptypassword');
-const cmdinjection = require('../smells/commandinjection');
-const filepermission = require('../smells/filepermission');
-const hardcodedsecret = require('../smells/hardcodedsecret');
+const xss = require('../rules/xss');
+const cipher = require('../rules/cipher');
+const deserialization = require('../rules/datadesrialization');
+const dynamiccode = require('../rules/dynamiccode');
+const tempdir = require('../rules/tempdir');
+const sql = require('../rules/sqlinjection');
+const httponly = require('../rules/httponly');
+const debugsettrue = require('../rules/debugflag');
+const ignexcept = require('../rules/ignexcept.js');
+const ipbinding = require('../rules/ipbinding.js');
+const nointeg = require('../rules/nointegritycheck');
+const emptypassword = require('../rules/emptypassword');
+const cmdinjection = require('../rules/commandinjection');
+const filepermission = require('../rules/filepermission');
+const hardcodedsecret = require('../rules/hardcodedsecret');
 
 var detection = {
 
@@ -43,7 +43,6 @@ var detection = {
                     sql.detect(token);
                     tempdir.detect(token);
                     xss.detect(token);
-
                 }
                 catch (error) {
                     console.log(error);
