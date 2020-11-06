@@ -2,8 +2,8 @@ const url = require('url');
 const vscode = require('vscode');
 
 var smell = {
-    detect: (token, imports) => {\
-
+    detect: (token, imports) => {
+        
         const WARNING_MSG = 'possible presence of omitting of integrity check at line ' + token.line;
         const libs = ['urllib.request.urlretrieve','urllib.urlretrieve','urllib2.urlopen','requests.get','wget.download'];
         
