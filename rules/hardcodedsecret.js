@@ -1,92 +1,128 @@
+const { type } = require('os');
 const vscode = require('vscode');
 
 var smell = {
     detect : (token) => {
         
-        if(token.hasOwnProperty("line")) var lineno = token.line;
-        if(token.hasOwnProperty("type")) var tokenType = token.type;
-        if(token.hasOwnProperty("name")) var name = token.name;
-        if(token.hasOwnProperty("value")) var value = token.value;
-        if(token.hasOwnProperty("valueSrc")) var valueSrc = token.valueSrc;
-        const WARNING_MSG = 'possible hardcoded secret at line '+ lineno;
-        const commonKeywords = ['key','id', 'cert', 'root','passno','pass-no', 'pass_no', 'auth_token', 'authetication_token','auth-token',
-                                'authentication-token', 'user', 'uname', 'username', 'user-name', 'user_name', 'owner-name', 'owner_name',
-                                'owner', 'admin', 'login', 'pass', 'pwd', 'password', 'passwd', 'secret', 'uuid', 'crypt', 'certificate', 
-                                'userid', 'loginid', 'token', 'ssh_key', 'md5', 'rsa', 'ssl_content', 'ca_content', 'ssl-content', 'ca-content', 
-                                'ssh_key_content', 'ssh-key-content', 'ssh_key_public', 'ssh-key-public', 'ssh_key_private', 'ssh-key-private', 
-                                'ssh_key_public_content', 'ssh_key_private_content', 'ssh-key-public-content', 'ssh-key-private-content'
-                            ];
-
-        const commonPasswords = ['password','passwords','pass','pwd','userpassword','userpwd', 'userpass','pass_no', 'pass-no', 'user-pass', 'upass'];
-        
-        if(tokenType == "variable" && valueSrc == "initialization" && (commonKeywords.includes(name) || commonPasswords.includes(name)) && value != null)
-        {
-            vscode.window.showWarningMessage(WARNING_MSG);
-        }
-        else if((tokenType == "list" || tokenType == "set") && token.hasOwnProperty("values"))
-        {
-            if(commonKeywords.includes(name.toLowerCase()) || commonPasswords.includes(name.toLowerCase()) && (token.values).length > 0)
-            {
-
-                vscode.window.showWarningMessage(WARNING_MSG);
-            } 
-        }
-        else if(tokenType == "dict" && token.hasOwnProperty("keys"))
-        {
-            if((commonKeywords.includes(name.toLowerCase()) || commonPasswords.includes(name.toLowerCase())) && (token.keys).length > 0)
-            {
-
-                vscode.window.showWarningMessage(WARNING_MSG);    
+        const WARNING_MSG = 'possible hardcoded secret at line '+ token.line;
+        const commonKeywords = ['user_name', 'usr', 'uid', 'userid', 'usrid', 'uname', 'usrname', 'admin_name', 'guest', 'admin', 'root_name', 'root_id', 'owner_name','owner_id','super_user', 'sup_usr',
+                                'userpassword', 'usr_pass', 'usr_pwd', 'user_pass', 'password', 'usr_password', 'admin_pwd', 'pwd', 'admin_pass', 'guest_pass', 'default_pwd', 'default_pass',
+                                'guest_pwd', 'admin_password', 'guest_password', 'root_password', 'root_pwd', 'root_pass', 'owner_pass', 'owner_pwd', 'owner_password', 'default_password',
+                                'user_key', 'usr_key', 'secret_key', 'recaptcha_key', 'site_key', 'ssh_key', 'ssl_key', 'private_key', 'public_key', 'cryptographic_key', 'tls_key', 'tls', 'ssl',
+                                'ssh_key', 'ssh_password', 'ssh_pwd', 'ssh_pass', 'site_ssh', 'crypt', 'certificate', 'user_token', 'usr_token', 'u_token', 'utoken' 
+                        ];
+        if(token.type == 'variable' && token.name != null && token.value != null && token.valueSrc == 'initialization'){
+            for(const keyword of commonKeywords){
+                if(token.name.toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\b`) || token.name.toLowerCase().match(`\b${keyword}[_A-Za-z0-9-\.]*`)){
+                    if(token.hasOwnProperty("value") && typeof(token.value) == 'string' && this.isValidHardcodedValue(token.value)){
+                        vscode.window.showWarningMessage(WARNING_MSG);
+                        break
+                    }
+                }
             }
-            token.keys.map(key => {
-                if(commonKeywords.includes(key.toLowerCase()) || commonPasswords.includes(key.toLowerCase())){ 
-    
-                    vscode.window.showWarningMessage(WARNING_MSG);
+        }
+        else if(token.type == 'variable' && token.name != null && token.hasOwnProperty('funckeywords')){
+            for(const funcKeyword of token.funckeywords){
+                for(const keyword of commonKeywords){
+                    if(funcKeyword[0].toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\b`) && this.isValidHardcodedValue(funcKeyword[1])){
+                        vscode.window.showWarningMessage(WARNING_MSG);
+                        break
+                    }
                 }
-            }) 
+            }
         }
-        else if(tokenType == "function_call" && token.hasOwnProperty('keywords'))
-        {
-            token.keywords.map( keyword => {
-                if(keyword.length == 2 && (commonPasswords.includes(keyword[0].toLowerCase()) || commonKeywords.includes(keyword[0].toLowerCase())) && keyword[1].length > 0)
-                {
-    
-                    vscode.window.showWarningMessage(WARNING_MSG);
+        else if((token.type == 'list' || token.type == 'set') && token.name != null && token.hasOwnProperty('values')){
+            for(const keyword of commonKeywords){
+                if(token.name.toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\b`)){
+                    for(const value of token.values){
+                        if(this.isValidHardcodedValue(value)){
+                            vscode.window.showWarningMessage(WARNING_MSG)
+                            break
+                        }   
+                    }
                 }
-            })
+            }
         }
-
-        else if(tokenType == "function_def" && token.hasOwnProperty("args") && token.hasOwnProperty("defaults"))
-        {
-            var args = token.args;
-            var defaults = token.defaults;
-
-            args.map((arg, index) => {
-                if((commonKeywords.includes(arg.toLowerCase()) || commonPasswords.includes(arg.toLowerCase())) && defaults[index].length > 0)
-                {
-    
-                    vscode.window.showWarningMessage(WARNING_MSG);
-                }     
-            })
+        else if(token.type == 'dict' && token.hasOwnProperty('pairs')){
+            for(const pair of token.pairs){
+                if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
+                    for(const keyword of commonKeywords){
+                        if(pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}`) && this.isValidHardcodedValue(pair[1])){
+                            vscode.window.showWarningMessage(WARNING_MSG)
+                            break
+                        }
+                    }
+                }
+            }   
         }
+        else if(token.type == 'comparison' && token.hasOwnProperty('pairs')){
+            for(const pair of token.pairs){
+                if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
+                    for(const keyword of commonKeywords){
+                        if(pair[0].toLowerCase() != 'key' && pair[0].toLowerCase() != 'token' && pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}`) && this.isValidHardcodedValue(pair[1])){
+                            vscode.window.showWarningMessage(WARNING_MSG)
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        else if(token.type == 'fucnctio_call' && token.hasOwnProperty('keywords')){
+            for(const funcKeyword of token.keywords){
+                if(funcKeyword.length == 3 && typeof(funcKeyword[0]) == 'string' && typeof(funcKeyword[1]) == 'string' && funcKeyword[2] == true){
+                    for(const keyword of commonKeywords){
+                        if(funcKeyword[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}`) && this.isValidHardcodedValue(funcKeyword[1])){
+                            vscode.window.showWarningMessage(WARNING_MSG)
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        else if(token.type == 'fucnctio_def' && token.hasOwnProperty('args') && token.hasOwnProperty('defaults')){
+            let argsLength = token.args.length
+            let defaultsLength = token.defaults.length;
             
-        else if(tokenType == "comparison"){
+            let args = token.args.splice(argsLength - defaultsLength, argsLength)
+            let defaults = token.defaults
 
-            if(token.hasOwnProperty("pairs")) var pairs = token.pairs;
-            
-            Object.values(pairs).map(pair => {
-                if(pair.length == 2 && (commonKeywords.includes(pair[0].toString()) || commonPasswords.includes(pair[0].toString())) && (pair[1].toString()).length > 0){
-
-    
-                    vscode.window.showWarningMessage(WARNING_MSG);
+            for(let i = 0; i< args.length; i++){
+                for (const keyword of commonKeywords){
+                    let re = new RegExp(`[_A-Za-z0-9-]*${keyword}/b`);
+                    if(args[i].toLowerCase().match(re) && this.isValidHardcodedValue(defaults[i])){
+                        vscode.window.showWarningMessage(WARNING_MSG);
+                        break
+                    }
                 }
-                else if(pair.length == 2 && (commonKeywords.includes(pair[1].toString()) || commonPasswords.includes(pair[1].toString())) && (pair[0].toString()).length > 0){
-
-    
-                    vscode.window.showWarningMessage(WARNING_MSG);
-                }
-            });  
+            }
         }
+    },
+
+    containsSuspiciousValues: (value) => {
+        const prohibitedValues = [
+                        'admin', 'root', 'user', 'username', 'pwd', 'pass', 'guest', 'root_password', 'usr',
+                        'userpass', 'usrpwd', 'userpassword', 'usrtoken', 'token','default', 'nopassword',
+                        'defaultpass', 'password', 'guest', 'root1', 'user root'
+                ]
+
+        for(const prohibitedValue of prohibitedValues){
+            if(value.includes(prohibitedValue)) return true
+        }
+        return false
+    },
+
+    isValidHardcodedValue: (value) => {
+        const value_reg_pattern = '([A-Za-z]*([0-9]+|[!\?@#\$%\^&\*\(\)\{\}\[\]_=?<>:\.\'\"-\+\/]+))+([A-Za-z]*([0-9]*|[!\?@#\$%\^&\*\(\)\{\}\[\]_=?<>:\.\'\"-\+\/]*))*'
+        if(typeof(value) == 'string'){    
+            if(value.length == 0) return false
+            else if(value.match(value_reg_pattern)) return true
+            else if(value.match('\\+')) return false
+            else if(value.match('([!\?@#\$%\^&\*\(\)\{\}\[\]_=?<>:\'\"-\+\/\.]+)')) return true
+            else if(this.containsSuspiciousValues(value)) return false
+            else return false
+        }
+
+        else return false
     }
 }
 
