@@ -9,19 +9,19 @@ var smell = {
         
         if(token.type == "variable" && token.hasOwnProperty("valueSrc") && token.hasOwnProperty("args")){
             if(libs.includes(token.valueSrc) && token.args.length > 0){
-                if(typeof(token.args[0]) == "string" && this.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
+                if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
                     vscode.window.showWarningMessage(WARNING_MSG);
             } 
         }
         else if(token.type == "function_call" && token.hasOwnProperty("args")){
             if(libs.includes(token.name) && token.args.length > 0){
-                if(typeof(token.args[0]) == "string" && this.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
+                if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
                     vscode.window.showWarningMessage(WARNING_MSG);
             } 
         }
         else if(token.type == "function_def" && token.hasOwnProperty("return") && token.hasOwnProperty("returnArgs")){
             if(libs.includes(token.return) && token.returnArgs.length > 0){
-                if(typeof(token.returnArgs[0]) == "string" && this.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
+                if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
                     vscode.window.showWarningMessage(WARNING_MSG);
             } 
         }
@@ -35,7 +35,7 @@ var smell = {
         const parts = ip.split('.')
         
         for(const part of parts){
-            if(this.isNumeric(part) == false) return false
+            if(smell.isNumeric(part) == false) return false
             if(parseInt(part) > 255) return false
             if(parseInt(part) < 0) return false
         }
@@ -54,7 +54,7 @@ var smell = {
                 'cur', 'dll', 'dmp', 'drv','icns','ico','lnk','sys','doc','docx','pdf','odt','rtf','tex','txt','pwd',
                 'odf','wmv','vob','swf','rm','mpeg','mpg','mp4','mp3','mov','mkv','m4v','h264','flv','avi','3gp','3g2'
             ]
-        if(this.isIp(hostURL.split('/')[0])){
+        if(smell.isIp(hostURL.split('/')[0])){
             let parts = hostURL.split('/')
             let fileURL = parts[parts.length - 1] 
             let fileExtensionParts = fileURL.split('.')

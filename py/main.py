@@ -1,5 +1,7 @@
 import ast
 import sys
+import json
+
 from analyzer import Analyzer
 
 def parse_code(code):
@@ -10,12 +12,11 @@ def parse_code(code):
 
         analyzer = Analyzer()
         analyzer.visit(tree)
-
+        analyzer.refine_tokens()        
         analyzer.printStatements()
         
     except Exception as error:
         print(str(error)) 
-
 
 
 def main():

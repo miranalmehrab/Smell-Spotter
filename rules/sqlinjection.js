@@ -18,15 +18,15 @@ var smell = {
                                 ];
         
         if(tokenType == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args')) {
-            if((unwantedMethods.includes(token.valueSrc.toLowerCase()) || this.queryMethodsHasPatterns(token.valueSrc.toLowerCase())) && token.args.length > 0) 
+            if((unwantedMethods.includes(token.valueSrc.toLowerCase()) || smell.queryMethodsHasPatterns(token.valueSrc.toLowerCase())) && token.args.length > 0) 
                 vscode.window.showWarningMessage(WARNING_MSG);
         }
         else if(tokenType == "function_call" && token.hasOwnProperty('name') && token.hasOwnProperty('args')) {
-            if ((unwantedMethods.includes(token.name.toLowerCase()) || this.queryMethodsHasPatterns(token.name.toLowerCase())) && token.args.length > 0)
+            if ((unwantedMethods.includes(token.name.toLowerCase()) || smell.queryMethodsHasPatterns(token.name.toLowerCase())) && token.args.length > 0)
                 vscode.window.showWarningMessage(WARNING_MSG);
         }
         else if(tokenType == 'function_def' && token.hasOwnProperty('return') && token.hasOwnProperty('returnArgs')){
-            if ((unwantedMethods.includes(token.return.toLowerCase()) || this.queryMethodsHasPatterns(token.return.toLowerCase())) && token.returnArgs.length > 0)
+            if ((unwantedMethods.includes(token.return.toLowerCase()) || smell.queryMethodsHasPatterns(token.return.toLowerCase())) && token.returnArgs.length > 0)
                 vscode.window.showWarningMessage(WARNING_MSG);
         }
     },

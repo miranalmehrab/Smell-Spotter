@@ -1,5 +1,6 @@
-import ast
+import ast   
 import json
+import time
 
 class Analyzer(ast.NodeVisitor):
 
@@ -7,7 +8,6 @@ class Analyzer(ast.NodeVisitor):
         self.inputs = []
         self.statements = []
         
-
     ######################### Import Modules Block Here #########################
     def visit_Import(self, node):
         try: 
@@ -21,7 +21,6 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(module)
         
         except Exception as error: pass
-
         self.generic_visit(node)
 
 
@@ -42,15 +41,12 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(member)
         
         except Exception as error: pass
-
         self.generic_visit(node)
 
 
     ######################### Function Definitions Here #########################
     def visit_FunctionDef(self, node):
         try:
-            # print(ast.dump(node))
-
             func_def = {}
             func_def["type"] = "function_def"
             func_def["line"] = node.lineno
@@ -105,7 +101,6 @@ class Analyzer(ast.NodeVisitor):
             self.statements.append(func_def)
      
         except Exception as error: pass
-
         self.generic_visit(node)
 
 
@@ -193,13 +188,17 @@ class Analyzer(ast.NodeVisitor):
                     variable["args"] = []
                     variable["isInput"] = False
                     
-                    input_functions = [ 'input','request.POST.get','request.GET.get','request.GET.getlist','request.POST.getlist','POST.get','GET.get','POST.getlist', 'GET.getlist']
-                    for name in input_functions:
-                        if name in function_name:
-                            variable["value"] = None
-                            variable["isInput"] = True
-                            self.inputs.append(variable["name"])
-                            break
+                    input_functions = [ 'input', 'request.POST.get', 'request.GET.get', 'request.GET.getlist', 'request.POST.getlist',
+                                        'self.request.POST.get', 'self.request.GET.get', 'self.request.GET.getlist', 'self.request.POST.getlist'
+                                    ]
+                    
+                    if function_name is not None:
+                        for name in input_functions:
+                            if name in function_name:
+                                variable["value"] = None
+                                variable["isInput"] = True
+                                self.inputs.append(variable["name"])
+                                break
                     
                     for arg in node.value.args:
                         if isinstance(arg, ast.Attribute): 
@@ -263,7 +262,7 @@ class Analyzer(ast.NodeVisitor):
 
                             else:
                                 if value is not None: variable["args"].append(value)
-                                else:  variable["args"].append(name)
+                                else: variable["args"].append(name)
 
                         else: variable["args"] = (self.separate_variables(arg, variable["args"]))
 
@@ -305,7 +304,6 @@ class Analyzer(ast.NodeVisitor):
                 elif variable.__contains__('remove') is False: self.statements.append(variable)
  
         except Exception as error: pass
-
         self.generic_visit(node)
 
 
@@ -379,7 +377,6 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(statement)
         
         except Exception as error: pass
-
         self.generic_visit(node)
 
 
@@ -389,7 +386,6 @@ class Analyzer(ast.NodeVisitor):
         try:
             statement = {}
             statement["type"] = "exception_handle"
-            # print(ast.dump(node))
             should_include_in_statements = False
 
             if isinstance(node, ast.Try):
@@ -433,7 +429,6 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(statement)
 
         except Exception as error: pass
-
         self.generic_visit(node)
 
 
@@ -480,7 +475,6 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(expression)
 
         except Exception as error: pass
-
         self.generic_visit(node)
     
 
@@ -527,7 +521,6 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(expression)
 
         except Exception as error: pass
-
 
     ######################### Assert Here #########################
 
@@ -585,9 +578,7 @@ class Analyzer(ast.NodeVisitor):
 
             self.statements.append(assertStatement)
 
-        except Exception as error:
-            # print(str(error)) pass
-
+        except Exception as error: pass
         self.generic_visit(node) 
 
             
@@ -683,7 +674,6 @@ class Analyzer(ast.NodeVisitor):
 
 
 
-
     def refine_tokens(self):
         for statement in self.statements:
             try:
@@ -750,7 +740,6 @@ class Analyzer(ast.NodeVisitor):
                     
             except Exception as error: pass
 
-
     def make_tokens_byte_free(self):
         for statement in self.statements:
             for item in statement:
@@ -765,6 +754,7 @@ class Analyzer(ast.NodeVisitor):
                                 except: 
                                     time.sleep(1)
                                     print('bytes can not be deleted!')
+
 
     def value_from_variable_name(self,name):
         for statement in reversed(self.statements):
@@ -918,7 +908,6 @@ class Analyzer(ast.NodeVisitor):
         except Exception as error: pass
 
 
-
     def get_function_name(self, node):
         for fieldname, value in ast.iter_fields(node):
             
@@ -981,14 +970,16 @@ class Analyzer(ast.NodeVisitor):
 
 
     def get_value_src_from_variable_name(self, name):
+        
         for statement in reversed(self.statements):
             if statement['type'] == 'variable' and statement['name'] == name:
-                return [True, statement['valueSrc']]
-                
+        
+                if statement.__contains__('valueSrc'): return [True, statement['valueSrc']]
+                else: [False, name] 
+
         return [False, name]
 
-                    
-    
+
     def printStatements(self, *types):
         for statement in self.statements:
             if len(types) == 0: print(json.dumps(statement))

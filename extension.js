@@ -1,6 +1,5 @@
 const fs = require('fs');
-const vscode = require('vscode');
-// import * from 
+const vscode = require('vscode'); 
 const { spawn } = require('child_process');
 var detection = require('./detection/detection');
 
@@ -11,6 +10,7 @@ var detection = require('./detection/detection');
 function activate(context) {
 	// const color = new vscode.ThemeColor('pssd.warning');
 	// vscode.window.showQuickPick.arguments(2);
+
 	let parsecode = vscode.commands.registerCommand('extension.parsecode', function () {
 		
 		const pcode = vscode.window.activeTextEditor.document.getText();
@@ -20,9 +20,10 @@ function activate(context) {
 			if (pcode != null) {
 				
 				const script = spawn('python3.8', [__dirname + '/py/main.py', pcode]);
-				script.stdout.on('data', data => data? startDetection(data.toString()) : console.log('No data from script!'));
 
-				script.on('close', code => code ? console.log(`main script close all stdio with code ${code}`) : 'main script exit code not found');
+				script.stdout.on('data', data => data? startDetection(data.toString()) : console.log('No data from script!'));
+				script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
+				script.on('error', err => console.log(err));
 			}
 			else vscode.window.showErrorMessage("Empty source code!");
 		}
@@ -37,18 +38,15 @@ const startDetection = tokens => {
 	
 	const data = fs.readFileSync(__dirname+'/logs/tokens.txt', {encoding:'utf8', flag:'r'}); 
 	var actualTokens = data.split('\n');
-	var imports = [];
+	console.log(actualTokens)
 	
+	var imports = [];
 	actualTokens.map(token => {
 		try{
 			var obj = JSON.parse(token)
-			if(obj.type == "import")
-			{
-				imports.push(obj.og)
-			}
+			if(obj.type == "import") imports.push(obj.og)
 		}
-		catch(error)
-		{
+		catch(error) {
 			console.log(console.error());
 		}
 	})

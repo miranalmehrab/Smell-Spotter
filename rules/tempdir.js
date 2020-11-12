@@ -16,19 +16,19 @@ var smell = {
         if(tokenType == "variable" && name != null && value != null){
             for( const dirName of unwantedDirNames){
                 let re = new RegExp(`[_A-Za-z0-9-]*${dirName}/b`);
-                if(name.match(re) && this.isValidPath(value)) vscode.window.showWarningMessage(WARNING_MSG);  
+                if(name.match(re) && smell.isValidPath(value)) vscode.window.showWarningMessage(WARNING_MSG);  
             } 
         }
         else if((tokenType == "list" || tokenType == "set") && name != null) {
             for( const dirName of unwantedDirNames){
                 
                 let re = new RegExp(`[_A-Za-z0-9-]*${dirName}/b`);
-                if(name.match(re) && this.isValidPath(value)){
+                if(name.match(re) && smell.isValidPath(value)){
 
                     if(token.hasOwnProperty("values")){
                         for (const value of token.values){
                     
-                            if(this.isValidPath(value)) vscode.window.showWarningMessage(WARNING_MSG);
+                            if(smell.isValidPath(value)) vscode.window.showWarningMessage(WARNING_MSG);
                         }
                     }
                 }
@@ -38,7 +38,7 @@ var smell = {
             for(const pair in token.pairs){
                 for (const dirName of unwantedDirNames){
                     let re = new RegExp(`[_A-Za-z0-9-]*${dirName}/b`);
-                    if(pair[0].match(re) && this.isValidPath(pair[1])) vscode.window.showWarningMessage(WARNING_MSG);
+                    if(pair[0].match(re) && smell.isValidPath(pair[1])) vscode.window.showWarningMessage(WARNING_MSG);
                 }
             }
         }
@@ -46,7 +46,7 @@ var smell = {
             for(const keyword in token.keywords){
                 for (const dirName of unwantedDirNames){
                     let re = new RegExp(`[_A-Za-z0-9-]*${dirName}/b`);
-                    if(keyword[0].match(re) && this.isValidPath(keyword[1])) vscode.window.showWarningMessage(WARNING_MSG);
+                    if(keyword[0].match(re) && smell.isValidPath(keyword[1])) vscode.window.showWarningMessage(WARNING_MSG);
                 }
             }
         }

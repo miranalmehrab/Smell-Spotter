@@ -13,7 +13,7 @@ var smell = {
         const restrictedNames = ['debug','debug_propagate_exceptions','propagate_exceptions','PROPAGATE_EXCEPTIONS'];
 
 
-        if(tokenType == "variable" && (restrictedNames.includes(name.toLowerCase()) || this.hasDebugInName(name.toLowerCase())) && value == true){
+        if(tokenType == "variable" && (restrictedNames.includes(name.toLowerCase()) || smell.hasDebugInName(name.toLowerCase())) && value == true){
             vscode.window.showWarningMessage(WARNING_MSG);
         }
         else if(tokenType == 'dict' && token.hasOwnProperty('pairs')){

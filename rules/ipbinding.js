@@ -16,12 +16,12 @@ var smell = {
             var args = token.args;
             var valueSrc = token.valueSrc; 
 
-            if(bindingMethods.includes(valueSrc) && args.length > 0 && typeof(args[0]) == 'string' && this.isValidIP(args[0])) { 
+            if(bindingMethods.includes(valueSrc) && args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
                 vscode.window.showWarningMessage(WARNING_MSG);
             }
         }
         else if(tokenType == "function_call" && bindingMethods.includes(name)) {
-            if(args.length > 0 && typeof(args[0]) == 'string' && this.isValidIP(args[0])) { 
+            if(args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
                 vscode.window.showWarningMessage(WARNING_MSG);
             }       
         }
