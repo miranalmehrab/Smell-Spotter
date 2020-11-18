@@ -37,12 +37,12 @@ var detection = {
                     // dynamiccode.detect(token);
                     // deserialization.detect(token)
                     // filepermission.detect(token);
-                    hardcodedsecret.detect(token);
-                    // httponly.detect(token);
+                    // hardcodedsecret.detect(token);
+                    httponly.detect(token);
                     // ignexcept.detect(token);
                     // ipbinding.detect(token);
                     // nointeg.detect(token, imports);
-                    // // sql.detect(token);
+                    // sql.detect(token);
                     // tempdir.detect(token);
                     // xss.detect(token);
                 }

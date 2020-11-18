@@ -84,7 +84,7 @@ var smell = {
                 if(fileExtension == extension) return true
             }
             
-            if(parsedURL.search.toLocaleLowerCase().search('file') != -1) return true
+            if(parsedURL.search.toLowerCase().search('file') != -1) return true
 
             return false
         }
