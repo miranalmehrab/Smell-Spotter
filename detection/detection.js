@@ -38,12 +38,14 @@ var detection = {
                     // deserialization.detect(token)
                     // filepermission.detect(token);
                     // hardcodedsecret.detect(token);
-                    httponly.detect(token);
+                    // httponly.detect(token);
                     // ignexcept.detect(token);
                     // ipbinding.detect(token);
                     // nointeg.detect(token, imports);
+                    
                     // sql.detect(token);
-                    // tempdir.detect(token);
+                    tempdir.detect(token);
+                    
                     // xss.detect(token);
                 }
                 catch (error) {

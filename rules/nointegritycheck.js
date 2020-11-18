@@ -84,7 +84,11 @@ var smell = {
                 if(fileExtension == extension) return true
             }
             
-            if(parsedURL.search.toLowerCase().search('file') != -1) return true
+            console.log(parsedURL.search);
+            let searchSplits = parsedURL.search.split('.')
+            let lastSearchSplit = searchSplits[searchSplits.length - 1]
+
+            if(fileExtensions.includes(lastSearchSplit)) return true
 
             return false
         }

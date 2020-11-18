@@ -1,2 +1,2 @@
-{"type": "function_call", "line": 5, "name": "requests.get", "args": ["http://abc.com"], "keywords": [], "hasInputs": false}
-{"type": "function_call", "line": 6, "name": "requests.get", "args": ["www.abc.com"], "keywords": [], "hasInputs": false}
+{"type": "list", "line": 1, "name": "hardcoded_tmp_directory", "value": null, "valueSrc": "initialization", "funcKeywords": [], "isInput": false, "values": ["/tmp", "/var/tmp", "/var/usr/tmp"]}
+{"type": "variable", "line": 2, "name": "temp_dir", "value": "/tmp/dev", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
