@@ -5,6 +5,8 @@ var smell = {
     detect: (token, imports) => {
         
         const WARNING_MSG = 'possible presence of omitting of integrity check at line ' + token.line;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of no integrity check at line '+ token.returnLine : null
+
         const libs = ['urllib.request.urlretrieve','urllib.urlretrieve','urllib2.urlopen','requests.get','wget.download'];
         
         if(token.type == "variable" && token.hasOwnProperty("valueSrc") && token.hasOwnProperty("args")){
@@ -19,11 +21,13 @@ var smell = {
                     vscode.window.showWarningMessage(WARNING_MSG);
             } 
         }
-        else if(token.type == "function_def" && token.hasOwnProperty("return") && token.hasOwnProperty("returnArgs")){
-            if(libs.includes(token.return) && token.returnArgs.length > 0){
-                if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
-                    vscode.window.showWarningMessage(WARNING_MSG);
-            } 
+        else if(token.type == "function_def" && token.hasOwnProperty("return")){
+            for(const funcReturn of token.return){
+                if(libs.includes(funcReturn) && token.returnArgs.length > 0){
+                    if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
+                        vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                }
+            }
         }
     },
     

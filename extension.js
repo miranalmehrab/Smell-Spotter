@@ -38,6 +38,7 @@ const startDetection = tokens => {
 	
 	const data = fs.readFileSync(__dirname+'/logs/tokens.txt', {encoding:'utf8', flag:'r'}); 
 	var actualTokens = data.split('\n');
+
 	console.log(actualTokens)
 	
 	var imports = [];

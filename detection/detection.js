@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+const assert = require('../rules/assert')
 const xss = require('../rules/xss');
 const cipher = require('../rules/cipher');
 const deserialization = require('../rules/datadesrialization');
@@ -27,22 +28,23 @@ var detection = {
             {
                 try{
                     token = JSON.parse(token);
-                    
-                    cipher.detect(token);
-                    cmdinjection.detect(token);
-                    debugsettrue.detect(token);
-                    emptypassword.detect(token);
-                    dynamiccode.detect(token);
-                    deserialization.detect(token)
-                    filepermission.detect(token);
+
+                    // assert.detect(token)        
+                    // cipher.detect(token);
+                    // cmdinjection.detect(token);
+                    // debugsettrue.detect(token);
+                    // emptypassword.detect(token);
+                    // dynamiccode.detect(token);
+                    // deserialization.detect(token)
+                    // filepermission.detect(token);
                     hardcodedsecret.detect(token);
-                    httponly.detect(token);
-                    ignexcept.detect(token);
-                    ipbinding.detect(token);
-                    nointeg.detect(token, imports);
-                    sql.detect(token);
-                    tempdir.detect(token);
-                    xss.detect(token);
+                    // httponly.detect(token);
+                    // ignexcept.detect(token);
+                    // ipbinding.detect(token);
+                    // nointeg.detect(token, imports);
+                    // sql.detect(token);
+                    // tempdir.detect(token);
+                    // xss.detect(token);
                 }
                 catch (error) {
                     console.log(error);

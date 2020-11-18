@@ -7,6 +7,7 @@ var smell = {
         if (token.hasOwnProperty("name")) var name = token.name;
         
         const WARNING_MSG = 'possible presence of skipping TLS verification at line ' + lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of cross-site scripting at line '+ token.returnLine : null
         
         const contextVars = ['requests.Session.verify'];
         const httpLibs = ['requests.get','requests.Session.get', 'requests.post', 'requests.Session.get'];
@@ -26,9 +27,11 @@ var smell = {
             }
         }
         else if(tokenType == 'function_def' && token.hasOwnProperty('return') && token.hasOwnProperty('returnKeywords')){
-            if (httpLibs.includes(token.return.toLowerCase()) && token.returnKeywords.length > 0){
-                for(const keyword of token.returnKeywords){
-                    if (keyword[0] == 'verify' && keyword[1] == false) vscode.window.showWarningMessage(WARNING_MSG);
+            for(const funcReturn of token.return){
+                if (httpLibs.includes(funcReturn) && token.returnKeywords.length > 0){
+                    for(const keyword of token.returnKeywords){
+                        if (keyword[0] == 'verify' && keyword[1] == false) vscode.window.showWarningMessage(WARNING_MSG);
+                    }
                 }
             }
         }

@@ -7,25 +7,30 @@ var smell = {
         if(token.hasOwnProperty("type")) var tokenType = token.type;
 
         const WARNING_MSG = 'possible presence of cross-site scripting at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of cross-site scripting at line '+ token.returnLine : null
+        
         const insecureMethods = ['django.utils.safestring.mark_safe', 'mark_safe'];
 
         if(tokenType == "variable") {
-            if(token.hasOwnProperty("args")) var args = token.args;
-            if(token.hasOwnProperty("valueSrc")) var valueSrc = token.valueSrc;
+            if(insecureMethods.includes(token.valueSrc)) vscode.window.showWarningMessage(WARNING_MSG);
+        }
 
-            if(insecureMethods.includes(valueSrc) && args.length > 0) vscode.window.showWarningMessage(WARNING_MSG);
-        }
         else if(tokenType == "function_call") {
-            if(token.hasOwnProperty("name")) var name = token.name;
-            if(token.hasOwnProperty("args")) var args = token.args;
+            if(insecureMethods.includes(token.name)) vscode.window.showWarningMessage(WARNING_MSG);
             
-            if(insecureMethods.includes(name) && args.length > 0) vscode.window.showWarningMessage(WARNING_MSG);
+            if(token.hasOwnProperty('args')){
+                for(const arg of token.args){
+                    if(insecureMethods.includes(arg)) vscode.window.showWarningMessage(WARNING_MSG);
+                }    
+            }
         }
+
         else if(tokenType == "function_def") {
-            if(token.hasOwnProperty("return")) var funcReturn = token.return;
-            if(token.hasOwnProperty("returnArgs")) var returnArgs = token.returnArgs;
-            
-            if(insecureMethods.includes(funcReturn) && returnArgs.length > 0) vscode.window.showWarningMessage(WARNING_MSG);
+            if(token.hasOwnProperty("return"))
+                for(const funcReturn of token.return){
+                    if(insecureMethods.includes(funcReturn)) 
+                        vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                }
         }
     },
     isInsecureMethod: (methodName) => {

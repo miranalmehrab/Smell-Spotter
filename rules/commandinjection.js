@@ -9,18 +9,23 @@ var smell = {
         if(token.hasOwnProperty("args")) var args = token.args;
         if(token.hasOwnProperty("hasInputs")) var hasInputs= token.hasInputs;
         
-        const WARNING_MESSAGE = 'possible presence of command injection at line ' + lineno
+        const WARNING_MSG = 'possible presence of command injection at line ' + lineno
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of command injection at line '+ token.returnLine : null
+
         const shellFunctions = ['sys.argv', 'subprocess.Popen', 'os.system', 'os.popen','subprocess.run','popen2.Popen4',
                                 'argparse.ArgumentParser','getopt.getopt', 'os.execle','os.execl', 'popen2.Popen3'
                             ];
         
         if(tokenType == "variable" && token.hasOwnProperty("valueSrc")) {
-            if(shellFunctions.includes(token.valueSrc) || smell.isExtendedShellFunction(token.valueSrc)) vscode.window.showWarningMessage(WARNING_MESSAGE);
+            if(shellFunctions.includes(token.valueSrc) || smell.isExtendedShellFunction(token.valueSrc)) vscode.window.showWarningMessage(WARNING_MSG);
             // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
         }
-        else if(tokenType == "function_call" && (shellFunctions.includes(name) || smell.isExtendedShellFunction(name))) vscode.window.showWarningMessage(WARNING_MESSAGE);
+        else if(tokenType == "function_call" && (shellFunctions.includes(name) || smell.isExtendedShellFunction(name))) vscode.window.showWarningMessage(WARNING_MSG);
         else if (tokenType == "function_def" && token.hasOwnProperty('return')) {
-            if(shellFunctions.includes(token.return) || smell.isExtendedShellFunction(token.return)) vscode.window.showWarningMessage(WARNING_MESSAGE);
+            for(const funcReturn of token.return){
+                if(shellFunctions.includes(funcReturn) || smell.isExtendedShellFunction(funcReturn)) 
+                    vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN)
+            }
         }
     },
 

@@ -5,8 +5,10 @@ var smell = {
         
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
-        const WARNING_MSG = 'possible use of weak cryptographic algorithm at line '+ lineno;
         
+        const WARNING_MSG = 'possible use of weak cryptographic algorithm at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of weak cryptographic algorithm at line '+ token.returnLine : null
+
         const insecureMethods = ['hashlib.md5','cryptography.hazmat.primitives.hashes.MD5','Crypto.Hash.MD2.new','Crypto.Hash.MD4.new','Crypto.Hash.MD5.new',
                                 'Crypto.Cipher.ARC2.new','Crypto.Cipher.ARC4.new','Crypto.Cipher.Blowfish.new', 'Crypto.Cipher.DES.new,Crypto.Cipher.XOR.new',
                                 'cryptography.hazmat.primitives.ciphers.algorithms.ARC4', 'cryptography.hazmat.primitives.ciphers.algorithms.Blowfish',
@@ -37,13 +39,17 @@ var smell = {
             }
         }
         else if(tokenType == "function_def") {
-            var returnArgs = []
-            if(token.hasOwnProperty("return")) var funcReturn = token.return;
-            if(token.hasOwnProperty("returnArgs")) returnArgs = token.returnArgs;
             
-            if(insecureMethods.includes(funcReturn)) vscode.window.showWarningMessage(WARNING_MSG);
-            for (const arg of returnArgs){
-                if (insecureMethods.includes(arg)) vscode.window.showWarningMessage(WARNING_MSG);
+            if(token.hasOwnProperty("return")){
+                for(const funcReturn of token.return){
+                    if(insecureMethods.includes(funcReturn)) vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                }
+            }
+
+            if(token.hasOwnProperty("returnArgs")){
+                for (const arg of token.returnArgs){
+                    if (insecureMethods.includes(arg)) vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                }
             }
         }
     }

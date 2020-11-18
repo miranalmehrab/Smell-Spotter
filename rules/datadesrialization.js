@@ -6,6 +6,9 @@ var smell = {
         
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
+
+        const WARNING_MSG = 'possible insecure deserialization at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of insecure deserialization at line '+ token.returnLine : null
         
         const insecureMethods = ['pickle.loads', 'pickle.load', 'pickle.Unpickler', 'cPickle.loads', 'cPickle.load', 'cPickle.Unpickler', 'marshal.loads', 'marshal.load', 
                                 'xml.etree.cElementTree.parse', 'xml.etree.cElementTree.iterparse','xml.etree.cElementTree.fromstring','xml.etree.cElementTree.XMLParser',
@@ -15,40 +18,27 @@ var smell = {
                                 'lxml.etree.fromstring','lxml.etree.RestrictedElement','xml.etree.GlobalParserTLS, lxml.etree.getDefaultParser, lxml.etree.check docinfo'
                             ];
 
-        if(tokenType == "variable")
-        {
-            if(token.hasOwnProperty("args")) var args = token.args;
-            if(token.hasOwnProperty("valueSrc")) var valueSrc = token.valueSrc;
-            
-            if(insecureMethods.includes(valueSrc) && args.length > 0) 
-            {
-                const warning = 'possible empty password at line '+ lineno;
-                vscode.window.showWarningMessage(warning);
-                // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
+        if(tokenType == "variable"){
+            if(token.hasOwnProperty("valueSrc")){
+                if(insecureMethods.includes(token.valueSrc)) 
+                    vscode.window.showWarningMessage(WARNING_MSG);
             }
         }
-        else if(tokenType == "function_call")
-        {
-            if(token.hasOwnProperty("args")) var name = token.name;
-            if(token.hasOwnProperty("args")) var args = token.args;
-            
-            if(insecureMethods.includes(name) && args.length > 0) 
-            {
-                const warning = 'possible empty password at line '+ lineno;
-                vscode.window.showWarningMessage(warning);
-                // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
+        else if(tokenType == "function_call"){
+            if(token.hasOwnProperty("name")){
+                if(insecureMethods.includes(token.name)) 
+                    vscode.window.showWarningMessage(WARNING_MSG);
             }
         }
-        else if(tokenType == "function_def")
-        {
-            if(token.hasOwnProperty("return")) var funcReturn = token.return;
-            if(token.hasOwnProperty("returnArgs")) var returnArgs = token.returnArgs;
-            
-            if(insecureMethods.includes(funcReturn) && returnArgs.length > 0) 
-            {
-                const warning = 'possible empty password at line '+ lineno;
-                vscode.window.showWarningMessage(warning);
-                // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
+        else if(tokenType == "function_def"){
+            if(token.hasOwnProperty("return")){
+                for(const funcReturn of token.return){
+                    if(insecureMethods.includes(funcReturn)) {
+                        vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                        // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
+                    }
+                }
+
             }
         }
     }

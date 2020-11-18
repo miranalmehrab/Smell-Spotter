@@ -1,1 +1,9 @@
-{"type": "function_call", "line": 43, "name": "app.run", "args": [], "keywords": [["debug", true, true]], "hasInputs": false}
+{"type": "variable", "line": 10, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 11, "name": "EMAIL_HOST_USER", "value": "18500611672@sinacn", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 12, "name": "EMAIL_HOST_PASSWORD", "value": "zz1123581321", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 13, "name": "SECRET_KEY", "value": "qzk7a803m2d6_ngccq$jh&8#90m!19qfr^s39#ay6#_*ri5ap+", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 14, "name": "MAIL_PASSWORD", "value": "password", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 15, "name": "admin", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 16, "name": "pylint_token", "value": "R0902", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 17, "name": "password", "value": "pbkdf2_sha256$36000$HizLkJV9vzk4$++1pBxJlH/uqIn5Qx0jugTH1b3U5SyZTaqnm+kSk7pQ=", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 20, "name": "pwd", "value": "pwd", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}

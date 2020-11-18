@@ -5,26 +5,29 @@ var smell = {
     detect : (token) => {
         
         const WARNING_MSG = 'possible hardcoded secret at line '+ token.line;
-        const commonKeywords = ['user_name', 'usr', 'uid', 'userid', 'usrid', 'uname', 'usrname', 'admin_name', 'guest', 'admin', 'root_name', 'root_id', 'owner_name','owner_id','super_user', 'sup_usr',
-                                'userpassword', 'usr_pass', 'usr_pwd', 'user_pass', 'password', 'usr_password', 'admin_pwd', 'pwd', 'admin_pass', 'guest_pass', 'default_pwd', 'default_pass',
-                                'guest_pwd', 'admin_password', 'guest_password', 'root_password', 'root_pwd', 'root_pass', 'owner_pass', 'owner_pwd', 'owner_password', 'default_password',
-                                'user_key', 'usr_key', 'secret_key', 'recaptcha_key', 'site_key', 'ssh_key', 'ssl_key', 'private_key', 'public_key', 'cryptographic_key', 'tls_key', 'tls', 'ssl',
-                                'ssh_key', 'ssh_password', 'ssh_pwd', 'ssh_pass', 'site_ssh', 'crypt', 'certificate', 'user_token', 'usr_token', 'u_token', 'utoken' 
-                        ];
+        const commonKeywords = [    'user', 'usr', 'guest', 'admin', 'root', 'owner', 'uid', 'uname', 'password','pwd',
+                                    '_key', 'tls','ssl','ssh', 'crypt', 'certificate', 'token', 'id', 'default'     ]
+
         if(token.type == 'variable' && token.name != null && token.value != null && token.valueSrc == 'initialization'){
             for(const keyword of commonKeywords){
-                if(token.name.toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\b`) || token.name.toLowerCase().match(`\b${keyword}[_A-Za-z0-9-\.]*`)){
-                    if(token.hasOwnProperty("value") && typeof(token.value) == 'string' && this.isValidHardcodedValue(token.value)){
+                let prefixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
+                let suffixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
+                
+                if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
+                    console.log('match found')
+                    
+                    if(token.hasOwnProperty("value") && typeof(token.value) == 'string' && smell.isValidHardcodedValue(token.value)){
                         vscode.window.showWarningMessage(WARNING_MSG);
                         break
                     }
                 }
             }
         }
-        else if(token.type == 'variable' && token.name != null && token.hasOwnProperty('funckeywords')){
+        
+        if(token.type == 'variable' && token.name != null && token.hasOwnProperty('funckeywords') && token.funckeywords.length > 0){
             for(const funcKeyword of token.funckeywords){
                 for(const keyword of commonKeywords){
-                    if(funcKeyword[0].toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\b`) && this.isValidHardcodedValue(funcKeyword[1])){
+                    if(funcKeyword[0].toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(funcKeyword[1])){
                         vscode.window.showWarningMessage(WARNING_MSG);
                         break
                     }
@@ -33,9 +36,9 @@ var smell = {
         }
         else if((token.type == 'list' || token.type == 'set') && token.name != null && token.hasOwnProperty('values')){
             for(const keyword of commonKeywords){
-                if(token.name.toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\b`)){
+                if(token.name.toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\\b`)){
                     for(const value of token.values){
-                        if(this.isValidHardcodedValue(value)){
+                        if(smell.isValidHardcodedValue(value)){
                             vscode.window.showWarningMessage(WARNING_MSG)
                             break
                         }   
@@ -47,7 +50,7 @@ var smell = {
             for(const pair of token.pairs){
                 if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
                     for(const keyword of commonKeywords){
-                        if(pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}`) && this.isValidHardcodedValue(pair[1])){
+                        if(pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(pair[1])){
                             vscode.window.showWarningMessage(WARNING_MSG)
                             break
                         }
@@ -59,7 +62,7 @@ var smell = {
             for(const pair of token.pairs){
                 if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
                     for(const keyword of commonKeywords){
-                        if(pair[0].toLowerCase() != 'key' && pair[0].toLowerCase() != 'token' && pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}`) && this.isValidHardcodedValue(pair[1])){
+                        if(pair[0].toLowerCase() != 'key' && pair[0].toLowerCase() != 'token' && pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(pair[1])){
                             vscode.window.showWarningMessage(WARNING_MSG)
                             break
                         }
@@ -71,7 +74,7 @@ var smell = {
             for(const funcKeyword of token.keywords){
                 if(funcKeyword.length == 3 && typeof(funcKeyword[0]) == 'string' && typeof(funcKeyword[1]) == 'string' && funcKeyword[2] == true){
                     for(const keyword of commonKeywords){
-                        if(funcKeyword[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}`) && this.isValidHardcodedValue(funcKeyword[1])){
+                        if(funcKeyword[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(funcKeyword[1])){
                             vscode.window.showWarningMessage(WARNING_MSG)
                             break
                         }
@@ -88,8 +91,8 @@ var smell = {
 
             for(let i = 0; i< args.length; i++){
                 for (const keyword of commonKeywords){
-                    let re = new RegExp(`[_A-Za-z0-9-]*${keyword}/b`);
-                    if(args[i].toLowerCase().match(re) && this.isValidHardcodedValue(defaults[i])){
+                    let re = new RegExp(`[_A-Za-z0-9-]*${keyword}\\b`);
+                    if(args[i].toLowerCase().match(re) && smell.isValidHardcodedValue(defaults[i])){
                         vscode.window.showWarningMessage(WARNING_MSG);
                         break
                     }
@@ -99,11 +102,7 @@ var smell = {
     },
 
     containsSuspiciousValues: (value) => {
-        const prohibitedValues = [
-                        'admin', 'root', 'user', 'username', 'pwd', 'pass', 'guest', 'root_password', 'usr',
-                        'userpass', 'usrpwd', 'userpassword', 'usrtoken', 'token','default', 'nopassword',
-                        'defaultpass', 'password', 'guest', 'root1', 'user root'
-                ]
+        const prohibitedValues = ['admin', 'root', 'host', 'user', 'username', 'pwd', 'pass', 'guest', 'usr','token','default','password' ]
 
         for(const prohibitedValue of prohibitedValues){
             if(value.includes(prohibitedValue)) return true
@@ -118,7 +117,7 @@ var smell = {
             else if(value.match(value_reg_pattern)) return true
             else if(value.match('\\+')) return false
             else if(value.match('([!\?@#\$%\^&\*\(\)\{\}\[\]_=?<>:\'\"-\+\/\.]+)')) return true
-            else if(this.containsSuspiciousValues(value)) return false
+            else if(smell.containsSuspiciousValues(value)) return true
             else return false
         }
 

@@ -78,6 +78,7 @@ class Analyzer(ast.NodeVisitor):
             for item in node.body:
                 
                 if isinstance(item, ast.Return):
+                    func_def['returnLine'] = item.lineno
                     func_def["return"] = self.separate_variables(item.value,[])
                     func_def["return"] = func_def["return"] if len(func_def["return"]) > 0 else None
 
@@ -646,7 +647,8 @@ class Analyzer(ast.NodeVisitor):
                     if isinstance(element, ast.Constant):
                         variable["values"].append(element.value)
                 
-                itemList.append(variable['values'])
+                for item in variable['values']:
+                    itemList.append(item)
                 self.statements.append(variable)
 
             elif isinstance(node, ast.Dict):
