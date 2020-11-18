@@ -1,3 +1,4 @@
+const { log } = require('console');
 const { type } = require('os');
 const vscode = require('vscode');
 
@@ -10,13 +11,12 @@ var smell = {
 
         if(token.type == 'variable' && token.name != null && token.value != null && token.valueSrc == 'initialization'){
             for(const keyword of commonKeywords){
-                let prefixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
-                let suffixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
+                let prefixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
+                let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
                 
                 if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
-                    console.log('match found')
                     
-                    if(token.hasOwnProperty("value") && typeof(token.value) == 'string' && smell.isValidHardcodedValue(token.value)){
+                    if(token.hasOwnProperty("value") && smell.isValidHardcodedValue(token.value)){
                         vscode.window.showWarningMessage(WARNING_MSG);
                         break
                     }
@@ -24,19 +24,27 @@ var smell = {
             }
         }
         
-        if(token.type == 'variable' && token.name != null && token.hasOwnProperty('funckeywords') && token.funckeywords.length > 0){
-            for(const funcKeyword of token.funckeywords){
+        if(token.type == 'variable' && token.hasOwnProperty('funcKeywords')){
+            token.funcKeywords.forEach( funcKeyword => {
                 for(const keyword of commonKeywords){
-                    if(funcKeyword[0].toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(funcKeyword[1])){
+                    
+                    let prefixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
+                    let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
+
+                    if((suffixMatch.test(funcKeyword[0].toLowerCase()) || prefixMatch.test(funcKeyword[0].toLowerCase())) && smell.isValidHardcodedValue(funcKeyword[1])){
                         vscode.window.showWarningMessage(WARNING_MSG);
                         break
                     }
                 }
-            }
+            })
         }
         else if((token.type == 'list' || token.type == 'set') && token.name != null && token.hasOwnProperty('values')){
             for(const keyword of commonKeywords){
-                if(token.name.toLowerCase().match(`[_A-Za-z0-9-\.]*${keyword}\\b`)){
+                
+                let prefixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
+                let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
+
+                if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
                     for(const value of token.values){
                         if(smell.isValidHardcodedValue(value)){
                             vscode.window.showWarningMessage(WARNING_MSG)
@@ -82,7 +90,7 @@ var smell = {
                 }
             }
         }
-        else if(token.type == 'fucnctio_def' && token.hasOwnProperty('args') && token.hasOwnProperty('defaults')){
+        else if(token.type == 'function_def' && token.hasOwnProperty('args') && token.hasOwnProperty('defaults')){
             let argsLength = token.args.length
             let defaultsLength = token.defaults.length;
             
@@ -91,8 +99,14 @@ var smell = {
 
             for(let i = 0; i< args.length; i++){
                 for (const keyword of commonKeywords){
-                    let re = new RegExp(`[_A-Za-z0-9-]*${keyword}\\b`);
-                    if(args[i].toLowerCase().match(re) && smell.isValidHardcodedValue(defaults[i])){
+
+                    let prefixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
+                    let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
+                    
+                    console.log(prefixMatch.test(args[i].toLowerCase()))
+                    console.log(suffixMatch.test(args[i].toLowerCase()))
+
+                    if((prefixMatch.test(args[i].toLowerCase()) || suffixMatch.test(args[i].toLowerCase())) && smell.isValidHardcodedValue(defaults[i][0]) && defaults[i][1] == true){
                         vscode.window.showWarningMessage(WARNING_MSG);
                         break
                     }
