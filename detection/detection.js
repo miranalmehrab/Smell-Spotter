@@ -33,16 +33,16 @@ var detection = {
                     // cipher.detect(token);
                     // cmdinjection.detect(token);
                     // debugsettrue.detect(token);
-                    // emptypassword.detect(token);
+                    emptypassword.detect(token);
                     // dynamiccode.detect(token);
                     // deserialization.detect(token)
                     // filepermission.detect(token);
-                    hardcodedsecret.detect(token);
+                    // hardcodedsecret.detect(token);
                     // httponly.detect(token);
                     // ignexcept.detect(token);
                     // ipbinding.detect(token);
                     // nointeg.detect(token, imports);
-                    // sql.detect(token);
+                    // // sql.detect(token);
                     // tempdir.detect(token);
                     // xss.detect(token);
                 }
