@@ -23,7 +23,11 @@ function activate(context) {
 
 				script.stdout.on('data', data => data? startDetection(data.toString()) : console.log('No data from script!'));
 				script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
-				script.on('error', err => console.log(err));
+				script.on('error', err => {
+					console.log('error found!')
+					console.log(err)
+					
+				});
 			}
 			else vscode.window.showErrorMessage("Empty source code!");
 		}
@@ -42,13 +46,14 @@ const startDetection = tokens => {
 	console.log(actualTokens)
 	
 	var imports = [];
+	actualTokens.pop()
 	actualTokens.map(token => {
 		try{
 			var obj = JSON.parse(token)
 			if(obj.type == "import") imports.push(obj.og)
 		}
 		catch(error) {
-			console.log(console.error());
+			vscode.window.showErrorMessage(error.toString())
 		}
 	})
 

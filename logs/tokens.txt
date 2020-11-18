@@ -1,2 +1,1 @@
-{"type": "list", "line": 1, "name": "hardcoded_tmp_directory", "value": null, "valueSrc": "initialization", "funcKeywords": [], "isInput": false, "values": ["/tmp", "/var/tmp", "/var/usr/tmp"]}
-{"type": "variable", "line": 2, "name": "temp_dir", "value": "/tmp/dev", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+unexpected EOF while parsing (<unknown>, line 4)
