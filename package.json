@@ -12,15 +12,15 @@
 	],
 	"activationEvents": [
 		"onLanguage:python",
-		"onCommand:extension.parsecode",
+		"onCommand:extension.quickscan",
 		"onCommand:extension.greetings"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.parsecode",
-				"title": "Detect Smell"
+				"command": "extension.quickscan",
+				"title": "Quick Scan"
 			}
 		],
 		"colors": [
