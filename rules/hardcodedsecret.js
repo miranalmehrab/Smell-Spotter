@@ -1,5 +1,6 @@
 const { log } = require('console');
 const { type } = require('os');
+const fs = require('fs');
 const vscode = require('vscode');
 
 var smell = {
@@ -17,7 +18,7 @@ var smell = {
                 if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
                     
                     if(token.hasOwnProperty("value") && smell.isValidHardcodedValue(token.value)){
-                        vscode.window.showWarningMessage(WARNING_MSG);
+                        smell.triggerAlarm(WARNING_MSG);;
                         break
                     }
                 }
@@ -32,7 +33,7 @@ var smell = {
                     let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
 
                     if((suffixMatch.test(funcKeyword[0].toLowerCase()) || prefixMatch.test(funcKeyword[0].toLowerCase())) && smell.isValidHardcodedValue(funcKeyword[1])){
-                        vscode.window.showWarningMessage(WARNING_MSG);
+                        smell.triggerAlarm(WARNING_MSG);;
                         break
                     }
                 }
@@ -47,7 +48,7 @@ var smell = {
                 if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
                     for(const value of token.values){
                         if(smell.isValidHardcodedValue(value)){
-                            vscode.window.showWarningMessage(WARNING_MSG)
+                            smell.triggerAlarm(WARNING_MSG);
                             break
                         }   
                     }
@@ -59,7 +60,7 @@ var smell = {
                 if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
                     for(const keyword of commonKeywords){
                         if(pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(pair[1])){
-                            vscode.window.showWarningMessage(WARNING_MSG)
+                            smell.triggerAlarm(WARNING_MSG);
                             break
                         }
                     }
@@ -71,7 +72,7 @@ var smell = {
                 if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
                     for(const keyword of commonKeywords){
                         if(pair[0].toLowerCase() != 'key' && pair[0].toLowerCase() != 'token' && pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(pair[1])){
-                            vscode.window.showWarningMessage(WARNING_MSG)
+                            smell.triggerAlarm(WARNING_MSG);
                             break
                         }
                     }
@@ -83,7 +84,7 @@ var smell = {
                 if(funcKeyword.length == 3 && typeof(funcKeyword[0]) == 'string' && typeof(funcKeyword[1]) == 'string' && funcKeyword[2] == true){
                     for(const keyword of commonKeywords){
                         if(funcKeyword[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(funcKeyword[1])){
-                            vscode.window.showWarningMessage(WARNING_MSG)
+                            smell.triggerAlarm(WARNING_MSG);
                             break
                         }
                     }
@@ -107,13 +108,18 @@ var smell = {
                     console.log(suffixMatch.test(args[i].toLowerCase()))
 
                     if((prefixMatch.test(args[i].toLowerCase()) || suffixMatch.test(args[i].toLowerCase())) && smell.isValidHardcodedValue(defaults[i][0]) && defaults[i][1] == true){
-                        vscode.window.showWarningMessage(WARNING_MSG);
+                        smell.triggerAlarm(WARNING_MSG);;
                         break
                     }
                 }
             }
         }
     },
+
+    triggerAlarm: (WARNING_MSG) => {
+        vscode.window.showWarningMessage(WARNING_MSG);
+        fs.appendFileSync(__dirname+'/../logs/warnings.txt', WARNING_MSG+"\n");
+    },   
 
     containsSuspiciousValues: (value) => {
         const prohibitedValues = ['admin', 'root', 'host', 'user', 'username', 'pwd', 'pass', 'guest', 'usr','token','default','password' ]
