@@ -13,7 +13,8 @@
 	"activationEvents": [
 		"onLanguage:python",
 		"onCommand:extension.quickscan",
-		"onCommand:extension.greetings"
+		"onCommand:extension.customscan",
+		"onCommand:extension.completescan"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -21,6 +22,14 @@
 			{
 				"command": "extension.quickscan",
 				"title": "Quick Scan"
+			},
+			{
+				"command": "extension.customscan",
+				"title": "Custom Scan"
+			},
+			{
+				"command": "extension.completescan",
+				"title": "Complete Scan"
 			}
 		],
 		"colors": [

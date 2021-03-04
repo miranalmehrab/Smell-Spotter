@@ -37,7 +37,105 @@ function activate(context) {
 		else vscode.window.showErrorMessage("Please select Python source code!");
 	});
 
+
+	let completeScan = vscode.commands.registerCommand('extension.completescan', function () {
+		fs.readdir(__dirname, (err, files) => { 
+			
+			if (err) console.log(err);
+			else {
+
+			  	console.log("\nCurrent directory filenames:"); 
+			  	files.forEach(file => { 
+					console.log(file);
+					// const sourceCode = vscode.window.activeTextEditor.document.getText();
+					// const codeLang = vscode.window.activeTextEditor.document.languageId;
+					
+					// if (codeLang === 'py') {
+					// 	if (sourceCode != null) {
+							
+					// 		const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+
+					// 		script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
+					// 		script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
+					// 		script.on('error', err => {
+					// 			console.log('Error while traversing AST!')
+					// 			console.log(err)
+								
+					// 		});
+					// 	}
+					// 	else vscode.window.showErrorMessage("Empty source code!");
+					// }
+					// else vscode.window.showErrorMessage("Please select Python source code!");	
+				
+				}); 
+			} 
+		});
+	}); 
+
+	let customScan = vscode.commands.registerCommand('extension.customscan', function (userSpecifiedPath) {
+		const pathCharacteristics = fs.statSync(userSpecifiedPath);
+		if (pathCharacteristics.isFile()){
+			const sourceCode = vscode.window.activeTextEditor.document.getText();
+			const codeLang = vscode.window.activeTextEditor.document.languageId;
+
+			if (codeLang === 'python') {
+				if (sourceCode != null) {
+					
+					const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+
+					script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
+					script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
+					script.on('error', err => {
+						console.log('Error while traversing AST!')
+						console.log(err)
+						
+					});
+				}
+				else vscode.window.showErrorMessage("Empty source code!");
+			}
+			else vscode.window.showErrorMessage("Please select Python source code!");
+
+		}
+		else if(pathCharacteristics.isDirectory()){
+			fs.readdir(userSpecifiedPath, (err, files) => { 
+				
+				if (err) console.log(err);
+				else {
+					
+					console.log("\nCurrent directory filenames:"); 
+					files.forEach(file => { 
+						console.log(file);
+						let sourceCodeExtension = ''; 
+						// const sourceCode = vscode.window.activeTextEditor.document.getText();
+						// const codeLang = vscode.window.activeTextEditor.document.languageId;
+						
+						// if (codeLang === 'py') {
+						// 	if (sourceCode != null) {
+								
+						// 		const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+
+						// 		script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
+						// 		script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
+						// 		script.on('error', err => {
+						// 			console.log('Error while traversing AST!')
+						// 			console.log(err)
+									
+						// 		});
+						// 	}
+						// 	else vscode.window.showErrorMessage("Empty source code!");
+						// }
+						// else vscode.window.showErrorMessage("Please select Python source code!");	
+					
+					}); 
+				}
+			});
+		} 
+
+	}); 
+
 	context.subscriptions.push(quickScan);
+	context.subscriptions.push(customScan);
+	context.subscriptions.push(completeScan);
 }
 
 
