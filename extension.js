@@ -1,10 +1,12 @@
 const fs = require('fs');
 const vscode = require('vscode'); 
 
+const { log } = require('console');
 const { spawn } = require('child_process');
+
 var detection = require('./detection/detection');
 var createPDFDocument = require('./utilities/createPDFDocument');
-const { log } = require('console');
+var createJsonDocument = require('./utilities/createJsonDocument');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -18,13 +20,14 @@ function activate(context) {
 		
 		const sourceCode = vscode.window.activeTextEditor.document.getText();
 		const codeLang = vscode.window.activeTextEditor.document.languageId;
+		console.log({'scan mode message': 'quick scan mode working'});
 
 		if (codeLang === 'python') {
 			if (sourceCode != null) {
 				
 				const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
 
-				script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
+				script.stdout.on('data', data => data? startSmellInvestigation(undefined, data.toString()) : console.log('No data from script!'));
 				script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
 				script.on('error', err => {
 					console.log('Error while traversing AST!')
@@ -130,7 +133,6 @@ function activate(context) {
 				}
 			});
 		} 
-
 	}); 
 
 	context.subscriptions.push(quickScan);
@@ -155,24 +157,49 @@ const getImportedPackagesInSourceCode = (splittedTokens) => {
 	return importedPackages;
 }
 
+const clearLogContents = () => {
 
-const startSmellInvestigation = (tokens) => {
-	fs.writeFileSync(__dirname+'/logs/tokens.txt', tokens);
+	try {
+		fs.writeFileSync(__dirname+'/logs/tokens.txt', "");
+		fs.writeFileSync(__dirname+'/logs/warnings.txt', "");
+		
+  	} catch(err) {
+		console.error(err)
+  	}
+}
+
+
+const startSmellInvestigation = (fileName = undefined, tokens) => {
+	clearLogContents();
 	
+	fs.writeFileSync(__dirname+'/logs/tokens.txt', tokens);
 	let tokensFromLog = fs.readFileSync(__dirname+'/logs/tokens.txt', {encoding:'utf8', flag:'r'}); 
 	let splittedTokens = tokensFromLog.split('\n');
-	splittedTokens.pop()
+	splittedTokens.pop(); //removing a blank item from array
 	
-	console.log({'dir name': __dirname});
-	console.log(splittedTokens)
+	// console.log({'dir name': __dirname});
+	// console.log(splittedTokens)
 
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
 	detection.detect(splittedTokens, importedPackages);
+	exportDetectionResult(fileName);
 
-	let warningsFromLog = fs.readFileSync(__dirname+'/logs/warnings.txt', {encoding:'utf8', flag:'r'});
-	fs.writeFileSync(__dirname+'/logs/warnings.txt', "");
-	createPDFDocument.createDocument("QuickScan.pdf", warningsFromLog, __dirname);
 }
+
+const exportDetectionResult = (fileName) => {
+	let warningsFromLog = fs.readFileSync(__dirname+'/logs/warnings.txt', {encoding:'utf8', flag:'r'});
+	warningsFromLog = fileName != undefined? "filename: "+ fileName +"\n"+ warningsFromLog : "filename: " + "No name found\n" + warningsFromLog;
+	
+	console.log({fileName: fileName});
+	console.log({"warningsFromLog": warningsFromLog});
+
+	createPDFDocument.createPDFDocument("QuickScan.pdf", warningsFromLog, __dirname);
+	console.log({"createPDFDocument": "came back"});
+	
+	createJsonDocument.createJsonDocument("QuickScan.json", warningsFromLog, __dirname);
+	console.log({"createJsonDocument": "came back"});
+}
+
 
 exports.activate = activate;
 
