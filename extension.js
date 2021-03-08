@@ -1,5 +1,8 @@
 const fs = require('fs');
-const vscode = require('vscode'); 
+const crypto = require('crypto');
+const vscode = require('vscode');
+
+const store = require('json-fs-store')();
 
 const { log } = require('console');
 const { spawn } = require('child_process');
@@ -16,6 +19,7 @@ function activate(context) {
 	// const color = new vscode.ThemeColor('pssd.warning');
 	// vscode.window.showQuickPick.arguments(2);
 
+	
 	let quickScan = vscode.commands.registerCommand('extension.quickscan', function () {
 		
 		const sourceCode = vscode.window.activeTextEditor.document.getText();
@@ -25,14 +29,21 @@ function activate(context) {
 		if (codeLang === 'python') {
 			if (sourceCode != null) {
 				
-				const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+				let md5Hash = crypto.createHash('md5').update(sourceCode).digest("hex");
+				console.log({'md5 hash': md5Hash});
+				
+				store.load(md5Hash, function(err, object){
+					console.log({'object': object});
+					if(err){
+						console.log(err);
 
-				script.stdout.on('data', data => data? startSmellInvestigation(undefined, data.toString()) : console.log('No data from script!'));
-				script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
-				script.on('error', err => {
-					console.log('Error while traversing AST!')
-					console.log(err)
-					
+						const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+						script.stdout.on('data', data => data ? startSmellInvestigation(undefined, data.toString(), md5Hash) : console.log('No data from script!'));
+						script.on('close', (exitCode) => exitCode ? console.log(`main script exit code ${exitCode}`) : 'main script exit code not found');
+						script.on('error', (err) => console.log(err));
+				
+					}
+					else showWarningsNotifications(object.warnings);
 				});
 			}
 			else vscode.window.showErrorMessage("Empty source code!");
@@ -140,18 +151,26 @@ function activate(context) {
 	context.subscriptions.push(completeScan);
 }
 
+const showWarningsNotifications = (previousWarnings) => {
+	console.log({'warnings': 'previous results'});
+	let warnings = previousWarnings.split("\n");
+	warnings.pop();
+
+	warnings.forEach(warning => {
+		vscode.window.showWarningMessage(warning);
+	});
+}
+
 
 const getImportedPackagesInSourceCode = (splittedTokens) => {
 	let importedPackages = [];
 	splittedTokens.map((token) => {
 		
-		try{
+		try {
 			let loadedToken = JSON.parse(token)
 			if(loadedToken.type == "import") importedPackages.push(loadedToken.og)
 		}
-		catch(error) {
-			vscode.window.showErrorMessage(error.toString())
-		}
+		catch(error) { vscode.window.showErrorMessage(error.toString())}
 	})
 
 	return importedPackages;
@@ -163,13 +182,11 @@ const clearLogContents = () => {
 		fs.writeFileSync(__dirname+'/logs/tokens.txt', "");
 		fs.writeFileSync(__dirname+'/logs/warnings.txt', "");
 		
-  	} catch(err) {
-		console.error(err)
-  	}
+  	} catch(err) { console.error(err)}
 }
 
 
-const startSmellInvestigation = (fileName = undefined, tokens) => {
+const startSmellInvestigation = (fileName = undefined, tokens, hash) => {
 	clearLogContents();
 	
 	fs.writeFileSync(__dirname+'/logs/tokens.txt', tokens);
@@ -182,17 +199,26 @@ const startSmellInvestigation = (fileName = undefined, tokens) => {
 
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
 	detection.detect(splittedTokens, importedPackages);
-	exportDetectionResult(fileName);
+	exportDetectionResult(fileName, hash);
 
 }
 
-const exportDetectionResult = (fileName) => {
+const exportDetectionResult = (fileName, hash) => {
 	let warningsFromLog = fs.readFileSync(__dirname+'/logs/warnings.txt', {encoding:'utf8', flag:'r'});
 	warningsFromLog = fileName != undefined? "filename: "+ fileName +"\n"+ warningsFromLog : "filename: " + "No name found\n" + warningsFromLog;
 	
 	console.log({fileName: fileName});
 	console.log({"warningsFromLog": warningsFromLog});
 
+	var log = {id: hash, name: fileName, warnings: warningsFromLog};
+	
+	store.add(log, function(err) {
+		// called when the file has been written
+		// to the /path/to/storage/location/12345.json
+		if (err) console.log(err); // err if the save failed
+	});
+
+	
 	createPDFDocument.createPDFDocument("QuickScan.pdf", warningsFromLog, __dirname);
 	console.log({"createPDFDocument": "came back"});
 	

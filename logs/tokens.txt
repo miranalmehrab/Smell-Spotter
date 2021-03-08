@@ -2,8 +2,5 @@
 {"type": "function_call", "line": 2, "name": "redirect_to_admin_panel", "args": ["name", "pwd"], "keywords": [], "hasInputs": false}
 {"type": "function_def", "line": 4, "name": "grant_guest_access", "args": ["name", "pwd"], "defaults": [["guest", true], ["guest", true]], "return": null}
 {"type": "function_call", "line": 5, "name": "redirect_to_user_options", "args": ["name", "pwd"], "keywords": [], "hasInputs": false}
-{"type": "variable", "line": 7, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
-{"type": "variable", "line": 8, "name": "password", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
-{"type": "comparison", "line": 10, "pairs": [["username", "admin"], ["password", "admin"]]}
-{"type": "function_call", "line": 11, "name": "grant_admin_access", "args": ["admin", "admin"], "keywords": [], "hasInputs": false}
-{"type": "function_call", "line": 13, "name": "grant_guest_access", "args": [], "keywords": [["name", "guest", true], ["pwd", "guest", true]], "hasInputs": false}
+{"type": "comparison", "line": 7, "pairs": [["username", "admin"], ["password", "admin"]]}
+{"type": "function_call", "line": 8, "name": "grant_admin_access", "args": ["username", "password"], "keywords": [], "hasInputs": false}
