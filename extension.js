@@ -2,9 +2,10 @@ const fs = require('fs');
 const crypto = require('crypto');
 const vscode = require('vscode');
 
+var path = require('path');
 const store = require('json-fs-store')();
 
-const { log } = require('console');
+// const { log } = require('console');
 const { spawn } = require('child_process');
 
 var detection = require('./detection/detection');
@@ -22,30 +23,12 @@ function activate(context) {
 	
 	let quickScan = vscode.commands.registerCommand('extension.quickscan', function () {
 		
-		const sourceCode = vscode.window.activeTextEditor.document.getText();
-		const codeLang = vscode.window.activeTextEditor.document.languageId;
-		console.log({'scan mode message': 'quick scan mode working'});
+		let fileName = vscode.window.activeTextEditor.document.fileName;  
+		let codeLang = vscode.window.activeTextEditor.document.languageId;
+		let sourceCode = vscode.window.activeTextEditor.document.getText();
 
 		if (codeLang === 'python') {
-			if (sourceCode != null) {
-				
-				let md5Hash = crypto.createHash('md5').update(sourceCode).digest("hex");
-				console.log({'md5 hash': md5Hash});
-				
-				store.load(md5Hash, function(err, object){
-					console.log({'object': object});
-					if(err){
-						console.log(err);
-
-						const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
-						script.stdout.on('data', data => data ? startSmellInvestigation(undefined, data.toString(), md5Hash) : console.log('No data from script!'));
-						script.on('close', (exitCode) => exitCode ? console.log(`main script exit code ${exitCode}`) : 'main script exit code not found');
-						script.on('error', (err) => console.log(err));
-				
-					}
-					else showWarningsNotifications(object.warnings);
-				});
-			}
+			if (sourceCode != null) analyzeSourceFile(sourceCode, fileName);
 			else vscode.window.showErrorMessage("Empty source code!");
 		}
 		else vscode.window.showErrorMessage("Please select Python source code!");
@@ -53,97 +36,59 @@ function activate(context) {
 
 
 	let completeScan = vscode.commands.registerCommand('extension.completescan', function () {
-		fs.readdir(__dirname, (err, files) => { 
-			
-			if (err) console.log(err);
-			else {
+		let workspaceFolder = vscode.workspace.workspaceFolders[0].uri.path;
+		console.log({'workspaceFolder': workspaceFolder});
 
-			  	console.log("\nCurrent directory filenames:"); 
-			  	files.forEach(file => { 
-					console.log(file);
-					// const sourceCode = vscode.window.activeTextEditor.document.getText();
-					// const codeLang = vscode.window.activeTextEditor.document.languageId;
-					
-					// if (codeLang === 'py') {
-					// 	if (sourceCode != null) {
-							
-					// 		const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+		console.log({'type of workspaceFolder': typeof(workspaceFolder)});
 
-					// 		script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
-					// 		script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
-					// 		script.on('error', err => {
-					// 			console.log('Error while traversing AST!')
-					// 			console.log(err)
-								
-					// 		});
-					// 	}
-					// 	else vscode.window.showErrorMessage("Empty source code!");
-					// }
-					// else vscode.window.showErrorMessage("Please select Python source code!");	
+		fs.readdir(workspaceFolder, (err, files) => { 
+			if(files){
 				
-				}); 
-			} 
+				files.forEach(file => {
+					if(getFileExtension(file) === 'py'){
+
+						let sourceCode = getFileContentsFromPath(path.join(workspaceFolder, file));
+						if (sourceCode != null) analyzeSourceFile(sourceCode, file);
+						else vscode.window.showErrorMessage("Empty source code!");
+					}
+				});
+			}
 		});
 	}); 
 
-	let customScan = vscode.commands.registerCommand('extension.customscan', function (userSpecifiedPath) {
-		const pathCharacteristics = fs.statSync(userSpecifiedPath);
-		if (pathCharacteristics.isFile()){
-			const sourceCode = vscode.window.activeTextEditor.document.getText();
-			const codeLang = vscode.window.activeTextEditor.document.languageId;
+	let customScan = vscode.commands.registerCommand('extension.customscan', function () {
 
-			if (codeLang === 'python') {
-				if (sourceCode != null) {
+		const userPathInput = vscode.window.showInputBox();
+		userPathInput.then( userSpecifiedPath => {
+			
+			if (checkIfFilePath(userSpecifiedPath)){
+				if (getFileExtension(userSpecifiedPath) === 'py') {
 					
-					const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+					let pathSplits = userSpecifiedPath.split('/')
+					let fileName = pathSplits[pathSplits.length - 1]
 
-					script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
-					script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
-					script.on('error', err => {
-						console.log('Error while traversing AST!')
-						console.log(err)
-						
-					});
+					let sourceCode = getFileContentsFromPath(userSpecifiedPath);
+					if (sourceCode != null) analyzeSourceFile(sourceCode, fileName);
+					else vscode.window.showErrorMessage("Empty source code!");
 				}
-				else vscode.window.showErrorMessage("Empty source code!");
+				else vscode.window.showErrorMessage("Please select Python source code!");
 			}
-			else vscode.window.showErrorMessage("Please select Python source code!");
-
-		}
-		else if(pathCharacteristics.isDirectory()){
-			fs.readdir(userSpecifiedPath, (err, files) => { 
-				
-				if (err) console.log(err);
-				else {
-					
-					console.log("\nCurrent directory filenames:"); 
-					files.forEach(file => { 
-						console.log(file);
-						let sourceCodeExtension = ''; 
-						// const sourceCode = vscode.window.activeTextEditor.document.getText();
-						// const codeLang = vscode.window.activeTextEditor.document.languageId;
+			else{
+				fs.readdir(userSpecifiedPath, (err, files) => { 
+					if(files){
 						
-						// if (codeLang === 'py') {
-						// 	if (sourceCode != null) {
-								
-						// 		const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+						files.forEach(file => {
+							if(getFileExtension(file) === 'py'){
 
-						// 		script.stdout.on('data', data => data? startSmellInvestigation(data.toString()) : console.log('No data from script!'));
-						// 		script.on('close', exitCode => exitCode ? console.log(`main script close all stdio with code ${exitCode}`) : 'main script exit code not found');
-						// 		script.on('error', err => {
-						// 			console.log('Error while traversing AST!')
-						// 			console.log(err)
-									
-						// 		});
-						// 	}
-						// 	else vscode.window.showErrorMessage("Empty source code!");
-						// }
-						// else vscode.window.showErrorMessage("Please select Python source code!");	
-					
-					}); 
-				}
-			});
-		} 
+								let sourceCode = getFileContentsFromPath(path.join(userSpecifiedPath, file));
+								if (sourceCode != null) analyzeSourceFile(sourceCode, file);
+								else vscode.window.showErrorMessage("Empty source code!");
+							}
+						});
+					}
+				});
+			}
+		});
 	}); 
 
 	context.subscriptions.push(quickScan);
@@ -151,16 +96,47 @@ function activate(context) {
 	context.subscriptions.push(completeScan);
 }
 
+
+const analyzeSourceFile = (sourceCode, fileName) => {
+
+	let fileHashValue = crypto.createHash('md5').update(sourceCode).digest("hex");
+	store.load(fileHashValue, function(err,object) {
+
+		if(err){
+			console.log(err);
+			const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
+			script.stdout.on('data', data => data ? startSmellInvestigation(fileName, data.toString(), fileHashValue) : console.log('No data from script!'));
+			script.on('close', (exitCode) => exitCode ? console.log(`main script exit code ${exitCode}`) : 'main script exit code not found');
+			script.on('error', (err) => console.log(err));
+		}
+		else showWarningsNotifications(object.warnings);
+	});		
+}
+
+const getFileContentsFromPath = (userSpecifiedPath) => {
+	return fs.readFileSync(userSpecifiedPath, {encoding:'utf8', flag:'r'});
+}
+
+const checkIfFilePath = (value) => {
+	let pathSplits = value.split("/");
+	return pathSplits[pathSplits.length - 1].includes(".")? true: false;
+}
+
+
+const getFileExtension = (value) => {
+	let pathSplits = value.split(".");
+	return pathSplits[pathSplits.length - 1]? pathSplits[pathSplits.length - 1]: undefined;
+}
+
 const showWarningsNotifications = (previousWarnings) => {
 	console.log({'warnings': 'previous results'});
 	let warnings = previousWarnings.split("\n");
-	warnings.pop();
+	// warnings.pop();
 
 	warnings.forEach(warning => {
 		vscode.window.showWarningMessage(warning);
 	});
 }
-
 
 const getImportedPackagesInSourceCode = (splittedTokens) => {
 	let importedPackages = [];
@@ -172,12 +148,10 @@ const getImportedPackagesInSourceCode = (splittedTokens) => {
 		}
 		catch(error) { vscode.window.showErrorMessage(error.toString())}
 	})
-
 	return importedPackages;
 }
 
 const clearLogContents = () => {
-
 	try {
 		fs.writeFileSync(__dirname+'/logs/tokens.txt', "");
 		fs.writeFileSync(__dirname+'/logs/warnings.txt', "");
@@ -185,18 +159,16 @@ const clearLogContents = () => {
   	} catch(err) { console.error(err)}
 }
 
-
 const startSmellInvestigation = (fileName = undefined, tokens, hash) => {
 	clearLogContents();
 	
 	fs.writeFileSync(__dirname+'/logs/tokens.txt', tokens);
 	let tokensFromLog = fs.readFileSync(__dirname+'/logs/tokens.txt', {encoding:'utf8', flag:'r'}); 
 	let splittedTokens = tokensFromLog.split('\n');
-	splittedTokens.pop(); //removing a blank item from array
-	
-	// console.log({'dir name': __dirname});
-	// console.log(splittedTokens)
 
+	console.log({'splitted tokens': splittedTokens});
+	// splittedTokens.pop(); //removing a blank item from array
+	
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
 	detection.detect(splittedTokens, importedPackages);
 	exportDetectionResult(fileName, hash);
@@ -213,18 +185,16 @@ const exportDetectionResult = (fileName, hash) => {
 	var log = {id: hash, name: fileName, warnings: warningsFromLog};
 	
 	store.add(log, function(err) {
-		// called when the file has been written
-		// to the /path/to/storage/location/12345.json
-		if (err) console.log(err); // err if the save failed
+		if (err) console.log(err); 
 	});
 
-	
 	createPDFDocument.createPDFDocument("QuickScan.pdf", warningsFromLog, __dirname);
 	console.log({"createPDFDocument": "came back"});
 	
 	createJsonDocument.createJsonDocument("QuickScan.json", warningsFromLog, __dirname);
 	console.log({"createJsonDocument": "came back"});
 }
+
 
 
 exports.activate = activate;

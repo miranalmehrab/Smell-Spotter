@@ -9,7 +9,10 @@ var createJsonDocument = {
         createJsonDocument.removePreviousJsonDocument(pathName+'/'+documentName);
         console.log({"createJsonDocument": "working"});
         detectionResults = detectionResults.split("\n");
+        detectionResults.pop();
         
+        console.log({'detectionResults': detectionResults});
+
         let warnings = detectionResults.slice(1);
         let sourceCodeFileName = detectionResults[0].split(":")[1];  
         let singleSourceCodeResult = {"filename": sourceCodeFileName, "warnings": warnings};

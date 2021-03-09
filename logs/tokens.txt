@@ -1,6 +1,10 @@
-{"type": "function_def", "line": 1, "name": "grant_admin_access", "args": ["name", "pwd"], "defaults": [], "return": null}
-{"type": "function_call", "line": 2, "name": "redirect_to_admin_panel", "args": ["name", "pwd"], "keywords": [], "hasInputs": false}
-{"type": "function_def", "line": 4, "name": "grant_guest_access", "args": ["name", "pwd"], "defaults": [["guest", true], ["guest", true]], "return": null}
-{"type": "function_call", "line": 5, "name": "redirect_to_user_options", "args": ["name", "pwd"], "keywords": [], "hasInputs": false}
-{"type": "comparison", "line": 7, "pairs": [["username", "admin"], ["password", "admin"]]}
-{"type": "function_call", "line": 8, "name": "grant_admin_access", "args": ["username", "password"], "keywords": [], "hasInputs": false}
+{"type": "variable", "line": 1, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 2, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 3, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 4, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 5, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 6, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 7, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 8, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 9, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
+{"type": "variable", "line": 10, "name": "username", "value": "admin", "valueSrc": "initialization", "funcKeywords": [], "isInput": false}
