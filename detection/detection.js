@@ -19,7 +19,7 @@ const hardcodedsecret = require('../rules/hardcodedsecret');
 
 var detection = {
 
-    detect: (tokens, imports) => {
+    detect: (fileName, tokens, imports) => {
         
         tokens.pop();
         tokens.map(token => {
@@ -46,7 +46,7 @@ var detection = {
                     // tempdir.detect(token);
                     
                     // xss.detect(token);
-                    hardcodedsecret.detect(token);
+                    hardcodedsecret.detect(fileName, token);
                 }
                 catch (error) {
                     console.log(error);

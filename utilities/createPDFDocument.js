@@ -1,16 +1,14 @@
 const fs = require('fs');
-const { log } = require('console');
 const PDFDocument = require('pdfkit');
 
 
 var createPDFDocument = {
-    createPDFDocument: (documentName, detectionResults, pathName) => {
-        createPDFDocument.removePreviousPDFDocument(pathName+'/'+documentName);
-        console.log({"createPDFDocument": "working"});
-
+    createPDFDocument: (resultDocumentName, detectionResults, pathName, fileName) => {
+        createPDFDocument.removePreviousPDFDocument(pathName+'/'+resultDocumentName);
+        
         let doument = new PDFDocument;
-        doument.pipe(fs.createWriteStream(pathName+'/'+documentName));
-        doument.text(detectionResults);
+        doument.pipe(fs.createWriteStream(pathName+'/'+resultDocumentName));
+        doument.text(fileName+"\n"+detectionResults);
         doument.end();
     },
 

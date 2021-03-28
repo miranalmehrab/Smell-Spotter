@@ -30,4 +30,4 @@
 
 13. **Constructing SQL upon Input**
 
-**Press `ctrl+alt+p` and run **Detect Smell** command.**
+**Press `ctrl+shift+p` and run **Detect Smell** command.**

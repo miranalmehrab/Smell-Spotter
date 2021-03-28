@@ -4,7 +4,7 @@ const fs = require('fs');
 const vscode = require('vscode');
 
 var smell = {
-    detect : (token) => {
+    detect : (fileName, token) => {
         
         const WARNING_MSG = 'possible hardcoded secret at line '+ token.line;
         const commonKeywords = [    'user', 'usr', 'guest', 'admin', 'root', 'owner', 'uid', 'uname', 'password','pwd',
@@ -18,7 +18,7 @@ var smell = {
                 if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
                     
                     if(token.hasOwnProperty("value") && smell.isValidHardcodedValue(token.value)){
-                        smell.triggerAlarm(WARNING_MSG);;
+                        smell.triggerAlarm(fileName, WARNING_MSG);;
                         break
                     }
                 }
@@ -33,7 +33,7 @@ var smell = {
                     let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
 
                     if((suffixMatch.test(funcKeyword[0].toLowerCase()) || prefixMatch.test(funcKeyword[0].toLowerCase())) && smell.isValidHardcodedValue(funcKeyword[1])){
-                        smell.triggerAlarm(WARNING_MSG);;
+                        smell.triggerAlarm(fileName, WARNING_MSG);;
                         break
                     }
                 }
@@ -48,7 +48,7 @@ var smell = {
                 if(prefixMatch.test(token.name.toLowerCase()) || suffixMatch.test(token.name.toLowerCase())){
                     for(const value of token.values){
                         if(smell.isValidHardcodedValue(value)){
-                            smell.triggerAlarm(WARNING_MSG);
+                            smell.triggerAlarm(fileName, WARNING_MSG);
                             break
                         }   
                     }
@@ -60,7 +60,7 @@ var smell = {
                 if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
                     for(const keyword of commonKeywords){
                         if(pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(pair[1])){
-                            smell.triggerAlarm(WARNING_MSG);
+                            smell.triggerAlarm(fileName, WARNING_MSG);
                             break
                         }
                     }
@@ -72,7 +72,7 @@ var smell = {
                 if(pair.length == 2 && typeof(pair[0]) == 'string' && typeof(pair[1]) == 'string'){
                     for(const keyword of commonKeywords){
                         if(pair[0].toLowerCase() != 'key' && pair[0].toLowerCase() != 'token' && pair[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(pair[1])){
-                            smell.triggerAlarm(WARNING_MSG);
+                            smell.triggerAlarm(fileName, WARNING_MSG);
                             break
                         }
                     }
@@ -84,7 +84,7 @@ var smell = {
                 if(funcKeyword.length == 3 && typeof(funcKeyword[0]) == 'string' && typeof(funcKeyword[1]) == 'string' && funcKeyword[2] == true){
                     for(const keyword of commonKeywords){
                         if(funcKeyword[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(funcKeyword[1])){
-                            smell.triggerAlarm(WARNING_MSG);
+                            smell.triggerAlarm(fileName, WARNING_MSG);
                             break
                         }
                     }
@@ -108,7 +108,7 @@ var smell = {
                     console.log(suffixMatch.test(args[i].toLowerCase()))
 
                     if((prefixMatch.test(args[i].toLowerCase()) || suffixMatch.test(args[i].toLowerCase())) && smell.isValidHardcodedValue(defaults[i][0]) && defaults[i][1] == true){
-                        smell.triggerAlarm(WARNING_MSG);;
+                        smell.triggerAlarm(fileName, WARNING_MSG);;
                         break
                     }
                 }
@@ -116,9 +116,14 @@ var smell = {
         }
     },
 
-    triggerAlarm: (WARNING_MSG) => {
+    triggerAlarm: (fileName, WARNING_MSG) => {
+        
         vscode.window.showWarningMessage(WARNING_MSG);
-        fs.appendFileSync(__dirname+'/../logs/warnings.txt', WARNING_MSG+"\n");
+        // fs.appendFile(__dirname+'/../logs/single_file_warnings.txt', WARNING_MSG+"\n", (err) => err ? console.log(err): "");
+        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
+        
+        // fs.appendFileSync(__dirname+'/../logs/single_file_warnings.txt', WARNING_MSG+"\n");
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
     },   
 
     containsSuspiciousValues: (value) => {

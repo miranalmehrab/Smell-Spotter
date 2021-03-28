@@ -1,27 +1,17 @@
 const fs = require('fs');
-const { log } = require('console'); 
-
 
 var createJsonDocument = {
-
-    createJsonDocument: (documentName, detectionResults, pathName) => {
-        
-        createJsonDocument.removePreviousJsonDocument(pathName+'/'+documentName);
-        console.log({"createJsonDocument": "working"});
+    createJsonDocument: (resultDocumentName, detectionResults, pathName,fileName) => {
+        createJsonDocument.removePreviousJsonDocument(pathName+'/'+resultDocumentName);
         detectionResults = detectionResults.split("\n");
-        detectionResults.pop();
         
-        console.log({'detectionResults': detectionResults});
+        detectionResults.pop();
 
         let warnings = detectionResults.slice(1);
-        let sourceCodeFileName = detectionResults[0].split(":")[1];  
-        let singleSourceCodeResult = {"filename": sourceCodeFileName, "warnings": warnings};
+        let singleSourceCodeResult = {"filename": fileName, "warnings": warnings};
 
         let jsonSingleSourceCodeResult = JSON.stringify(singleSourceCodeResult);
-        console.log({"jsonSingleSourceCodeResult": jsonSingleSourceCodeResult});
-        
-        fs.writeFileSync(pathName+'/'+documentName, jsonSingleSourceCodeResult);
-        
+        fs.writeFileSync(pathName+'/'+resultDocumentName, jsonSingleSourceCodeResult);
     },
 
     removePreviousJsonDocument: (fullPath) => {
