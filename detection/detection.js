@@ -53,8 +53,6 @@ var detection = {
                 }
             }
         });
-
-        console.log('detection finished!');    
     }
 }
 

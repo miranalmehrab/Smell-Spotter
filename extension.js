@@ -29,7 +29,10 @@ function activate(context) {
 			if (sourceCode != null){		
 				analyzeSourceFile(sourceCode, fileName);
 				// storeDetectionInDB(fileName, fileHashValue);
+
 				generateReport(fileName);
+				
+				
 				console.log('quick scan normally finished!');
 			} else vscode.window.showErrorMessage("Empty source code!");
 		} else vscode.window.showErrorMessage("Please select Python source code!");
@@ -146,12 +149,12 @@ const getImportedPackagesInSourceCode = (splittedTokens) => {
 }
 
 const clearPreviousDetectionLog = () => {
-	fs.writeFileSync(path.join(__dirname, 'project_warnings.csv'), "");
+	// fs.writeFileSync(path.join(__dirname, 'project_warnings.csv'), "");
 
-	// fs.unlink(path.join(__dirname, 'project_warnings.csv'), (err) => {
-	// 	console.log(path.join(__dirname, 'project_warnings.csv') + " was deleted");
-	// 	if (err) throw err;
-	// });	
+	fs.unlink(path.join(__dirname, 'project_warnings.csv'), (err) => {
+		console.log(path.join(__dirname, 'project_warnings.csv') + " was deleted");
+		if (err) throw err;
+	});	
 }
 
 const startSmellInvestigation = (tokens, fileName) => {
@@ -178,7 +181,7 @@ const generateReport = (fileName) => {
 		// createPDFDocument.createPDFDocument("QuickScanResult.pdf", data, __dirname, fileName);
 		// createJsonDocument.createJsonDocument("QuickScanResult.txt", data, __dirname, fileName);
 		
-		console.log('testing if its done');
+		console.log('generate report function executed');
 	}
 	catch (e) {console.log(e);}
 }  

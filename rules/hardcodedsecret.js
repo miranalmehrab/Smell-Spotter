@@ -1,5 +1,3 @@
-const { log } = require('console');
-const { type } = require('os');
 const fs = require('fs');
 const vscode = require('vscode');
 
@@ -117,13 +115,9 @@ var smell = {
     },
 
     triggerAlarm: (fileName, WARNING_MSG) => {
-        
         vscode.window.showWarningMessage(WARNING_MSG);
-        // fs.appendFile(__dirname+'/../logs/single_file_warnings.txt', WARNING_MSG+"\n", (err) => err ? console.log(err): "");
-        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
-        
-        // fs.appendFileSync(__dirname+'/../logs/single_file_warnings.txt', WARNING_MSG+"\n");
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
+        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     },   
 
     containsSuspiciousValues: (value) => {

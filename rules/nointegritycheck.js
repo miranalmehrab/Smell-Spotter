@@ -1,3 +1,4 @@
+const fs = require('fs');
 const url = require('url');
 const vscode = require('vscode');
 
@@ -92,6 +93,12 @@ var smell = {
 
             return false
         }
+    },
+    
+    triggerAlarm: (fileName, WARNING_MSG) => {
+        vscode.window.showWarningMessage(WARNING_MSG);
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
+        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     }
 }
 

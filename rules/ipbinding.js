@@ -1,4 +1,4 @@
-const { type } = require('os');
+const fs = require('fs');
 const vscode = require('vscode');
 
 var smell = {
@@ -43,6 +43,12 @@ var smell = {
         else if (parseInt(port) > 0 && parseInt(port) < 65536) return true
         else return false
 
+    },
+    
+    triggerAlarm: (fileName, WARNING_MSG) => {
+        vscode.window.showWarningMessage(WARNING_MSG);
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
+        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     }
 }
 module.exports = smell;

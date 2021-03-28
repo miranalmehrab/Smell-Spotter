@@ -1,3 +1,4 @@
+const fs = require('fs');
 const vscode = require('vscode');
 
 var smell = {
@@ -65,6 +66,12 @@ var smell = {
         
         // else if(windowsRegex.test(path)) return true
         
+    },
+    
+    triggerAlarm: (fileName, WARNING_MSG) => {
+        vscode.window.showWarningMessage(WARNING_MSG);
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
+        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     }
 }
 
