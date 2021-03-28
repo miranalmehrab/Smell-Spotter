@@ -2,41 +2,43 @@ const fs = require('fs');
 const vscode = require('vscode');
 
 var smell = {
-    detect : (token) => {
+    detect : (fileName, token) => {
         
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
         
-        const WARNING_MSG = 'possible use of insecure yaml operations at line '+ lineno
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of cross-site scripting at line '+ token.returnLine : null
+        const MSG = 'possible use of insecure yaml operations'
         
+        const WARNING_MSG = MSG+' at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
         const insecureMethods = ['yaml.load', 'yaml.load_all', 'yaml.full_load', 'yaml.dump', 'yaml.dump_all', 'yaml.full_load_all']
 
         if(tokenType == "variable") {
-            if(insecureMethods.includes(token.valueSrc)) vscode.window.showWarningMessage(WARNING_MSG);
+            if(insecureMethods.includes(token.valueSrc)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
         }
         
         else if(tokenType == "function_call") {    
-            if(insecureMethods.includes(token.name)) vscode.window.showWarningMessage(WARNING_MSG);
+            if(insecureMethods.includes(token.name)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             
             if(token.hasOwnProperty('args')){
                 for(const arg of token.args){
-                    if(insecureMethods.includes(arg)) vscode.window.showWarningMessage(WARNING_MSG);
+                    if(insecureMethods.includes(arg)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                 }
             }
         }
 
         else if(tokenType == "function_def") {
-            if(token.hasOwnProperty("return"))
+            if(token.hasOwnProperty("return")){
                 for(const funcReturn of token.return){
-                    if(insecureMethods.includes(funcReturn)) vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                    if(insecureMethods.includes(funcReturn)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
                 }
-            
+            }
         }
     },
     
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");

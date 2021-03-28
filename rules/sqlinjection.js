@@ -3,11 +3,13 @@ const vscode = require('vscode');
 
 var smell = {
 
-    detect : (token) => {
+    detect : (fileName, token) => {
+        let lineno = token.line;
         
-        const WARNING_MSG = 'possible room for SQL injection at line '+ token.line;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of SQL injection at line '+ token.returnLine : null
-
+        const MSG = 'possible room for SQL injection'
+        const WARNING_MSG = MSG+' at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
+        
         const unwantedMethods = [   'execution.query', 'connection.cursor.execute', 'sqlite3.connect.execute',
                                     'psycopg2.connect.cursor.execute','mysql.connector.connect.cursor.execute', 
                                     'pyodbc.connect.cursor.execute', 'sqlalchemy.sql.text', 'sqlalchemy.text',
@@ -16,17 +18,17 @@ var smell = {
         
         if(token.type == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args')) {
             if((unwantedMethods.includes(token.valueSrc) || smell.queryMethodsHasPatterns(token.valueSrc)) && token.args.length > 0) 
-                vscode.window.showWarningMessage(WARNING_MSG);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         }
         else if(token.type == "function_call" && token.name != null && token.hasOwnProperty('args')) {
             if ((unwantedMethods.includes(token.name) || smell.queryMethodsHasPatterns(token.name)) && token.args.length > 0)
-                vscode.window.showWarningMessage(WARNING_MSG);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         }
         else if(token.type == 'function_def' && token.hasOwnProperty('return')){
         
             for(const funcReturn of token.return){
                 if ((unwantedMethods.includes(funcReturn) || smell.queryMethodsHasPatterns(funcReturn))) 
-                    vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
             }
         
         }
@@ -48,7 +50,8 @@ var smell = {
         return false
     },
     
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");

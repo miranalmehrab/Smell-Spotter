@@ -3,30 +3,32 @@ const url = require('url');
 const vscode = require('vscode');
 
 var smell = {
-    detect: (token, imports) => {
+    detect: (fileName, token, imports) => {
+        let lineno = token.line;
+        const MSG = 'possible presence of omitting of integrity check'
         
-        const WARNING_MSG = 'possible presence of omitting of integrity check at line ' + token.line;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of no integrity check at line '+ token.returnLine : null
-
+        const WARNING_MSG = MSG+' at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
+        
         const libs = ['urllib.request.urlretrieve','urllib.urlretrieve','urllib2.urlopen','requests.get','wget.download'];
         
         if(token.type == "variable" && token.hasOwnProperty("valueSrc") && token.hasOwnProperty("args")){
             if(libs.includes(token.valueSrc) && token.args.length > 0){
                 if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
-                    vscode.window.showWarningMessage(WARNING_MSG);
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             } 
         }
         else if(token.type == "function_call" && token.hasOwnProperty("args")){
             if(libs.includes(token.name) && token.args.length > 0){
                 if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
-                    vscode.window.showWarningMessage(WARNING_MSG);
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             } 
         }
         else if(token.type == "function_def" && token.hasOwnProperty("return")){
             for(const funcReturn of token.return){
                 if(libs.includes(funcReturn) && token.returnArgs.length > 0){
                     if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
-                        vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
                 }
             }
         }
@@ -95,7 +97,8 @@ var smell = {
         }
     },
     
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");

@@ -3,13 +3,16 @@ const vscode = require('vscode');
 
 var smell = {
 
-    detect : (token) => {
+    detect : (fileName, token) => {
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
         if(token.hasOwnProperty("name")) var name= token.name;
         if(token.hasOwnProperty("args")) var args= token.args;
         
-        const WARNING_MSG = 'possible harcoded ip address binding at line '+ lineno;
+        const MSG = 'possible harcoded ip address binding'
+        const WARNING_MSG = MSG+' at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
+        
         const bindingMethods = ['socket.socket.bind', 'socket.socket.connect'];
          
         if(tokenType == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args')) {
@@ -17,12 +20,12 @@ var smell = {
             var valueSrc = token.valueSrc; 
 
             if(bindingMethods.includes(valueSrc) && args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
-                vscode.window.showWarningMessage(WARNING_MSG);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             }
         }
         else if(tokenType == "function_call" && bindingMethods.includes(name)) {
             if(args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
-                vscode.window.showWarningMessage(WARNING_MSG);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             }       
         }
     },
@@ -45,7 +48,8 @@ var smell = {
 
     },
     
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");

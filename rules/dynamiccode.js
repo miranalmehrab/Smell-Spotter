@@ -4,33 +4,35 @@ const vscode = require('vscode');
 
 var smell = {
 
-    detect : (token) => {
+    detect : (fileName, token) => {
         
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
         
-        const WARNING_MSG = 'possible presence of dynamic code execution at line '+ lineno;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of dynamic code execution at line '+ token.returnLine : null
+        const MSG = 'possible presence of dynamic code execution'
         
+        const WARNING_MSG = MSG+' at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
         const insecureMethods = ['exec', 'eval', 'compile'];
 
         if(tokenType == "variable" && token.hasOwnProperty("valueSrc")){
             if(insecureMethods.includes(token.valueSrc)) 
-                vscode.window.showWarningMessage(WARNING_MSG);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         }
         else if(tokenType == "function_call" && token.hasOwnProperty("name")) {
             if(insecureMethods.includes(token.name)) 
-                vscode.window.showWarningMessage(WARNING_MSG);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         }
         else if(tokenType == "function_def" && token.hasOwnProperty("return")) {
             for(const funcReturn of token.return){
                 if(insecureMethods.includes(funcReturn)) 
-                    vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN);
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
             }
         }
     },
     
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");

@@ -4,14 +4,16 @@ const vscode = require('vscode');
 
 var smell = {
 
-    detect : (token) => {
+    detect : (fileName, token) => {
         
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
         if(token.hasOwnProperty("name")) var name= token.name;
         if(token.hasOwnProperty("value")) var value = token.value;
         
-        const WARNING_MSG = 'possible use of empty password at line '+ lineno;
+        const MSG = 'possible use of empty password'
+        
+        const WARNING_MSG = MSG+' at line '+ lineno;
         const commonPasswords = ['password','pwd','userpassword','userpwd', 'userpass', 'pass_no', 'pass-no','user-pass', 'upass', 'user_pass', 'u_pass',  
                                 'usr_pwd','usr_pass', 'usr-pass','userpasswords', 'user-passwords', 'user-password', 'user_password', 'use_pass','user_pwd'
                             ]
@@ -22,11 +24,11 @@ var smell = {
                 let suffixMatch = new RegExp(`[_A-Za-z0-9-]*${pwd}\\b`);
 
                 if(token.name.toLowerCase().match(prefixMatch)) {
-                    vscode.window.showWarningMessage(WARNING_MSG);
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                     break
                 }
                 else if(token.name.toLowerCase().match(suffixMatch)){ 
-                    vscode.window.showWarningMessage(WARNING_MSG);
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                     break
                 }
             }
@@ -40,7 +42,7 @@ var smell = {
                     let suffixMatch = new RegExp(`[_A-Za-z0-9-]*${pwd}\\b`);
                     
                     if(pair[0].toLowerCase().match(suffixMatch) && (pair[1] == null || pair[1].length == 0)){
-                        vscode.window.showWarningMessage(WARNING_MSG);
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                         break
                     } 
                 }
@@ -52,7 +54,7 @@ var smell = {
                 for (const pwd of commonPasswords){
         
                     let re = new RegExp(`[_A-Za-z0-9-]*${pwd}\\b`);
-                    if(pair[0].toLowerCase().match(re) && (pair[1] == null || pair[1].length == 0)) vscode.window.showWarningMessage(WARNING_MSG);
+                    if(pair[0].toLowerCase().match(re) && (pair[1] == null || pair[1].length == 0)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                 }
             })
         }
@@ -70,7 +72,7 @@ var smell = {
         
                     let re = new RegExp(`[_A-Za-z0-9-]*${pwd}\\b`);
                     if(args[i].toLowerCase().match(re) && (defaults[i][0] == null || defaults[i][0].length == 0) && defaults[i][1] == true) 
-                        vscode.window.showWarningMessage(WARNING_MSG);
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                 }
             }  
         }
@@ -81,7 +83,7 @@ var smell = {
 
                     let re = new RegExp(`[_A-Za-z0-9-]*${pwd}\\b`)
                     if(token.keywords.length == 3 && keyword[0].match(re) && (keyword[1][0] == null || keyword[1][0].length == 0) && keyword[1][1] == true){
-                        vscode.window.showWarningMessage(WARNING_MSG);
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
                         break
                     }   
                 }
@@ -89,7 +91,8 @@ var smell = {
         }
     },
     
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");

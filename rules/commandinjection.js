@@ -3,30 +3,32 @@ const vscode = require('vscode');
 
 var smell = {
 
-    detect : (token) => {
+    detect : (fileName, token) => {
 
         if(token.hasOwnProperty("name")) var name= token.name;
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
         if(token.hasOwnProperty("args")) var args = token.args;
         if(token.hasOwnProperty("hasInputs")) var hasInputs= token.hasInputs;
+    
+        const MSG = 'possible presence of command injection'
         
-        const WARNING_MSG = 'possible presence of command injection at line ' + lineno
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? 'possible presence of command injection at line '+ token.returnLine : null
+        const WARNING_MSG = MSG+' at line '+ lineno;
+        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
 
         const shellFunctions = ['sys.argv', 'subprocess.Popen', 'os.system', 'os.popen','subprocess.run','popen2.Popen4',
                                 'argparse.ArgumentParser','getopt.getopt', 'os.execle','os.execl', 'popen2.Popen3'
                             ];
         
         if(tokenType == "variable" && token.hasOwnProperty("valueSrc")) {
-            if(shellFunctions.includes(token.valueSrc) || smell.isExtendedShellFunction(token.valueSrc)) vscode.window.showWarningMessage(WARNING_MSG);
+            if(shellFunctions.includes(token.valueSrc) || smell.isExtendedShellFunction(token.valueSrc)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
         }
-        else if(tokenType == "function_call" && (shellFunctions.includes(name) || smell.isExtendedShellFunction(name))) vscode.window.showWarningMessage(WARNING_MSG);
+        else if(tokenType == "function_call" && (shellFunctions.includes(name) || smell.isExtendedShellFunction(name))) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         else if (tokenType == "function_def" && token.hasOwnProperty('return')) {
             for(const funcReturn of token.return){
                 if(shellFunctions.includes(funcReturn) || smell.isExtendedShellFunction(funcReturn)) 
-                    vscode.window.showWarningMessage(WARNING_MSG_ON_RETURN)
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
             }
         }
     },
@@ -41,7 +43,8 @@ var smell = {
         return false;
     },
 
-    triggerAlarm: (fileName, WARNING_MSG) => {
+    triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(WARNING_MSG);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
