@@ -192,7 +192,6 @@ const generateReport = (fileName) => {
 }  
 
 
-
 exports.activate = activate;
 
 function deactivate() {

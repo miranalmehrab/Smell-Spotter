@@ -1,33 +1,29 @@
-# Python Security Smell Detection
+# Smell-Spotter
 
-### This is an experimental extension for detecting security smells in python code. The identified security issues are listed below.
+## This is an extension for detecting insecure coding practices in python coThese insecure coding practices can leave room for exploitation of software system and lead to security breach. To help the practioners, the following recurring insecure coding practices have been considered to be investogated - 
 
-### The smells are -
+### Insecure practices -
 
-1. **Exec Statement**
+**Use of assert Statement**
+**Bad File Permission**
+**Command Injections**
+**Constructing SQL upon Input**
+**Debug Set to True in Deployment**
+**Exec Statement**
+**Empty Password**
+**Hard-coded Secrets**
+**Hard-coded IP Address Binding**
+**Hard-coded tmp Directory**
+**Insecure Data Deserialization**
+**Insecure Dynamic Code Execution**
+**Ignore Except Block**
+**Insecure YAML operation**
+**No Certificate Validation**
+**No Integrity Check**
+**Use of HTTP without TLS**
+**Cross-site scripting**
 
-2. **Bad File Permission**
-
-3. **Hard-coded Secret**
-
-4. **Empty Password**
-
-5. **Hard-coded IP Address Binding**
-
-6. **Hard-coded tmp Directory**
-
-7. **Ignore Except Block**
-
-8. **Debug Set to True in Deployment**
-
-9. **Use of HTTP without TLS**
-
-10. **No Certificate Validation**
-
-11. **No Integrity Check**
-
-12. **Command Injections**
-
-13. **Constructing SQL upon Input**
-
-**Press `ctrl+shift+p` and run **Detect Smell** command.**
+### Following Detection Mode is supported - 
+**Quick Scan:** **Press `ctrl+shift+p` and run **quick scan** command.**
+**Custom Scan:** **Press `ctrl+shift+p` and run **custom scan** command.**
+**Complete Scan:** **Press `ctrl+shift+p` and run **complete scan** command.**
