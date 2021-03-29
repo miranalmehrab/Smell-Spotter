@@ -1,7 +1,7 @@
 {
-	"name": "pssd",
+	"name": "smellspotter",
 	"publisher": "MiranALMehrab",
-	"displayName": "python-security-smell-detection",
+	"displayName": "smell-spotter: security smell detection tool",
 	"description": "security smell detection in python code",
 	"version": "0.0.21",
 	"engines": {
@@ -34,8 +34,8 @@
 		],
 		"colors": [
 			{
-				"id": "pssd.warning",
-				"description": "Warning color for pssd.",
+				"id": "smellspotter.warning",
+				"description": "Warning color for smell spotter.",
 				"defaults": {
 					"dark": "errorForeground",
 					"light": "errorForeground",

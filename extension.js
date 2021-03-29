@@ -16,7 +16,7 @@ var createJsonDocument = require('./utilities/createJsonDocument');
 
 function activate(context) {
 	// vscode.window.showQuickPick.arguments(2);
-	// const color = new vscode.ThemeColor('pssd.warning');
+	// const color = new vscode.ThemeColor('smellspotter.warning');
 	
 	let quickScan = vscode.commands.registerCommand('extension.quickscan', function () {
 		
