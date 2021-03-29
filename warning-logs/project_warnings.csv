@@ -1,6 +1,4 @@
 /home/miran/Projects/Rotten-Project/config.py,possible hardcoded secret at line 1
 /home/miran/Projects/Rotten-Project/config.py,possible hardcoded secret at line 2
-/home/miran/Projects/Rotten-Project/connection_test.py,exception might have been suppressed at line 8
-/home/miran/Projects/Rotten-Project/connection_test.py,possible use of assert statement at line 4
-/home/miran/Projects/Rotten-Project/user_info.py,possible hardcoded secret at line 1
-/home/miran/Projects/Rotten-Project/user_info.py,possible hardcoded secret at line 2
+/home/miran/Projects/Rotten-Project/config.py,possible hardcoded secret at line 1
+/home/miran/Projects/Rotten-Project/config.py,possible hardcoded secret at line 2
