@@ -15,7 +15,7 @@ var smell = {
         const WARNING_MSG = MSG+' at line '+ lineno;
         const unwantedMethods = ['os.chmod','chmod'];
         
-        if(tokenType == "function_call" && unwantedMethods.includes(name.toLowerCase())) vscode.window.showWarningMessage(WARNING_MSG);
+        if(tokenType == "function_call" && unwantedMethods.includes(name.toLowerCase())) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         
         else if(tokenType == "function_call" && name.toLowerCase() == "subprocess.call" && token.args.length > 0) {
             for(const arg of token.args){
@@ -26,8 +26,12 @@ var smell = {
     },
     
     triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
+        let backslashSplittedFilePathLength = fileName.split("/").length
+        let filenameFromPath = fileName.split("/")[backslashSplittedFilePathLength - 1]
+        
         console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
-        vscode.window.showWarningMessage(WARNING_MSG);
+        vscode.window.showWarningMessage(MSG +" : "+ filenameFromPath+":"+lineno);
+        
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     }

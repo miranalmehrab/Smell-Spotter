@@ -17,6 +17,7 @@ var createJsonDocument = require('./utilities/createJsonDocument');
 function activate(context) {
 	// vscode.window.showQuickPick.arguments(2);
 	// const color = new vscode.ThemeColor('pssd.warning');
+	clearPreviousDetectionLog();
 
 	let quickScan = vscode.commands.registerCommand('extension.quickscan', function () {
 		
@@ -41,15 +42,14 @@ function activate(context) {
 
 	let completeScan = vscode.commands.registerCommand('extension.completescan', function () {
 		let workspaceFolder = vscode.workspace.workspaceFolders[0].uri.path;
-		clearPreviousDetectionLog();
-
+		
 		fs.readdir(workspaceFolder, (err, files) => { 
 			if(files){
 				files.forEach(file => {
 					if(getFileExtension(file) === 'py'){
 
 						let sourceCode = getFileContentsFromPath(path.join(workspaceFolder, file));
-						if (sourceCode != null) analyzeSourceFile(sourceCode, file);
+						if (sourceCode != null) analyzeSourceFile(sourceCode, path.join(workspaceFolder, file));
 						// storeDetectionInDB(fileName, fileHashValue);
 						generateReport(file);
 						console.log('complete scan normally finished!');
@@ -59,43 +59,48 @@ function activate(context) {
 		});
 	}); 
 
-	// let customScan = vscode.commands.registerCommand('extension.customscan', function () {
+	let customScan = vscode.commands.registerCommand('extension.customscan', function () {
 
-	// 	const userPathInput = vscode.window.showInputBox();
-	// 	userPathInput.then( userSpecifiedPath => {
+		const userPathInput = vscode.window.showInputBox();
+		userPathInput.then( userSpecifiedPath => {
 			
-	// 		if (checkIfFilePath(userSpecifiedPath)){
-	// 			if (getFileExtension(userSpecifiedPath) === 'py') {
+			if (checkIfFilePath(userSpecifiedPath)){
+				if (getFileExtension(userSpecifiedPath) === 'py') {
 					
-	// 				let pathSplits = userSpecifiedPath.split('/')
-	// 				let fileName = pathSplits[pathSplits.length - 1]
+					let pathSplits = userSpecifiedPath.split('/')
+					let fileName = pathSplits[pathSplits.length - 1]
 
-	// 				let sourceCode = getFileContentsFromPath(userSpecifiedPath);
-	// 				if (sourceCode != null) analyzeSourceFile(sourceCode, fileName);
-	// 				else vscode.window.showErrorMessage("Empty source code!");
-	// 			}
-	// 			else vscode.window.showErrorMessage("Please select Python source code!");
-	// 		}
-	// 		else{
-	// 			fs.readdir(userSpecifiedPath, (err, files) => { 
-	// 				if(files){
-						
-	// 					files.forEach(file => {
-	// 						if(getFileExtension(file) === 'py'){
-
-	// 							let sourceCode = getFileContentsFromPath(path.join(userSpecifiedPath, file));
-	// 							if (sourceCode != null) analyzeSourceFile(sourceCode, file);
-	// 							else vscode.window.showErrorMessage("Empty source code!");
-	// 						}
-	// 					});
-	// 				}
-	// 			});
-	// 		}
-	// 	});
-	// }); 
+					let sourceCode = getFileContentsFromPath(userSpecifiedPath);
+					if (sourceCode != null) {
+						analyzeSourceFile(sourceCode, userSpecifiedPath);
+						// storeDetectionInDB(fileName, fileHashValue);
+						generateReport(userSpecifiedPath);
+					} 
+					else vscode.window.showErrorMessage("Empty source code!");
+				}
+				else vscode.window.showErrorMessage("Please select Python source code!");
+			}
+			else{
+				fs.readdir(userSpecifiedPath, (err, files) => { 
+					if(files){
+						files.forEach(file => {
+							if(getFileExtension(file) === 'py'){
+		
+								let sourceCode = getFileContentsFromPath(path.join(userSpecifiedPath, file));
+								if (sourceCode != null) analyzeSourceFile(sourceCode, path.join(userSpecifiedPath, file));
+								// storeDetectionInDB(fileName, fileHashValue);
+								generateReport(file);
+								console.log('complete scan normally finished!');
+							}
+						});
+					} else vscode.window.showErrorMessage("Error while reading files!");
+				});
+			}
+		});
+	});
 
 	context.subscriptions.push(quickScan);
-	// context.subscriptions.push(customScan);
+	context.subscriptions.push(customScan);
 	context.subscriptions.push(completeScan);
 }
 
@@ -106,8 +111,8 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 	
 	store.load(fileHashValue, function(error, object) {
 		if(error){
-			console.log("Could not find json store data for that file!");
 			console.log(error);
+			console.log("Could not find json store data for that file!");
 			
 			const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
 			script.stdout.on('data', data => data ? startSmellInvestigation(data.toString(), fileName): console.log('No data from script!'));
@@ -122,10 +127,10 @@ const getFileContentsFromPath = (userSpecifiedPath) => {
 	return fs.readFileSync(userSpecifiedPath, {encoding:'utf8', flag:'r'});
 }
 
-// const checkIfFilePath = (value) => {
-// 	let pathSplits = value.split("/");
-// 	return pathSplits[pathSplits.length - 1].includes(".")? true: false;
-// }
+const checkIfFilePath = (value) => {
+	let pathSplits = value.split("/");
+	return pathSplits[pathSplits.length - 1].includes(".")? true: false;
+}
 
 
 const getFileExtension = (value) => {
@@ -151,7 +156,7 @@ const getImportedPackagesInSourceCode = (splittedTokens) => {
 const clearPreviousDetectionLog = () => {
 	// fs.writeFileSync(path.join(__dirname, 'project_warnings.csv'), "");
 
-	fs.unlink(path.join(__dirname, 'project_warnings.csv'), (err) => {
+	fs.unlink(path.join(__dirname, '/warning-logs/project_warnings.csv'), (err) => {
 		console.log(path.join(__dirname, 'project_warnings.csv') + " was deleted");
 		if (err) throw err;
 	});	
@@ -175,7 +180,7 @@ const storeDetectionInDB = (fileName , hash) => {
 const generateReport = (fileName) => {
 
 	try {
-		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
+		let data = fs.readFileSync(__dirname+'project_warnings.csv');
 		console.log({'project warnings ': data.toString()});
 		
 		// createPDFDocument.createPDFDocument("QuickScanResult.pdf", data, __dirname, fileName);
