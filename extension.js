@@ -53,18 +53,18 @@ function activate(context) {
 						if (sourceCode != null) {
 							analyzeSourceFile(sourceCode, path.join(workspaceFolder, file));
 							setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
-							setTimeout(generateReport, 4000, file);
-
+							
 							console.log('complete scan normally finished!');
 						}
 					}
 				});
 			} else vscode.window.showErrorMessage("Error while reading files!");
+			setTimeout(generateReport, 4000, undefined);
 		});
 	}); 
 
 	let customScan = vscode.commands.registerCommand('extension.customscan', function () {
-
+		clearPreviousDetectionLog();
 		const userPathInput = vscode.window.showInputBox();
 		userPathInput.then( userSpecifiedPath => {
 			
@@ -77,8 +77,8 @@ function activate(context) {
 					let sourceCode = getFileContentsFromPath(userSpecifiedPath);
 					if (sourceCode != null) {
 						analyzeSourceFile(sourceCode, userSpecifiedPath);
-						// storeDetectionInDB(fileName, fileHashValue);
-						generateReport(userSpecifiedPath);
+						setTimeout(storeDetectionInDB, 4000, fileName, userSpecifiedPath);
+						setTimeout(generateReport, 4000, userSpecifiedPath);
 					} 
 					else vscode.window.showErrorMessage("Empty source code!");
 				}
@@ -89,15 +89,21 @@ function activate(context) {
 					if(files){
 						files.forEach(file => {
 							if(getFileExtension(file) === 'py'){
-		
+
 								let sourceCode = getFileContentsFromPath(path.join(userSpecifiedPath, file));
-								if (sourceCode != null) analyzeSourceFile(sourceCode, path.join(userSpecifiedPath, file));
-								// storeDetectionInDB(fileName, fileHashValue);
-								generateReport(file);
-								console.log('complete scan normally finished!');
+								let fileHashValue = crypto.createHash('md5').update(sourceCode).digest("hex");
+
+								if (sourceCode != null) {
+									analyzeSourceFile(sourceCode, path.join(userSpecifiedPath, file));
+									setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
+									
+									console.log('complete scan normally finished!');
+								}
 							}
 						});
 					} else vscode.window.showErrorMessage("Error while reading files!");
+					setTimeout(generateReport, 4000, undefined);
+					console.log('complete scan normally finished!');
 				});
 			}
 		});
