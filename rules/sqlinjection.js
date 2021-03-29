@@ -54,10 +54,10 @@ var smell = {
         let backslashSplittedFilePathLength = fileName.split("/").length
         let filenameFromPath = fileName.split("/")[backslashSplittedFilePathLength - 1]
         
-        console.log("warning: "+MSG +"  location:"+ fileName+":"+lineno);
         vscode.window.showWarningMessage(MSG +" : "+ filenameFromPath+":"+lineno);
-        
+        console.log( "\u001b[1;31m"+"warning: "+MSG +"  location:"+ fileName+":"+lineno);
         fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
+        
         // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     }
 }

@@ -18,8 +18,7 @@ const deserialization = require('../rules/datadesrialization');
 var detection = {
 
     detect: (fileName, tokens, imports) => {
-        console.log("insecure coding practices in - "+fileName+"\n");
-        
+        console.log("\u001b[1;34minsecure coding practices in - "+fileName);
         tokens.pop();
         tokens.map( token => {
             if(token.length != 0){
