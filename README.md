@@ -4,26 +4,26 @@
 
 ### Insecure practices -
 
-**Use of assert Statement**
-**Bad File Permission**
-**Command Injections**
-**Constructing SQL upon Input**
-**Debug Set to True in Deployment**
-**Exec Statement**
-**Empty Password**
-**Hard-coded Secrets**
-**Hard-coded IP Address Binding**
-**Hard-coded tmp Directory**
-**Insecure Data Deserialization**
-**Insecure Dynamic Code Execution**
-**Ignore Except Block**
-**Insecure YAML operation**
-**No Certificate Validation**
-**No Integrity Check**
-**Use of HTTP without TLS**
-**Cross-site scripting**
+1. **Use of assert Statement**
+2. **Bad File Permission**
+3. **Command Injections**
+4. **Constructing SQL upon Input**
+5. **Debug Set to True in Deployment**
+6. **Exec Statement**
+7. **Empty Password**
+8. **Hard-coded Secrets**
+9. **Hard-coded IP Address Binding**
+10. **Hard-coded tmp Directory**
+11. **Insecure Data Deserialization**
+12. **Insecure Dynamic Code Execution**
+13. **Ignore Except Block**
+14. **Insecure YAML operation**
+15. **No Certificate Validation**
+16. **No Integrity Check**
+17. **Use of HTTP without TLS**
+18. **Cross-site scripting**
 
 ### Following Detection Mode is supported - 
-**Quick Scan:** **Press `ctrl+shift+p` and run **quick scan** command.**
-**Custom Scan:** **Press `ctrl+shift+p` and run **custom scan** command.**
-**Complete Scan:** **Press `ctrl+shift+p` and run **complete scan** command.**
+1. **Quick Scan:** **Press `ctrl+shift+p` and run **quick scan** command.**
+2. **Custom Scan:** **Press `ctrl+shift+p` and run **custom scan** command.**
+3. **Complete Scan:** **Press `ctrl+shift+p` and run **complete scan** command.**
