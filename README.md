@@ -51,7 +51,7 @@ Follow the steps to get a development env running
 pull the repository
 cd ~/*/repository
 npm install
-press f
+press F5 to start debugging extension
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
@@ -70,9 +70,8 @@ Give an example
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Yeoman](https://yeoman.io/) - The web scaffolding tool
+* [NPM](https://www.npmjs.com/) - Dependency Management
 
 ## Authors
 
