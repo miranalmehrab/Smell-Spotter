@@ -1,29 +1,83 @@
-# Smell-Spotter
+# Smell Spotter
+This is an `Visual Studio Code` extension for detecting insecure coding practices in python code. These insecure coding practices are also known as security smells. These smells can leave room for exploitation of software system ands lead to security breaches. To help the practioners, this tool has been developed to locate these smells in code.
 
-## This is an extension for detecting insecure coding practices in python coThese insecure coding practices can leave room for exploitation of software system and lead to security breach. To help the practioners, the following recurring insecure coding practices have been considered to be investogated - 
+## Investigated Smells
+```
+Bad File Permission
+Command Injections
+Cross-site scripting
+Constructing SQL upon Input
+Debug Set to True in Deployment
+Exec Statement
+Empty Password
+Hard-coded Secrets
+Hard-coded IP Address Binding
+Hard-coded tmp Directory
+Insecure Data Deserialization
+Insecure Dynamic Code Execution
+Ignore Except Block
+Insecure YAML operation
+No Certificate Validation
+No Integrity Check
+Use of HTTP without TLS
+Use of assert Statement
+```
+## Detection Modes 
+```
+Quick Scan: Press `ctrl+shift+p` and execute `quick scan` command
+Custom Scan: Press `ctrl+shift+p` and execute `custom scan` command
+Complete Scan: Press `ctrl+shift+p` and execute `complete scan` command
+```
 
-### Insecure practices -
+## Getting Started
 
-1. **Use of assert Statement**
-2. **Bad File Permission**
-3. **Command Injections**
-4. **Constructing SQL upon Input**
-5. **Debug Set to True in Deployment**
-6. **Exec Statement**
-7. **Empty Password**
-8. **Hard-coded Secrets**
-9. **Hard-coded IP Address Binding**
-10. **Hard-coded tmp Directory**
-11. **Insecure Data Deserialization**
-12. **Insecure Dynamic Code Execution**
-13. **Ignore Except Block**
-14. **Insecure YAML operation**
-15. **No Certificate Validation**
-16. **No Integrity Check**
-17. **Use of HTTP without TLS**
-18. **Cross-site scripting**
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Following Detection Mode is supported - 
-1. **Quick Scan:** **Press `ctrl+shift+p` and run **`quick scan`** command.**
-2. **Custom Scan:** **Press `ctrl+shift+p` and run **`custom scan`** command.**
-3. **Complete Scan:** **Press `ctrl+shift+p` and run **`complete scan`** command.**
+### Prerequisites
+
+The following things need to be installed for the software -
+
+```
+nodejs
+npm
+python 3.8
+```
+
+### Installing
+
+Follow the steps to get a development env running
+
+```
+Pull the repository
+cd ~/*/repository
+npm install
+```
+
+End with an example of getting some data out of the system or using it for a little demo
+
+## Running the tests
+
+Explain how to run the automated tests for this system
+
+### Break down into end to end tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+## Built With
+
+* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
+* [Maven](https://maven.apache.org/) - Dependency Management
+* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+
+## Authors
+
+* **Miran Al Mehrab** - *developer* - [Github](https://github.com/MiranAlMehrab) [twitter](https://twitter.com/miranmehrab) [LinkedIn](https://www.linkedin.com/in/miranalmehrab/)
+
+
+## License
+
+This project is licensed under the GPLv3 - see the [LICENSE.md](LICENSE.md) file for details
