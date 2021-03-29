@@ -24,9 +24,9 @@ Use of assert Statement
 ```
 ## Detection Modes 
 ```
-Quick Scan: Press `ctrl+shift+p` and execute `quick scan` command
-Custom Scan: Press `ctrl+shift+p` and execute `custom scan` command
-Complete Scan: Press `ctrl+shift+p` and execute `complete scan` command
+Quick Scan: press ctrl+shift+p and execute quick scan command
+Custom Scan: press ctrl+shift+p and execute custom scan command
+Complete Scan: press ctrl+shift+p and execute complete scan command
 ```
 
 ## Getting Started
@@ -48,9 +48,10 @@ python 3.8
 Follow the steps to get a development env running
 
 ```
-Pull the repository
+pull the repository
 cd ~/*/repository
 npm install
+press f
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
