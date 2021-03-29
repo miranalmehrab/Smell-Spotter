@@ -8,7 +8,6 @@ const { spawn } = require('child_process');
 
 var detection = require('./detection/detection');
 var createPDFDocument = require('./utilities/createPDFDocument');
-var createJsonDocument = require('./utilities/createJsonDocument');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -206,10 +205,8 @@ const generateReport = (fileName, reportFileName) => {
 		
 		console.log({'projectkwarnings ': porjectWarnings});
 		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname, fileName);
-		// createJsonDocument.createJsonDocument("QuickScanResult.txt", porjectWarnings, __dirname, fileName);
 		
-		console.log('generate report function executed');
-	}
+		}
 	catch (e) {
 		console.log("Error here in generate report");
 		console.log(e);
