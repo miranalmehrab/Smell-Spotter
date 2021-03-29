@@ -77,7 +77,7 @@ Give an example
 
 ## Authors
 
-* **Miran Al Mehrab** - *developer* - [Github](https://github.com/MiranAlMehrab) [LinkedIn](https://www.linkedin.com/in/miranalmehrab/) [Twitter](https://twitter.com/miranmehrab)
+* **Miran Al Mehrab** - *developer* - [GitHub](https://github.com/MiranAlMehrab) [LinkedIn](https://www.linkedin.com/in/miranalmehrab/) [Twitter](https://twitter.com/miranmehrab)
 
 
 ## License
