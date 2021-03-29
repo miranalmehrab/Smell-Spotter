@@ -51,10 +51,12 @@ Follow the steps to get a development env running
 pull the repository
 cd ~/*/repository
 npm install
-press F5 to start debugging extension
 ```
+#### Debugging
+To run the extension for debug press `F5`
+![Extension Running in `dev` environment](https://github.com/MiranAlMehrab/Python-Security-Smell-Detection/blob/master/extension-running.jpeg?raw=true)
 
-End with an example of getting some data out of the system or using it for a little demo
+Now you can test different scan modes
 
 ## Running the tests
 
@@ -75,7 +77,7 @@ Give an example
 
 ## Authors
 
-* **Miran Al Mehrab** - *developer* - [Github](https://github.com/MiranAlMehrab) [twitter](https://twitter.com/miranmehrab) [LinkedIn](https://www.linkedin.com/in/miranalmehrab/)
+* **Miran Al Mehrab** - *developer* - [Github](https://github.com/MiranAlMehrab) [LinkedIn](https://www.linkedin.com/in/miranalmehrab/) [Twitter](https://twitter.com/miranmehrab)
 
 
 ## License
