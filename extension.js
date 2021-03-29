@@ -30,7 +30,7 @@ function activate(context) {
 			if (sourceCode != null){		
 				analyzeSourceFile(sourceCode, fileName);
 				setTimeout(storeDetectionInDB, 4000, fileName, fileHashValue);
-				setTimeout(generateReport, 4000, fileName);
+				setTimeout(generateReport, 4000, fileName, "QuickScan.pdf");
 				
 				console.log('quick scan normally finished!');
 			} else vscode.window.showErrorMessage("Empty source code!");
@@ -58,8 +58,9 @@ function activate(context) {
 						}
 					}
 				});
-			} else vscode.window.showErrorMessage("Error while reading files!");
-			setTimeout(generateReport, 4000, undefined);
+			} 
+			else vscode.window.showErrorMessage("Error while reading files!");
+			setTimeout(generateReport, 4000, undefined, "CompleteScan.pdf");
 		});
 	}); 
 
@@ -78,7 +79,7 @@ function activate(context) {
 					if (sourceCode != null) {
 						analyzeSourceFile(sourceCode, userSpecifiedPath);
 						setTimeout(storeDetectionInDB, 4000, fileName, userSpecifiedPath);
-						setTimeout(generateReport, 4000, userSpecifiedPath);
+						setTimeout(generateReport, 4000, userSpecifiedPath, "CustomScan.pdf");
 					} 
 					else vscode.window.showErrorMessage("Empty source code!");
 				}
@@ -102,7 +103,7 @@ function activate(context) {
 							}
 						});
 					} else vscode.window.showErrorMessage("Error while reading files!");
-					setTimeout(generateReport, 4000, undefined);
+					setTimeout(generateReport, 4000, undefined, "CustomScan.pdf");
 					console.log('complete scan normally finished!');
 				});
 			}
@@ -196,7 +197,7 @@ const storeDetectionInDB = (fileName , hash) => {
 	store.add(smellLog, (err) => err? console.log(err): "successfully added to store");
 }
 
-const generateReport = (fileName) => {
+const generateReport = (fileName, reportFileName) => {
 
 	try {
 		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
@@ -204,7 +205,7 @@ const generateReport = (fileName) => {
 		porjectWarnings.pop(); //null array item removal due to new line split
 		
 		console.log({'projectkwarnings ': porjectWarnings});
-		createPDFDocument.createPDFDocument("QuickScanResult.pdf", porjectWarnings, __dirname, fileName);
+		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname, fileName);
 		// createJsonDocument.createJsonDocument("QuickScanResult.txt", porjectWarnings, __dirname, fileName);
 		
 		console.log('generate report function executed');

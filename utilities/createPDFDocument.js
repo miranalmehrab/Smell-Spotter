@@ -4,10 +4,10 @@ const PDFDocument = require('pdfkit');
 
 var createPDFDocument = {
     createPDFDocument: (resultDocumentName, detectionResults, pathName, fileName) => {
-        createPDFDocument.removePreviousPDFDocument(pathName+'/'+resultDocumentName);
+        createPDFDocument.removePreviousPDFDocument(pathName+'/results/'+resultDocumentName);
         
         let doument = new PDFDocument;
-        doument.pipe(fs.createWriteStream(pathName+'/'+resultDocumentName));
+        doument.pipe(fs.createWriteStream(pathName+'/results/'+resultDocumentName));
         doument.text(detectionResults.join("\n"));
         doument.end();
     },
