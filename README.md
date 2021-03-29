@@ -24,6 +24,6 @@
 18. **Cross-site scripting**
 
 ### Following Detection Mode is supported - 
-1. **Quick Scan:** **Press `ctrl+shift+p` and run **quick scan** command.**
-2. **Custom Scan:** **Press `ctrl+shift+p` and run **custom scan** command.**
-3. **Complete Scan:** **Press `ctrl+shift+p` and run **complete scan** command.**
+1. **Quick Scan:** **Press `ctrl+shift+p` and run **`quick scan`** command.**
+2. **Custom Scan:** **Press `ctrl+shift+p` and run **`custom scan`** command.**
+3. **Complete Scan:** **Press `ctrl+shift+p` and run **`complete scan`** command.**
