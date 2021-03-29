@@ -17,10 +17,10 @@ var createJsonDocument = require('./utilities/createJsonDocument');
 function activate(context) {
 	// vscode.window.showQuickPick.arguments(2);
 	// const color = new vscode.ThemeColor('pssd.warning');
-	clearPreviousDetectionLog();
-
+	
 	let quickScan = vscode.commands.registerCommand('extension.quickscan', function () {
 		
+		clearPreviousDetectionLog();
 		let fileName = vscode.window.activeTextEditor.document.fileName;  
 		let codeLang = vscode.window.activeTextEditor.document.languageId;
 		let sourceCode = vscode.window.activeTextEditor.document.getText();
@@ -29,10 +29,8 @@ function activate(context) {
 		if (codeLang === 'python') {
 			if (sourceCode != null){		
 				analyzeSourceFile(sourceCode, fileName);
-				// storeDetectionInDB(fileName, fileHashValue);
-
-				generateReport(fileName);
-				
+				setTimeout(storeDetectionInDB, 4000, fileName, fileHashValue);
+				setTimeout(generateReport, 4000, fileName);
 				
 				console.log('quick scan normally finished!');
 			} else vscode.window.showErrorMessage("Empty source code!");
@@ -41,6 +39,7 @@ function activate(context) {
 
 
 	let completeScan = vscode.commands.registerCommand('extension.completescan', function () {
+		clearPreviousDetectionLog();
 		let workspaceFolder = vscode.workspace.workspaceFolders[0].uri.path;
 		
 		fs.readdir(workspaceFolder, (err, files) => { 
@@ -49,10 +48,15 @@ function activate(context) {
 					if(getFileExtension(file) === 'py'){
 
 						let sourceCode = getFileContentsFromPath(path.join(workspaceFolder, file));
-						if (sourceCode != null) analyzeSourceFile(sourceCode, path.join(workspaceFolder, file));
-						// storeDetectionInDB(fileName, fileHashValue);
-						generateReport(file);
-						console.log('complete scan normally finished!');
+						let fileHashValue = crypto.createHash('md5').update(sourceCode).digest("hex");
+
+						if (sourceCode != null) {
+							analyzeSourceFile(sourceCode, path.join(workspaceFolder, file));
+							setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
+							setTimeout(generateReport, 4000, file);
+
+							console.log('complete scan normally finished!');
+						}
 					}
 				});
 			} else vscode.window.showErrorMessage("Error while reading files!");
@@ -119,7 +123,10 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 			script.on('close', (exitCode) => exitCode ? console.log(`main script exit code ${exitCode}`) : 'main script exit code not found');
 			script.on('error', (err) => console.log(err));
 		}
-		else showWarningsNotifications(object.warnings);
+		else {
+			fs.appendFileSync(__dirname+"/warning-logs/project_warnings.csv", object.warnings);
+			showWarningsNotifications(object.warnings);
+		}
 	});		
 }
 
@@ -154,17 +161,12 @@ const getImportedPackagesInSourceCode = (splittedTokens) => {
 }
 
 const clearPreviousDetectionLog = () => {
-	// fs.writeFileSync(path.join(__dirname, 'project_warnings.csv'), "");
-
-	fs.unlink(path.join(__dirname, '/warning-logs/project_warnings.csv'), (err) => {
-		console.log(path.join(__dirname, 'project_warnings.csv') + " was deleted");
-		if (err) throw err;
-	});	
+	fs.writeFileSync(path.join(__dirname, '/warning-logs/project_warnings.csv'), "");
 }
 
 const startSmellInvestigation = (tokens, fileName) => {
 	let splittedTokens = tokens.split('\n');
-	console.log({'splitted tokens': splittedTokens});
+	// console.log({'splitted tokens': splittedTokens});
 	splittedTokens.pop(); //removing a blank item from array
 	
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
@@ -172,23 +174,39 @@ const startSmellInvestigation = (tokens, fileName) => {
 }
 
 const storeDetectionInDB = (fileName , hash) => {
-	let warningForSingleFile = fs.readFileSync(__dirname+'/warning-logs/single_file_warnings.txt', {encoding:'utf8', flag:'r'});
-	let smellLog = {id: hash, name: fileName, warnings: warningForSingleFile};
+	let warningObject = "";
+	let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
+	
+	let porjectWarnings = data.toString().split("\n");
+	porjectWarnings.pop(); //null array item removal due to new line split
+	
+	porjectWarnings.forEach(warning => {
+		if(warning.search(fileName) != -1){
+			warningObject = warningObject+warning+"\n";
+		}
+	});
+
+	let smellLog = {id: hash, name: fileName, warnings: warningObject};
 	store.add(smellLog, (err) => err? console.log(err): "successfully added to store");
 }
 
 const generateReport = (fileName) => {
 
 	try {
-		let data = fs.readFileSync(__dirname+'project_warnings.csv');
-		console.log({'project warnings ': data.toString()});
+		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
+		let porjectWarnings = data.toString().split("\n");
+		porjectWarnings.pop(); //null array item removal due to new line split
 		
-		// createPDFDocument.createPDFDocument("QuickScanResult.pdf", data, __dirname, fileName);
-		// createJsonDocument.createJsonDocument("QuickScanResult.txt", data, __dirname, fileName);
+		console.log({'projectkwarnings ': porjectWarnings});
+		createPDFDocument.createPDFDocument("QuickScanResult.pdf", porjectWarnings, __dirname, fileName);
+		// createJsonDocument.createJsonDocument("QuickScanResult.txt", porjectWarnings, __dirname, fileName);
 		
 		console.log('generate report function executed');
 	}
-	catch (e) {console.log(e);}
+	catch (e) {
+		console.log("Error here in generate report");
+		console.log(e);
+	}
 }  
 
 

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const xss = require('../rules/xss');
 const assert = require('../rules/assert')
 const cipher = require('../rules/cipher');
@@ -19,6 +20,8 @@ var detection = {
 
     detect: (fileName, tokens, imports) => {
         console.log("\u001b[1;34minsecure coding practices in - "+fileName);
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', "filename : "+fileName+"\n");
+
         tokens.pop();
         tokens.map( token => {
             if(token.length != 0){
@@ -53,6 +56,8 @@ var detection = {
                 }
             }
         });
+    
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', "\n");
     }
 }
 

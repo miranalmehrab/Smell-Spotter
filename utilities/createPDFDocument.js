@@ -8,7 +8,7 @@ var createPDFDocument = {
         
         let doument = new PDFDocument;
         doument.pipe(fs.createWriteStream(pathName+'/'+resultDocumentName));
-        doument.text(fileName+"\n"+detectionResults);
+        doument.text(detectionResults.join("\n"));
         doument.end();
     },
 
