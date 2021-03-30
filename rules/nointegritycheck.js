@@ -24,7 +24,7 @@ var smell = {
                     smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             } 
         }
-        else if(token.type == "function_def" && token.hasOwnProperty("return")){
+        else if(token.type == "function_def" && token.hasOwnProperty("return") && token.return != null){
             for(const funcReturn of token.return){
                 if(libs.includes(funcReturn) && token.returnArgs.length > 0){
                     if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)

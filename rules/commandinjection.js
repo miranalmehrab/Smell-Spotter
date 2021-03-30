@@ -8,9 +8,7 @@ var smell = {
         if(token.hasOwnProperty("name")) var name= token.name;
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
-        if(token.hasOwnProperty("args")) var args = token.args;
-        if(token.hasOwnProperty("hasInputs")) var hasInputs= token.hasInputs;
-    
+        
         const MSG = 'possible presence of command injection'
         
         const WARNING_MSG = MSG+' at line '+ lineno;
@@ -25,7 +23,7 @@ var smell = {
             // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
         }
         else if(tokenType == "function_call" && (shellFunctions.includes(name) || smell.isExtendedShellFunction(name))) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-        else if (tokenType == "function_def" && token.hasOwnProperty('return')) {
+        else if (tokenType == "function_def" && token.hasOwnProperty('return') && token.return != null) {
             for(const funcReturn of token.return){
                 if(shellFunctions.includes(funcReturn) || smell.isExtendedShellFunction(funcReturn)) 
                 smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);

@@ -1,5 +1,4 @@
-import ast
-import sys   
+import ast   
 import json
 import time
 
@@ -129,14 +128,12 @@ class Analyzer(ast.NodeVisitor):
                 elif isinstance(target, ast.Name) and isinstance(node.value, ast.BinOp):
                     variable["name"] = target.id
                     usedVars = self.get_variables_used_in_declaration(node.value)
-
+                    
                     returns = self.build_value_from_used_variables(usedVars, variable['line'])
                     if returns[0] is True: variable["value"] = returns[1]
                     else: 
                         variable['value'] = None
-                        variable['values'] = usedVars
-                        variable['valueSrc'] = 'BinOp'
-                        # variable['remove'] = True
+                        variable['remove'] = True
                     
                 elif isinstance(target, ast.Name) and isinstance(node.value, ast.List):
                     variable["name"] = target.id
@@ -180,17 +177,11 @@ class Analyzer(ast.NodeVisitor):
                             variable["values"].append(element.value)
                     
 
-                elif (isinstance(target, ast.Name) or isinstance(target, ast.Attribute) or isinstance(target, ast.Subscript)) and isinstance(node.value, ast.Call):
-                    
+                elif (isinstance(target, ast.Name) or isinstance(target, ast.Attribute)) and isinstance(node.value, ast.Call):
                     if isinstance(target, ast.Name): variable["name"] = target.id
                     elif isinstance(target, ast.Attribute): 
                         variable["name"] = self.get_name_from_attribute_node(target)
                         if target.attr: variable["name"] = variable["name"]+ '.' +target.attr
-                    
-                    elif isinstance(target, ast.Subscript):
-                        returns = self.separate_variables(target, [])
-                        variable["name"] = returns[0] if len(returns) > 0 else None
-
 
                     function_name = self.get_function_name(node.value)
                     variable["value"] = None #self.get_function_return_value(function_name) 
@@ -272,14 +263,11 @@ class Analyzer(ast.NodeVisitor):
 
                             else:
                                 if value is not None: variable["args"].append(value)
-                                else:  variable["args"].append(name)
+                                else: variable["args"].append(name)
 
                         else: variable["args"] = (self.separate_variables(arg, variable["args"]))
 
-
-
                     for keyword in node.value.keywords:
-                        
                         # variable['funcKeywords'] = []
                         karg = keyword.arg
                         kvalue = None
@@ -302,20 +290,7 @@ class Analyzer(ast.NodeVisitor):
                             variable["funcKeywords"].append([karg, kvalue])
                             # print(variable["funcKeywords"])
 
-                    try:
-                        # print(ast.dump(node.value))
-                        # print()
-
-                        keywords_from_all_functions = self.get_function_keywords(node.value, [])
-
-                        for keyword in keywords_from_all_functions:
-                            if keyword not in variable['funcKeywords']:
-                                variable['funcKeywords'].append(keyword)
-                    except Exception as error:
-                        pass
-                        # print(error)
-                        # print(ast.dump(node.value))
-
+                
                 elif isinstance(target, ast.Attribute) and isinstance(node.value, ast.Constant):    
                     name = self.get_name_from_attribute_node(target)
                     returns = self.get_value_src_from_variable_name(name)
@@ -326,9 +301,8 @@ class Analyzer(ast.NodeVisitor):
                     
                     variable['value'] = node.value.value
 
-                self.statements.append(variable)
-                # if variable['name'] is None and variable['value'] is None and variable['valueSrc'] == 'initialization': pass
-                # elif variable.__contains__('remove') is False: self.statements.append(variable)
+                if variable['name'] is None and variable['value'] is None and variable['valueSrc'] == 'initialization': pass
+                elif variable.__contains__('remove') is False: self.statements.append(variable)
  
         except Exception as error: pass
         self.generic_visit(node)
@@ -394,11 +368,7 @@ class Analyzer(ast.NodeVisitor):
                             statement['pairs'].append([right_var, value_of_left_var[1]])
 
 
-                elif(
-                    isinstance(node.test.left, ast.Name) 
-                    and isinstance(node.test.comparators[0], ast.Constant) 
-                    and (isinstance(node.test.ops[0], ast.IsNot) is False and isinstance(node.test.ops[0], ast.NotEq) is False)  
-                ):    
+                elif isinstance(node.test.left, ast.Name) and isinstance(node.test.comparators[0], ast.Constant):
                     statement["pairs"].append([node.test.left.id, node.test.comparators[0].value])
 
                 elif isinstance(node.test.left, ast.Constant) and isinstance(node.test.comparators[0], ast.Name):
@@ -417,7 +387,6 @@ class Analyzer(ast.NodeVisitor):
         try:
             statement = {}
             statement["type"] = "exception_handle"
-            # print(ast.dump(node))
             should_include_in_statements = False
 
             if isinstance(node, ast.Try):
@@ -485,8 +454,8 @@ class Analyzer(ast.NodeVisitor):
     
                 # separating args in function call
                 for arg in node.value.args:
+                    expression["args"] = self.separate_variables(arg, expression["args"])
                     if isinstance(arg, ast.Call): self.extract_function_call_from_argument_passing(arg)
-                    else: expression["args"] = self.separate_variables(arg, expression["args"])
                     
                 # print(expression['args'])
                 hasInputs = self.search_input_in_declaration(expression['args'], expression["line"])
@@ -508,7 +477,7 @@ class Analyzer(ast.NodeVisitor):
 
         except Exception as error: pass
         self.generic_visit(node)
-
+    
 
     def extract_function_call_from_argument_passing(self, node):
         
@@ -553,7 +522,6 @@ class Analyzer(ast.NodeVisitor):
                 self.statements.append(expression)
 
         except Exception as error: pass
-
 
     ######################### Assert Here #########################
 
@@ -612,7 +580,7 @@ class Analyzer(ast.NodeVisitor):
             self.statements.append(assertStatement)
 
         except Exception as error: pass
-        self.generic_visit(node)
+        self.generic_visit(node) 
 
             
     ######################### Utility Function Here #########################
@@ -650,10 +618,10 @@ class Analyzer(ast.NodeVisitor):
 
                 varSlice = None
                 itemList = self.separate_variables(node.value, itemList)
+                # print(ast.dump(node))
 
                 if isinstance(node.slice, ast.Index): 
                     varSlice = self.separate_variables(node.slice.value, [])
-                    # print(varSlice)
                     varSlice = varSlice[0] if len(varSlice) > 0 else None
 
                 elif isinstance(node.slice, ast.ExtSlice):
@@ -679,7 +647,8 @@ class Analyzer(ast.NodeVisitor):
                     if isinstance(element, ast.Constant):
                         variable["values"].append(element.value)
                 
-                itemList.append(variable['values'])
+                for item in variable['values']:
+                    itemList.append(item)
                 self.statements.append(variable)
 
             elif isinstance(node, ast.Dict):
@@ -700,13 +669,11 @@ class Analyzer(ast.NodeVisitor):
 
                 itemList.append(variable['pairs'])
                 self.statements.append(variable)
-            
-            elif isinstance(node, ast.Str):
-                itemList.append(node.s)
 
             return itemList
 
         except Exception as error: pass
+
 
 
     def refine_tokens(self):
@@ -733,7 +700,7 @@ class Analyzer(ast.NodeVisitor):
                         self.statements.append(variable)
 
                     self.statements.remove(statement)
-                    print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
+                    # print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
                     # time.sleep(2)
 
                 elif statement["type"] == "variable" and statement.__contains__("names") and statement.__contains__("valueSrc") and statement.__contains__('args'):
@@ -751,7 +718,7 @@ class Analyzer(ast.NodeVisitor):
                         self.statements.append(variable)
 
                     self.statements.remove(statement)
-                    print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
+                    # print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
                     # time.sleep(2)
 
                 elif statement['type'] == 'tuple' and statement.__contains__("names") and statement.__contains__("values"):
@@ -770,11 +737,10 @@ class Analyzer(ast.NodeVisitor):
 
                 elif statement["type"] == "function_def" and statement.__contains__("return") is False: 
                     self.statements.remove(statement)
-                    print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
+                    # print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
                     # time.sleep(2)
                     
             except Exception as error: pass
-
 
     def make_tokens_byte_free(self):
         for statement in self.statements:
@@ -789,7 +755,8 @@ class Analyzer(ast.NodeVisitor):
                                     del item[sub_item]
                                 except: 
                                     time.sleep(1)
-                                    print('bytes can not be deleted!')
+                                    # print('bytes can not be deleted!')
+
 
     def value_from_variable_name(self,name):
         for statement in reversed(self.statements):
@@ -848,17 +815,13 @@ class Analyzer(ast.NodeVisitor):
             if isinstance(node.func, ast.Name): usedVars.append(node.func.id)
             elif isinstance(node.func, ast.Attribute): usedVars.append(self.get_function_name(node.func))
         
-        elif isinstance(node, ast.Tuple):
-            for item in node.elts:
-                self.get_operands_from_bin_operation(item, usedVars)
-
-        elif isinstance(node, ast.Attribute):
-            usedVars.append(self.get_name_from_attribute_node(node))
-
         elif isinstance(node,ast.BinOp): 
             usedVars = self.get_operands_from_bin_operation(node.left,usedVars)  
             usedVars = self.get_operands_from_bin_operation(node.right,usedVars)
 
+        elif isinstance(node, ast.Tuple):
+            for item in node.elts:
+                self.get_operands_from_bin_operation(item, usedVars)
         return usedVars     
         
 
@@ -870,42 +833,6 @@ class Analyzer(ast.NodeVisitor):
         return usedVariables
 
 
-
-    def get_function_keywords(self, node, keywords):
-
-        # print(ast.dump(node))
-        # print()
-        
-        if isinstance(node, ast.Call):
-            if isinstance(node.func, ast.Call):
-                # print('recursion')
-                self.get_function_keywords(node.func.value, keywords)
-            
-            elif isinstance(node.func, ast.Attribute):
-                # print('recursion')
-                self.get_function_keywords(node.func.value, keywords)
-            
-            
-            for keyword in node.keywords:
-                karg = keyword.arg
-                kvalue = None
-                should_take = True
-                
-                if isinstance(keyword.value, ast.Constant): kvalue = keyword.value.value
-                elif isinstance(keyword.value, ast.Name): 
-                    kvalue = keyword.value.id
-                    returns = self.value_from_variable_name(kvalue) 
-                    
-                    if returns[0] is True: kvalue = returns[1]
-                    else: should_take = False
-
-                if karg is not None and should_take:
-                    keywords.append([karg, kvalue])
-
-        return keywords
-
-
-       
     def all_has_value(self, usedVariables, line_number):
         no_of_founds = 0
 
@@ -991,11 +918,6 @@ class Analyzer(ast.NodeVisitor):
             
             elif(fieldname == "func" and isinstance(value, ast.Attribute)):    
                 function_name = self.get_name_from_attribute_node(value)
-
-                for statement in self.statements:
-                    if statement['type'] == 'function_obj' and statement['objName'] == function_name:
-                        function_name = statement['function_name']
-                        break
 
                 if function_name != None and value.attr != None : return str(function_name) +'.'+ str(value.attr) 
                 elif function_name != None and value.attr == None : return str(function_name)

@@ -5,7 +5,6 @@ var smell = {
     detect: (fileName, token) => {
         if (token.hasOwnProperty("line")) var lineno = token.line;
         if (token.hasOwnProperty("type")) var tokenType = token.type;
-        if (token.hasOwnProperty("name")) var name = token.name;
         
         const MSG = 'TLS verification might have been skipped'
         const WARNING_MSG = MSG+' at line '+ lineno;
@@ -28,7 +27,7 @@ var smell = {
                 }
             }
         }
-        else if(tokenType == 'function_def' && token.hasOwnProperty('return') && token.hasOwnProperty('returnKeywords')){
+        else if(tokenType == 'function_def' && token.hasOwnProperty('return') && token.return != null && token.hasOwnProperty('returnKeywords')){
             for(const funcReturn of token.return){
                 if (httpLibs.includes(funcReturn) && token.returnKeywords.length > 0){
                     for(const keyword of token.returnKeywords){

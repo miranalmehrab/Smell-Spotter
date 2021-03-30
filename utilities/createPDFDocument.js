@@ -3,7 +3,7 @@ const PDFDocument = require('pdfkit');
 
 
 var createPDFDocument = {
-    createPDFDocument: (resultDocumentName, detectionResults, pathName, fileName) => {
+    createPDFDocument: (resultDocumentName, detectionResults, pathName) => {
         createPDFDocument.removePreviousPDFDocument(pathName+'/results/'+resultDocumentName);
         
         let doument = new PDFDocument;
@@ -15,7 +15,7 @@ var createPDFDocument = {
     removePreviousPDFDocument: (fullPath) => {
         fs.unlink(fullPath, (err) => {
             if (err) throw err;
-            console.log(fullPath+' was deleted');
+            // console.log(fullPath+' was deleted');
         });
     }
 }

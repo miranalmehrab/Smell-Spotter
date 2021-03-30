@@ -10,12 +10,9 @@ var smell = {
         if(token.hasOwnProperty("name")) var name = token.name;
         if(token.hasOwnProperty("value")) var value = token.value;
 
-        const MSG = 'possible presence of debug set true'
-        
+        const MSG = 'possible presence of debug set true'        
         const WARNING_MSG = MSG+' at line '+ lineno;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
-        const restrictedNames = ['debug','debug_propagate_exceptions','propagate_exceptions','PROPAGATE_EXCEPTIONS'];
-
+        const restrictedNames = ['debug','debug_propagate_exceptions','propagate_exceptions'];
 
         if(tokenType == "variable" && (restrictedNames.includes(name.toLowerCase()) || smell.hasDebugInName(name.toLowerCase())) && value == true){
             smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);

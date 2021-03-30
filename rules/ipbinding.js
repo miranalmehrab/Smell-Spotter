@@ -11,7 +11,6 @@ var smell = {
         
         const MSG = 'possible harcoded ip address binding'
         const WARNING_MSG = MSG+' at line '+ lineno;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
         
         const bindingMethods = ['socket.socket.bind', 'socket.socket.connect'];
          

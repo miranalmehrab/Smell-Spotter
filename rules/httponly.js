@@ -49,7 +49,7 @@ var smell = {
                 smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             }
         }
-        else if(token.type == 'function_def' && token.hasOwnProperty('return') && token.hasOwnProperty('returnArgs')){
+        else if(token.type == 'function_def' && token.hasOwnProperty('return') && token.return != null && token.hasOwnProperty('returnArgs')){
             
             for(const funcReturn of token.return){
                 if(httpLibs.includes(funcReturn) && token.returnArgs.length > 0 && smell.isValidHTTPURL(token.returnArgs[0])){
@@ -69,12 +69,12 @@ var smell = {
             const urlPattern = 'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
             let urlRegex = new RegExp(urlPattern)
 
-            console.log(urlRegex.test(hostURL))
+            // console.log(urlRegex.test(hostURL))
 
             if(urlRegex.test(hostURL) == false) return false
             
             const hostURLObj = url.parse(hostURL)
-            console.log(hostURLObj.protocol);
+            // console.log(hostURLObj.protocol);
             if(hostURLObj.protocol == 'http:') return true
             else return false
 

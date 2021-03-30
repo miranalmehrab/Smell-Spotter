@@ -56,8 +56,8 @@ var detection = {
                 }
             }
         });
-    
-        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', "\n");
+
+        console.log("");
     }
 }
 

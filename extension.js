@@ -31,7 +31,6 @@ function activate(context) {
 				setTimeout(storeDetectionInDB, 4000, fileName, fileHashValue);
 				setTimeout(generateReport, 4000, fileName, "QuickScan.pdf");
 				
-				console.log('quick scan normally finished!');
 			} else vscode.window.showErrorMessage("Empty source code!");
 		} else vscode.window.showErrorMessage("Please select Python source code!");
 	});
@@ -52,8 +51,6 @@ function activate(context) {
 						if (sourceCode != null) {
 							analyzeSourceFile(sourceCode, path.join(workspaceFolder, file));
 							setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
-							
-							console.log('complete scan normally finished!');
 						}
 					}
 				});
@@ -96,14 +93,11 @@ function activate(context) {
 								if (sourceCode != null) {
 									analyzeSourceFile(sourceCode, path.join(userSpecifiedPath, file));
 									setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
-									
-									console.log('complete scan normally finished!');
 								}
 							}
 						});
 					} else vscode.window.showErrorMessage("Error while reading files!");
 					setTimeout(generateReport, 4000, undefined, "CustomScan.pdf");
-					console.log('complete scan normally finished!');
 				});
 			}
 		});
@@ -121,9 +115,6 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 	
 	store.load(fileHashValue, function(error, object) {
 		if(error){
-			console.log(error);
-			console.log("Could not find json store data for that file!");
-			
 			const script = spawn('python3.8', [__dirname + '/py/main.py', sourceCode]);
 			script.stdout.on('data', data => data ? startSmellInvestigation(data.toString(), fileName): console.log('No data from script!'));
 			script.on('close', (exitCode) => exitCode ? console.log(`main script exit code ${exitCode}`) : 'main script exit code not found');
@@ -155,13 +146,13 @@ const showWarningsNotifications = (warnings) => warnings.split("\n").forEach(war
 
 const getImportedPackagesInSourceCode = (splittedTokens) => {
 	let importedPackages = [];
-	splittedTokens.map((token) => {
+	splittedTokens.map(token => {
 		
 		try {
 			let loadedToken = JSON.parse(token)
 			if(loadedToken.type == "import") importedPackages.push(loadedToken.og)
 		}
-		catch(error) { vscode.window.showErrorMessage(error.toString())}
+		catch(error) {}
 	})
 	return importedPackages;
 }
@@ -171,9 +162,8 @@ const clearPreviousDetectionLog = () => {
 }
 
 const startSmellInvestigation = (tokens, fileName) => {
-	let splittedTokens = tokens.split('\n');
+	let splittedTokens = tokens.split("\n");
 	// console.log({'splitted tokens': splittedTokens});
-	splittedTokens.pop(); //removing a blank item from array
 	
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
 	detection.detect(fileName, splittedTokens, importedPackages);
@@ -203,8 +193,8 @@ const generateReport = (fileName, reportFileName) => {
 		let porjectWarnings = data.toString().split("\n");
 		porjectWarnings.pop(); //null array item removal due to new line split
 		
-		console.log({'projectkwarnings ': porjectWarnings});
-		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname, fileName);
+		// console.log({'projectkwarnings ': porjectWarnings});
+		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname);
 		
 		}
 	catch (e) {

@@ -11,8 +11,6 @@ var smell = {
 
         const MSG = 'possible hardcoded temporary directory'
         const WARNING_MSG = MSG+' at line '+ lineno;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
-        
         const unwantedDirNames = ['folder', 'directory', 'dir', 'path', 'root', 'tmp', 'temp', 'temporary', 'site', 'log', 'save'];
 
         if(tokenType == "variable" && name != null && value != null){

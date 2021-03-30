@@ -5,12 +5,15 @@ var smell = {
     detect : (fileName, token) => {
         let lineno = token.line;
         const MSG = 'possible hardcoded secret'
-        
         const WARNING_MSG = MSG+' at line '+ lineno;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
         
-        const commonKeywords = [    'user', 'usr', 'guest', 'admin', 'root', 'owner', 'uid', 'uname', 'password','pwd',
-                                    '_key', 'tls','ssl','ssh', 'crypt', 'certificate', 'token', 'id', 'default'     ]
+        const commonKeywords = [    
+                            'user_name', 'usr', 'userid', 'usrid', 'username','uname', 'usrname', 'admin_name', 'guest', 'admin', 'root_name', 'root_id', 'owner_name','owner_id','super_user', 'sup_usr',
+                            'userpassword', 'usr_pass', 'usr_pwd', 'user_pass', 'password', 'usr_password', 'admin_pwd', 'pwd', 'admin_pass', 'guest_pass', 'default_pwd', 'default_pass',
+                            'guest_pwd', 'admin_password', 'guest_password', 'root_password', 'root_pwd', 'root_pass', 'owner_pass', 'owner_pwd', 'owner_password', 'default_password',
+                            'user_key', 'usr_key', 'secret_key', 'recaptcha_key', 'site_key', 'ssh_key', 'ssl_key', 'private_key', 'public_key', 'cryptographic_key', 'tls_key', 'tls', 'ssl',
+                            'ssh_key', 'ssh_password', 'ssh_pwd', 'ssh_pass', 'site_ssh', 'crypt', 'certificate', 'user_token', 'usr_token', 'u_token', 'utoken', 'secrete', 'token', 'passwd'
+                        ]
 
         if(token.type == 'variable' && token.name != null && token.value != null && token.valueSrc == 'initialization'){
             for(const keyword of commonKeywords){
@@ -81,23 +84,26 @@ var smell = {
                 }
             }
         }
-        else if(token.type == 'fucnctio_call' && token.hasOwnProperty('keywords')){
+        else if(token.type == 'function_call' && token.hasOwnProperty('keywords')){
             for(const funcKeyword of token.keywords){
-                if(funcKeyword.length == 3 && typeof(funcKeyword[0]) == 'string' && typeof(funcKeyword[1]) == 'string' && funcKeyword[2] == true){
-                    for(const keyword of commonKeywords){
-                        if(funcKeyword[0].toLowerCase().match(`[A-Za-z0-9-\.]*${keyword}\\b`) && smell.isValidHardcodedValue(funcKeyword[1])){
-                            smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-                            break
-                        }
+                for(const commonKeyword of commonKeywords){
+                    // console.log({"funckeywords: " : funcKeyword}); 
+                    let prefixMatch = new RegExp(`\\b${commonKeyword}[_A-Za-z0-9-\.]*`)
+                    let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${commonKeyword}\\b`)
+                
+                    if((prefixMatch.test(funcKeyword[0].toLowerCase()) || suffixMatch.test(funcKeyword[0].toLowerCase())) && smell.isValidHardcodedValue(funcKeyword[1])){
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                        break
                     }
                 }
             }
         }
         else if(token.type == 'function_def' && token.hasOwnProperty('args') && token.hasOwnProperty('defaults')){
-            let argsLength = token.args.length
+            
+            let argsLength = token.args.length;
             let defaultsLength = token.defaults.length;
             
-            let args = token.args.splice(argsLength - defaultsLength, argsLength)
+            let args = token.args.slice(argsLength - defaultsLength, argsLength)
             let defaults = token.defaults
 
             for(let i = 0; i< args.length; i++){
@@ -106,8 +112,8 @@ var smell = {
                     let prefixMatch = new RegExp(`\\b${keyword}[_A-Za-z0-9-\.]*`)
                     let suffixMatch = new RegExp(`[_A-Za-z0-9-\.]*${keyword}\\b`)
                     
-                    console.log(prefixMatch.test(args[i].toLowerCase()))
-                    console.log(suffixMatch.test(args[i].toLowerCase()))
+                    // console.log(prefixMatch.test(args[i].toLowerCase()))
+                    // console.log(suffixMatch.test(args[i].toLowerCase()))
 
                     if((prefixMatch.test(args[i].toLowerCase()) || suffixMatch.test(args[i].toLowerCase())) && smell.isValidHardcodedValue(defaults[i][0]) && defaults[i][1] == true){
                         smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
@@ -132,7 +138,7 @@ var smell = {
     },   
 
     containsSuspiciousValues: (value) => {
-        const prohibitedValues = ['admin', 'root', 'host', 'user', 'username', 'pwd', 'pass', 'guest', 'usr','token','default','password' ]
+        const prohibitedValues = ['admin', 'root', 'user', 'username', 'pwd', 'pass', 'guest', 'root_password', 'usr', 'passwd', 'password', 'secret', 'secrete', 'key' ]
 
         for(const prohibitedValue of prohibitedValues){
             if(value.includes(prohibitedValue)) return true

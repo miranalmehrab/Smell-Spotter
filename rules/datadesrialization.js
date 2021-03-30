@@ -32,16 +32,23 @@ var smell = {
                 if(insecureMethods.includes(token.name)) 
                     smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             }
+
+            if(token.hasOwnProperty("args") && token.args.length > 0){
+                token.args.forEach(arg => {
+                    if(insecureMethods.includes(arg)) 
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);        
+                });
+            }
+
         }
         else if(tokenType == "function_def"){
-            if(token.hasOwnProperty("return")){
+            if(token.hasOwnProperty("return") && token.return != null){
                 for(const funcReturn of token.return){
                     if(insecureMethods.includes(funcReturn)) {
                         smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
                         // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
                     }
                 }
-
             }
         }
     },
@@ -50,11 +57,9 @@ var smell = {
         let backslashSplittedFilePathLength = fileName.split("/").length
         let filenameFromPath = fileName.split("/")[backslashSplittedFilePathLength - 1]
         
-        vscode.window.showWarningMessage(MSG +" : "+ filenameFromPath+":"+lineno);
-        console.log( "\u001b[1;31m"+"warning: "+MSG +"  location:"+ fileName+":"+lineno);
-        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n");
-        
-        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
+        vscode.window.showWarningMessage(MSG +" : "+ filenameFromPath+":"+lineno)
+        console.log( "\u001b[1;31m"+"warning: "+MSG +"  location:"+ fileName+":"+lineno)
+        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n")    
     }
 }
 

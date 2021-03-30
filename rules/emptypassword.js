@@ -8,8 +8,6 @@ var smell = {
         
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
-        if(token.hasOwnProperty("name")) var name= token.name;
-        if(token.hasOwnProperty("value")) var value = token.value;
         
         const MSG = 'possible use of empty password'
         
@@ -62,10 +60,8 @@ var smell = {
             let argsLength = token.args.length
             let defaultsLength = token.defaults.length;
             
-            let args = token.args.splice(argsLength - defaultsLength, argsLength)
+            let args = token.args.slice(argsLength - defaultsLength, argsLength)
             let defaults = token.defaults
-
-            console.log(defaults)
 
             for(let i = 0; i< args.length; i++){
                 for (const pwd of commonPasswords){

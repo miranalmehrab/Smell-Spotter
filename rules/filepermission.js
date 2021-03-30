@@ -6,7 +6,6 @@ var smell = {
     detect : (fileName, token) => {
 
         if(token.hasOwnProperty("name")) var name = token.name;
-        if(token.hasOwnProperty("args")) var args = token.args;
         if(token.hasOwnProperty("line")) var lineno = token.line;
         if(token.hasOwnProperty("type")) var tokenType = token.type;
 

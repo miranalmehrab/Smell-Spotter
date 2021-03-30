@@ -13,7 +13,7 @@ def parse_code(code):
         analyzer = Analyzer()
         analyzer.visit(tree)
         analyzer.refine_tokens()        
-        analyzer.printStatements()
+        analyzer.print_statements()
         
     except Exception as error:
         print(str(error)) 

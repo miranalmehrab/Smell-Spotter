@@ -24,7 +24,7 @@ var smell = {
             if ((unwantedMethods.includes(token.name) || smell.queryMethodsHasPatterns(token.name)) && token.args.length > 0)
                 smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         }
-        else if(token.type == 'function_def' && token.hasOwnProperty('return')){
+        else if(token.type == 'function_def' && token.hasOwnProperty('return') && token.return != null){
         
             for(const funcReturn of token.return){
                 if ((unwantedMethods.includes(funcReturn) || smell.queryMethodsHasPatterns(funcReturn))) 

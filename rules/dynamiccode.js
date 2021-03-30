@@ -23,7 +23,7 @@ var smell = {
             if(insecureMethods.includes(token.name)) 
                 smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         }
-        else if(tokenType == "function_def" && token.hasOwnProperty("return")) {
+        else if(tokenType == "function_def" && token.hasOwnProperty("return") && token.return != null) {
             for(const funcReturn of token.return){
                 if(insecureMethods.includes(funcReturn)) 
                 smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
