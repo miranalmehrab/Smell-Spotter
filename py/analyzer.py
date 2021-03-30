@@ -700,7 +700,7 @@ class Analyzer(ast.NodeVisitor):
                         self.statements.append(variable)
 
                     self.statements.remove(statement)
-                    print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
+                    # print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
                     # time.sleep(2)
 
                 elif statement["type"] == "variable" and statement.__contains__("names") and statement.__contains__("valueSrc") and statement.__contains__('args'):
@@ -718,7 +718,7 @@ class Analyzer(ast.NodeVisitor):
                         self.statements.append(variable)
 
                     self.statements.remove(statement)
-                    print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
+                    # print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
                     # time.sleep(2)
 
                 elif statement['type'] == 'tuple' and statement.__contains__("names") and statement.__contains__("values"):
@@ -737,7 +737,7 @@ class Analyzer(ast.NodeVisitor):
 
                 elif statement["type"] == "function_def" and statement.__contains__("return") is False: 
                     self.statements.remove(statement)
-                    print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
+                    # print('statement not deleted yet!') if statement in self.statements else print('statement is deleted!')
                     # time.sleep(2)
                     
             except Exception as error: pass
@@ -755,7 +755,7 @@ class Analyzer(ast.NodeVisitor):
                                     del item[sub_item]
                                 except: 
                                     time.sleep(1)
-                                    print('bytes can not be deleted!')
+                                    # print('bytes can not be deleted!')
 
 
     def value_from_variable_name(self,name):
