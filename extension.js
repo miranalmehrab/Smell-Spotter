@@ -29,8 +29,8 @@ function activate(context) {
 			if (sourceCode != null){		
 				analyzeSourceFile(sourceCode, fileName);
 				setTimeout(storeDetectionInDB, 4000, fileName, fileHashValue);
-				setTimeout(generateReport, 4000, fileName, "QuickScan.pdf");
-				
+				setTimeout(generateReport, 4000, "QuickScan.pdf");
+
 			} else vscode.window.showErrorMessage("Empty source code!");
 		} else vscode.window.showErrorMessage("Please select Python source code!");
 	});
@@ -186,8 +186,19 @@ const storeDetectionInDB = (fileName , hash) => {
 	store.add(smellLog, (err) => err? console.log(err): "successfully added to store");
 }
 
-const generateReport = (fileName, reportFileName) => {
+const showWarningsInOutputChannel = (warnings) => {
+	let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
+	warnings.forEach(warning => {
+		outputChannel.appendLine(warning);
+		
+	});
 
+	outputChannel.show();
+		
+}
+
+const generateReport = (reportFileName) => {
+		
 	try {
 		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
 		let porjectWarnings = data.toString().split("\n");
@@ -195,7 +206,8 @@ const generateReport = (fileName, reportFileName) => {
 		
 		// console.log({'projectkwarnings ': porjectWarnings});
 		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname);
-		
+		showWarningsInOutputChannel(porjectWarnings);
+			
 		}
 	catch (e) {
 		console.log("Error here in generate report");
