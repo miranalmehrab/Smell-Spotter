@@ -3,10 +3,10 @@ filename : /home/miran/Projects/Rotten-Project/config.py
 /home/miran/Projects/Rotten-Project/config.py ,possible hardcoded secret at line 2
 filename : /home/miran/Projects/Rotten-Project/connection.py
 /home/miran/Projects/Rotten-Project/connection.py ,possible harcoded ip address binding at line 7
-/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line undefined
-/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line undefined
-/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line undefined
-/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line undefined
+/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line 11
+/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line 12
+/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line 21
+/home/miran/Projects/Rotten-Project/connection.py ,possible use of HTTP without TLS at line 22
 /home/miran/Projects/Rotten-Project/connection.py ,possible use of empty password at line 25
 /home/miran/Projects/Rotten-Project/connection.py ,possible hardcoded secret at line 25
 /home/miran/Projects/Rotten-Project/connection.py ,possible hardcoded secret at line 26

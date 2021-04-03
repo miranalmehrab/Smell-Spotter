@@ -205,7 +205,7 @@ const clearPreviousDetectionLog = () => {
 
 const startSmellInvestigation = (tokens, fileName) => {
 	let splittedTokens = tokens.split("\n");
-	console.log({'splitted tokens': splittedTokens});
+	// console.log({'splitted tokens': splittedTokens});
 	
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
 	detection.detect(fileName, splittedTokens, importedPackages);

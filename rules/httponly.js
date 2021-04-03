@@ -6,14 +6,14 @@ var smell = {
 
     detect : (fileName, token) => {
         try{
-            const MSG = 'possible use of HTTP without TLS'
-        
-            const WARNING_MSG = MSG+' at line '+ lineno;
-            const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
-    
             if(token.hasOwnProperty("line")) var lineno = token.line;
             if(token.hasOwnProperty("args")) var args = token.args;
     
+            const MSG = 'possible use of HTTP without TLS'
+            
+            const WARNING_MSG = MSG+' at line '+ lineno;
+            const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
+            
             const httpLibs = [  'httplib.urlretrieve','urllib.request.urlopen','urllib.urlopen','urllib2.urlopen','requests.get', 
                                 'requests.post','urllib.request.Request','httplib.HTTPConnection','httplib2.Http.request'
                             ]
