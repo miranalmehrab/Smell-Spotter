@@ -56,7 +56,7 @@ function activate(context) {
 				});
 			} 
 			else vscode.window.showErrorMessage("Error while reading files!");
-			setTimeout(generateReport, 4000, undefined, "CompleteScan.pdf");
+			setTimeout(generateReport, 4000, "CompleteScan.pdf");
 		});
 	}); 
 
@@ -75,7 +75,7 @@ function activate(context) {
 					if (sourceCode != null) {
 						analyzeSourceFile(sourceCode, userSpecifiedPath);
 						setTimeout(storeDetectionInDB, 4000, fileName, userSpecifiedPath);
-						setTimeout(generateReport, 4000, userSpecifiedPath, "CustomScan.pdf");
+						setTimeout(generateReport, 4000, "CustomScan.pdf");
 					} 
 					else vscode.window.showErrorMessage("Empty source code!");
 				}
@@ -97,7 +97,7 @@ function activate(context) {
 							}
 						});
 					} else vscode.window.showErrorMessage("Error while reading files!");
-					setTimeout(generateReport, 4000, undefined, "CustomScan.pdf");
+					setTimeout(generateReport, 4000, "CustomScan.pdf");
 				});
 			}
 		});

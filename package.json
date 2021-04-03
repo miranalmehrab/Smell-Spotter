@@ -3,6 +3,7 @@
 	"publisher": "MiranALMehrab",
 	"displayName": "smell-spotter: security smell detection tool",
 	"description": "security smell detection in python code",
+	"icon":"assets/evaluation.png",
 	"version": "0.0.21",
 	"engines": {
 		"vscode": "^1.43.0"
