@@ -4,34 +4,40 @@ const vscode = require('vscode');
 
 var smell = {
     detect: (fileName, token, imports) => {
-        let lineno = token.line;
-        const MSG = 'possible presence of omitting of integrity check'
-        
-        const WARNING_MSG = MSG+' at line '+ lineno;
-        const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
-        
-        const libs = ['urllib.request.urlretrieve','urllib.urlretrieve','urllib2.urlopen','requests.get','wget.download'];
-        
-        if(token.type == "variable" && token.hasOwnProperty("valueSrc") && token.hasOwnProperty("args")){
-            if(libs.includes(token.valueSrc) && token.args.length > 0){
-                if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
-                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-            } 
-        }
-        else if(token.type == "function_call" && token.hasOwnProperty("args")){
-            if(libs.includes(token.name) && token.args.length > 0){
-                if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
-                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-            } 
-        }
-        else if(token.type == "function_def" && token.hasOwnProperty("return") && token.return != null){
-            for(const funcReturn of token.return){
-                if(libs.includes(funcReturn) && token.returnArgs.length > 0){
-                    if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
-                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
+        try{
+            let lineno = token.line;
+            const MSG = 'possible presence of omitting of integrity check'
+            
+            const WARNING_MSG = MSG+' at line '+ lineno;
+            const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
+            
+            const libs = ['urllib.request.urlretrieve','urllib.urlretrieve','urllib2.urlopen','requests.get','wget.download'];
+            
+            if(token.type == "variable" && token.hasOwnProperty("valueSrc") && token.hasOwnProperty("args")){
+                if(libs.includes(token.valueSrc) && token.args.length > 0){
+                    if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                } 
+            }
+            else if(token.type == "function_call" && token.hasOwnProperty("args")){
+                if(libs.includes(token.name) && token.args.length > 0){
+                    if(typeof(token.args[0]) == "string" && smell.isValidDownloadUrl(token.args[0]) && imports.includes('hashlib') == false)
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                } 
+            }
+            else if(token.type == "function_def" && token.hasOwnProperty("return") && token.return != null){
+                for(const funcReturn of token.return){
+                    if(libs.includes(funcReturn) && token.returnArgs.length > 0){
+                        if(typeof(token.returnArgs[0]) == "string" && smell.isValidDownloadUrl(token.returnArgs[0]) && imports.includes('hashlib') == false)
+                        smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG_ON_RETURN);
+                    }
                 }
             }
+        } catch(error){
+            console.log(error);
         }
+
+        
     },
     
     isNumeric: (value) => {
@@ -87,12 +93,11 @@ var smell = {
                 if(fileExtension == extension) return true
             }
             
-            console.log(parsedURL.search);
-            let searchSplits = parsedURL.search.split('.')
-            let lastSearchSplit = searchSplits[searchSplits.length - 1]
-
-            if(fileExtensions.includes(lastSearchSplit)) return true
-
+            if(parsedURL.search != null){
+                let searchSplits = parsedURL.search.split('.')
+                let lastSearchSplit = searchSplits[searchSplits.length - 1]
+                if(fileExtensions.includes(lastSearchSplit)) return true
+            }
             return false
         }
     },

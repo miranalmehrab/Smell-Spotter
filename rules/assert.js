@@ -3,17 +3,20 @@ const vscode = require('vscode');
 
 var smell = {
     detect: (fileName, token) => {
-        
-        if(token.hasOwnProperty("line")) var lineno = token.line;
-        if(token.hasOwnProperty("type")) var tokenType = token.type;
-        
-        const MSG = 'possible use of assert statement'
-        const WARNING_MSG = MSG+ ' at line '+ lineno;
-        
-        if (tokenType == "assert") {
-            smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-            // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
-            // fs.appendFileSync(__dirname+'/../logs/warnings.txt', WARNING_MSG+"\n");
+        try{
+            if(token.hasOwnProperty("line")) var lineno = token.line;
+            if(token.hasOwnProperty("type")) var tokenType = token.type;
+            
+            const MSG = 'possible use of assert statement'
+            const WARNING_MSG = MSG+ ' at line '+ lineno;
+            
+            if (tokenType == "assert") {
+                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
+                // fs.appendFileSync(__dirname+'/../logs/warnings.txt', WARNING_MSG+"\n");
+            }
+        } catch(error){
+            console.log(error);
         }
     },
     triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {

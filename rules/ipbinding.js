@@ -4,28 +4,32 @@ const vscode = require('vscode');
 var smell = {
 
     detect : (fileName, token) => {
-        if(token.hasOwnProperty("line")) var lineno = token.line;
-        if(token.hasOwnProperty("type")) var tokenType = token.type;
-        if(token.hasOwnProperty("name")) var name= token.name;
-        if(token.hasOwnProperty("args")) var args= token.args;
-        
-        const MSG = 'possible harcoded ip address binding'
-        const WARNING_MSG = MSG+' at line '+ lineno;
-        
-        const bindingMethods = ['socket.socket.bind', 'socket.socket.connect'];
-         
-        if(tokenType == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args')) {
-            var args = token.args;
-            var valueSrc = token.valueSrc; 
+        try{
+            if(token.hasOwnProperty("line")) var lineno = token.line;
+            if(token.hasOwnProperty("type")) var tokenType = token.type;
+            if(token.hasOwnProperty("name")) var name= token.name;
+            if(token.hasOwnProperty("args")) var args= token.args;
+            
+            const MSG = 'possible harcoded ip address binding'
+            const WARNING_MSG = MSG+' at line '+ lineno;
+            
+            const bindingMethods = ['socket.socket.bind', 'socket.socket.connect'];
+            
+            if(tokenType == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args')) {
+                var args = token.args;
+                var valueSrc = token.valueSrc; 
 
-            if(bindingMethods.includes(valueSrc) && args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
-                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                if(bindingMethods.includes(valueSrc) && args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                }
             }
-        }
-        else if(tokenType == "function_call" && bindingMethods.includes(name)) {
-            if(args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
-                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-            }       
+            else if(tokenType == "function_call" && bindingMethods.includes(name)) {
+                if(args.length > 0 && typeof(args[0]) == 'string' && smell.isValidIP(args[0])) { 
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                }       
+            }
+        } catch(error){
+            console.log(error);
         }
     },
 

@@ -4,16 +4,21 @@ const vscode = require('vscode');
 var smell = {
 
     detect : (fileName, token) => {
-        if(token.hasOwnProperty("line")) var lineno = token.line;
-        if(token.hasOwnProperty("type")) var tokenType = token.type;
-        if(token.hasOwnProperty("exceptionHandler")) var handler = token.exceptionHandler;
-        
-        const MSG = 'exception might have been suppressed'
-        const WARNING_MSG = MSG+' at line '+ lineno;
+        try{
+            if(token.hasOwnProperty("line")) var lineno = token.line;
+            if(token.hasOwnProperty("type")) var tokenType = token.type;
+            if(token.hasOwnProperty("exceptionHandler")) var handler = token.exceptionHandler;
+            
+            const MSG = 'exception might have been suppressed'
+            const WARNING_MSG = MSG+' at line '+ lineno;
 
-        const unwantedHandlers = ['continue','pass'];
+            const unwantedHandlers = ['continue','pass'];
+            
+            if(tokenType == "exception_handle" &&  unwantedHandlers.includes(handler)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
         
-        if(tokenType == "exception_handle" &&  unwantedHandlers.includes(handler)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+        } catch(error){
+            console.log(error);
+        }
     },
     
     triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {

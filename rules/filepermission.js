@@ -4,23 +4,26 @@ const vscode = require('vscode');
 var smell = {
 
     detect : (fileName, token) => {
-
-        if(token.hasOwnProperty("name")) var name = token.name;
-        if(token.hasOwnProperty("line")) var lineno = token.line;
-        if(token.hasOwnProperty("type")) var tokenType = token.type;
-
-        const MSG = 'possible bad file permission'
-        
-        const WARNING_MSG = MSG+' at line '+ lineno;
-        const unwantedMethods = ['os.chmod','chmod'];
-        
-        if(tokenType == "function_call" && unwantedMethods.includes(name.toLowerCase())) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
-        
-        else if(tokenType == "function_call" && name.toLowerCase() == "subprocess.call" && token.args.length > 0) {
-            for(const arg of token.args){
-                if(unwantedMethods.includes(arg))
-                smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+        try{
+            if(token.hasOwnProperty("name")) var name = token.name;
+            if(token.hasOwnProperty("line")) var lineno = token.line;
+            if(token.hasOwnProperty("type")) var tokenType = token.type;
+    
+            const MSG = 'possible bad file permission'
+            
+            const WARNING_MSG = MSG+' at line '+ lineno;
+            const unwantedMethods = ['os.chmod','chmod'];
+            
+            if(tokenType == "function_call" && unwantedMethods.includes(name.toLowerCase())) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+            
+            else if(tokenType == "function_call" && name.toLowerCase() == "subprocess.call" && token.args.length > 0) {
+                for(const arg of token.args){
+                    if(unwantedMethods.includes(arg))
+                    smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                }
             }
+        } catch(error){
+            console.log(error);
         }
     },
     
