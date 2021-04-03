@@ -142,7 +142,32 @@ const getFileExtension = (value) => {
 	return pathSplits[pathSplits.length - 1]? pathSplits[pathSplits.length - 1]: undefined;
 }
 
-const showWarningsNotifications = (warnings) => warnings.split("\n").forEach(warning => vscode.window.showWarningMessage(warning));
+const showWarningsNotifications = (warnings) => {
+	warnings = warnings.split("\n");
+	warnings.pop();
+
+	warnings.forEach(warning => {
+		try{
+			if(!warning.includes("filename")){
+				if(warning == "") console.log({});
+				let tmpWarning = warning.split(",")[0];
+				let splittedWarnigLength = tmpWarning.split("/").length;
+				let fileName = tmpWarning.split("/")[splittedWarnigLength - 1];
+				
+				tmpWarning = warning.split(",")[1];
+				tmpWarning = tmpWarning.split(" ");
+				splittedWarnigLength = tmpWarning.length;
+				let lineNumber = tmpWarning[splittedWarnigLength - 1];
+				
+				tmpWarning.pop();
+				vscode.window.showWarningMessage(tmpWarning.join(" ")+" : "+fileName+":"+lineNumber);
+			}
+			
+		}catch(e){
+			console.log(e);
+		}
+		});
+}
 
 const getImportedPackagesInSourceCode = (splittedTokens) => {
 	let importedPackages = [];
@@ -188,13 +213,8 @@ const storeDetectionInDB = (fileName , hash) => {
 
 const showWarningsInOutputChannel = (warnings) => {
 	let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
-	warnings.forEach(warning => {
-		outputChannel.appendLine(warning);
-		
-	});
-
+	warnings.forEach(warning => outputChannel.appendLine(warning));
 	outputChannel.show();
-		
 }
 
 const generateReport = (reportFileName) => {
