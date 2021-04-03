@@ -103,6 +103,23 @@ function activate(context) {
 		});
 	});
 
+	let cleardb = vscode.commands.registerCommand('extension.cleardb', function () {
+		const homedir = require('os').homedir();
+		const directory =  homedir+"/store";
+
+		fs.readdir(directory, (err, files) => {
+		if (err) console.log(err);
+
+		for (const file of files) {
+			fs.unlink(path.join(directory, file), err => {
+				if (!err) vscode.window.showInformationMessage(file+" cleared!");
+			});
+		}
+		});	
+	
+	});
+
+	context.subscriptions.push(cleardb);
 	context.subscriptions.push(quickScan);
 	context.subscriptions.push(customScan);
 	context.subscriptions.push(completeScan);
@@ -213,8 +230,24 @@ const storeDetectionInDB = (fileName , hash) => {
 
 const showWarningsInOutputChannel = (warnings) => {
 	let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
-	warnings.forEach(warning => outputChannel.appendLine(warning));
-	outputChannel.show();
+	warnings.forEach(warning => {
+		try{
+			if(!warning.includes("filename")){
+
+				let tmpWarning = warning.split(",")[1];
+				tmpWarning = tmpWarning.split(" ");
+				let splittedWarnigLength = tmpWarning.length;
+				let lineNumber = tmpWarning[splittedWarnigLength - 1];
+				warning = warning.split(",")[0].trim() +":"+ lineNumber+","+ warning.split(",")[1];
+
+				outputChannel.appendLine(warning)
+			}
+			
+		} catch(e){ console.log(e);}
+	
+		outputChannel.show();
+	
+	});
 }
 
 const generateReport = (reportFileName) => {

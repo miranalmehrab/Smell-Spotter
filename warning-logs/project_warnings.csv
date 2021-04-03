@@ -1,12 +1,8 @@
-filename : /home/miran/Projects/Rotten-Project/config.py
-/home/miran/Projects/Rotten-Project/config.py,possible hardcoded secret at line 1
-/home/miran/Projects/Rotten-Project/config.py,possible hardcoded secret at line 2
-filename : /home/miran/Projects/Rotten-Project/connection_test.py
-/home/miran/Projects/Rotten-Project/connection_test.py,exception might have been suppressed at line 8
-/home/miran/Projects/Rotten-Project/connection_test.py,possible hardcoded secret at line 2
-/home/miran/Projects/Rotten-Project/connection_test.py,possible hardcoded secret at line 2
-/home/miran/Projects/Rotten-Project/connection_test.py,possible use of assert statement at line 4
-filename : /home/miran/Projects/Rotten-Project/user_info.py
-/home/miran/Projects/Rotten-Project/user_info.py,possible hardcoded secret at line 1
-/home/miran/Projects/Rotten-Project/user_info.py,possible hardcoded secret at line 2
-/home/miran/Projects/Rotten-Project/user_info.py,possible hardcoded secret at line 3
+filename : /home/miran/Projects/Rotten-Project/example3.py
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 1
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 2
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 3
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 4
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 5
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 6
+/home/miran/Projects/Rotten-Project/example3.py ,possible hardcoded secret at line 7

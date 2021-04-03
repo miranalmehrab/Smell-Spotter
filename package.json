@@ -12,6 +12,7 @@
 	],
 	"activationEvents": [
 		"onLanguage:python",
+		"onCommand:extension.cleardb",
 		"onCommand:extension.quickscan",
 		"onCommand:extension.customscan",
 		"onCommand:extension.completescan"
@@ -20,16 +21,20 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "extension.cleardb",
+				"title": "Smell-Spotter: Clear DB"
+			},
+			{
 				"command": "extension.quickscan",
-				"title": "Quick Scan"
+				"title": "Smell-Spotter: Quick Scan"
 			},
 			{
 				"command": "extension.customscan",
-				"title": "Custom Scan"
+				"title": "Smell-Spotter: Custom Scan"
 			},
 			{
 				"command": "extension.completescan",
-				"title": "Complete Scan"
+				"title": "Smell-Spotter: Complete Scan"
 			}
 		],
 		"colors": [
