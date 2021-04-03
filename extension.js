@@ -256,6 +256,10 @@ const generateReport = (reportFileName) => {
 		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
 		let porjectWarnings = data.toString().split("\n");
 		porjectWarnings.pop(); //null array item removal due to new line split
+
+		if (!fs.existsSync("./results")){
+			fs.mkdirSync("./results");
+		}
 		
 		// console.log({'projectkwarnings ': porjectWarnings});
 		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname);
