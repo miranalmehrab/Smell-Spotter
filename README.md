@@ -54,7 +54,7 @@ npm install
 ```
 #### Debugging
 To run the extension for debug press `F5`
-![Extension Running in `dev` environment](https://github.com/MiranAlMehrab/Smell-Spotter/blob/master/assets/debug-extension.png?raw=true)
+![Extension Running in `dev` environment](https://github.com/MiranAlMehrab/Smell-Spotter/blob/master/assets/debug_extension.png?raw=true)
 
 Now you can test different scan modes
 
