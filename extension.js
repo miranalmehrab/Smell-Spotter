@@ -242,6 +242,9 @@ const showWarningsInOutputChannel = (warnings) => {
 
 				outputChannel.appendLine(warning)
 			}
+			else{;
+				outputChannel.append("\n" + warning + "\n");
+			}
 			
 		} catch(e){ console.log(e);}
 	
@@ -253,16 +256,16 @@ const showWarningsInOutputChannel = (warnings) => {
 const generateReport = (reportFileName) => {
 		
 	try {
+		if (!fs.existsSync("smell-spotter")){
+			fs.mkdirSync("smell-spotter");
+		}
+		
 		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
 		let porjectWarnings = data.toString().split("\n");
 		porjectWarnings.pop(); //null array item removal due to new line split
-
-		if (!fs.existsSync("./results")){
-			fs.mkdirSync("./results");
-		}
 		
 		// console.log({'projectkwarnings ': porjectWarnings});
-		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, __dirname);
+		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, "smell-spotter");
 		showWarningsInOutputChannel(porjectWarnings);
 			
 		}

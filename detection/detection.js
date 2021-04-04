@@ -19,8 +19,16 @@ const deserialization = require('../rules/datadesrialization');
 var detection = {
 
     detect: (fileName, tokens, imports) => {
+        try{
+            if (!fs.existsSync('smell-spotter/warning-logs/')){
+                fs.mkdirSync('smell-spotter/warning-logs/');
+            }
+        }catch(error){
+            console.log(error);            
+        }
+
         console.log("\u001b[1;34minsecure coding practices in - "+fileName);
-        fs.appendFileSync(__dirname+'/../warning-logs/project_warnings.csv', "filename : "+fileName+"\n");
+        fs.appendFileSync('smell-spotter/warning-logs/project_warnings.csv', "filename : "+fileName+"\n");
 
         tokens.pop();
         tokens.map( token => {
