@@ -10,7 +10,7 @@ var createPDFDocument = {
             }
             
             createPDFDocument.removePreviousPDFDocument(pathName+'/results/'+resultDocumentName);
-            console.log({"result location": pathName+'/results/'+resultDocumentName});
+            // console.log({"result location": pathName+'/results/'+resultDocumentName});
             
             let results = createPDFDocument.processDetectionResults(detectionResults);
 
@@ -27,7 +27,7 @@ var createPDFDocument = {
     removePreviousPDFDocument: (fullPath) => {
         fs.unlink(fullPath, (err) => {
             if (err) console.log(err);
-            else console.log(fullPath+' was deleted');
+            // else console.log(fullPath+' was deleted');
         });
     },
 

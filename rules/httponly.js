@@ -83,7 +83,7 @@ var smell = {
 
         }
         else return false
-    }      ,
+    },
     
     triggerAlarm: (fileName, MSG, lineno, WARNING_MSG) => {
         let backslashSplittedFilePathLength = fileName.split("/").length
@@ -93,7 +93,6 @@ var smell = {
         console.log( "\u001b[1;31m"+"warning: "+MSG +"  location:"+ fileName+":"+lineno);
         
         fs.appendFileSync('smell-spotter/warning-logs/project_warnings.csv', fileName+" ,"+WARNING_MSG+"\n");
-        // fs.appendFile(__dirname+'/../logs/project_warnings.csv', fileName+","+WARNING_MSG+"\n", (err) => err ? console.log(err): "");
     }     
 }
 

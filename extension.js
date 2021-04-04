@@ -138,7 +138,7 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 			script.on('error', (err) => console.log(err));
 		}
 		else {
-			fs.appendFileSync(__dirname+"/warning-logs/project_warnings.csv", object.warnings);
+			fs.appendFileSync("smell-spotter/warning-logs/project_warnings.csv", object.warnings);
 			showWarningsNotifications(object.warnings);
 		}
 	});		
@@ -200,7 +200,7 @@ const getImportedPackagesInSourceCode = (splittedTokens) => {
 }
 
 const clearPreviousDetectionLog = () => {
-	fs.writeFileSync(path.join(__dirname, '/warning-logs/project_warnings.csv'), "");
+	fs.writeFileSync('smell-spotter/warning-logs/project_warnings.csv', "");
 }
 
 const startSmellInvestigation = (tokens, fileName) => {
@@ -213,7 +213,7 @@ const startSmellInvestigation = (tokens, fileName) => {
 
 const storeDetectionInDB = (fileName , hash) => {
 	let warningObject = "";
-	let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
+	let data = fs.readFileSync('smell-spotter/warning-logs/project_warnings.csv');
 	
 	let porjectWarnings = data.toString().split("\n");
 	porjectWarnings.pop(); //null array item removal due to new line split
@@ -260,7 +260,7 @@ const generateReport = (reportFileName) => {
 			fs.mkdirSync("smell-spotter");
 		}
 		
-		let data = fs.readFileSync(__dirname+'/warning-logs/project_warnings.csv');
+		let data = fs.readFileSync('smell-spotter/warning-logs/project_warnings.csv');
 		let porjectWarnings = data.toString().split("\n");
 		porjectWarnings.pop(); //null array item removal due to new line split
 		
