@@ -1,6 +1,7 @@
 const fs = require('fs');
 const xss = require('../rules/xss');
 const assert = require('../rules/assert')
+const yaml = require('../rules/yamlload'); 
 const cipher = require('../rules/cipher');
 const tempdir = require('../rules/tempdir');
 const sql = require('../rules/sqlinjection');
@@ -12,6 +13,7 @@ const dynamiccode = require('../rules/dynamiccode');
 const nointeg = require('../rules/nointegritycheck');
 const emptypassword = require('../rules/emptypassword');
 const cmdinjection = require('../rules/commandinjection');
+const igncertificate = require('../rules/nocertificate');
 const filepermission = require('../rules/filepermission');
 const hardcodedsecret = require('../rules/hardcodedsecret');
 const deserialization = require('../rules/datadesrialization');
@@ -53,11 +55,14 @@ var detection = {
                     
                     ignexcept.detect(fileName,token);
                     ipbinding.detect(fileName,token);
+                    igncertificate.detect(fileName, token);
                     
                     nointeg.detect(fileName,token,imports);
                     sql.detect(fileName,token);
                     tempdir.detect(fileName,token);
                     xss.detect(fileName,token);
+                    
+                    yaml.detect(fileName,token);
 
                 } catch (error) {
                     console.log(error);

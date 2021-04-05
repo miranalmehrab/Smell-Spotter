@@ -32,7 +32,7 @@ var smell = {
                 if (insecureMethods.includes(valueSrc)) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG); 
                 // vscode.commands.executeCommand('revealLine',{'lineNumber':lineno, 'at':'top'});
             }
-            else if(tokenType == "function_call") {
+            if(tokenType == "function_call") {
                 if(token.hasOwnProperty("name")) var name = token.name;
                 if(token.hasOwnProperty("args")) var args = token.args;
                 
@@ -55,7 +55,7 @@ var smell = {
                     })
                 } 
             }
-            else if(tokenType == "function_def") {
+            if(tokenType == "function_def") {
                 
                 if(token.hasOwnProperty("return") && token.return != null){
                     for(const funcReturn of token.return){

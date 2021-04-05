@@ -18,8 +18,12 @@ var smell = {
                                     ];
             
             if(token.type == "variable" && token.hasOwnProperty('valueSrc') && token.hasOwnProperty('args')) {
-                if((unwantedMethods.includes(token.valueSrc) || smell.queryMethodsHasPatterns(token.valueSrc)) && token.args.length > 0) 
+                if(unwantedMethods.includes(token.valueSrc) && token.args.length > 0) {
                     smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
+                }
+            }
+            if(token.type == "variable" && token.hasOwnProperty('values')){
+                if(token.values.length > 1) smell.triggerAlarm (fileName, MSG, lineno, WARNING_MSG);
             }
             else if(token.type == "function_call" && token.name != null && token.hasOwnProperty('args')) {
                 if ((unwantedMethods.includes(token.name) || smell.queryMethodsHasPatterns(token.name)) && token.args.length > 0)
@@ -42,7 +46,7 @@ var smell = {
         const methods = [   'execution.query', 'connection.cursor.execute', 'sqlite3.connect.execute',
                             'psycopg2.connect.cursor.execute','mysql.connector.connect.cursor.execute', 
                             'pyodbc.connect.cursor.execute', 'sqlalchemy.sql.text', 'sqlalchemy.text',
-                            'text', 'records.Database.query'
+                            'records.Database.query'
                     ];
 
         if(name == null) return false

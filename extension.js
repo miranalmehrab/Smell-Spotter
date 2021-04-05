@@ -39,26 +39,37 @@ function activate(context) {
 	let completeScan = vscode.commands.registerCommand('extension.completescan', function () {
 		clearPreviousDetectionLog();
 		let workspaceFolder = vscode.workspace.workspaceFolders[0].uri.path;
-		
-		fs.readdir(workspaceFolder, (err, files) => { 
-			if(files){
-				files.forEach(file => {
+		console.log({"workspaceFolder: ": workspaceFolder});
+
+		let allFiles = getAllFiles(workspaceFolder, []);
+		console.log({"allFiles": allFiles});
+
+		allFiles.forEach(file => {
+			try{
+				if(file.includes(".git") == false && file.includes("test") == false){
+					file = workspaceFolder+file.split(workspaceFolder)[1];
+					console.log(file);
+					
 					if(getFileExtension(file) === 'py'){
-
-						let sourceCode = getFileContentsFromPath(path.join(workspaceFolder, file));
+						
+						let sourceCode = getFileContentsFromPath(file);
 						let fileHashValue = crypto.createHash('md5').update(sourceCode).digest("hex");
-
+	
 						if (sourceCode != null) {
-							analyzeSourceFile(sourceCode, path.join(workspaceFolder, file));
+							analyzeSourceFile(sourceCode, file);
 							setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
 						}
 					}
-				});
+				}
+			} catch(error){
+				vscode.window.showErrorMessage("could not read file - "+ file);
 			}
-			else vscode.window.showErrorMessage("Error while reading files!");
-			setTimeout(generateReport, 4000, "CompleteScan.pdf");
+			
 		});
-	}); 
+				
+		setTimeout(generateReport, 4000, "CompleteScan.pdf");
+	});
+
 
 	let customScan = vscode.commands.registerCommand('extension.customscan', function () {
 		clearPreviousDetectionLog();
@@ -82,23 +93,32 @@ function activate(context) {
 				else vscode.window.showErrorMessage("Please select Python source code!");
 			}
 			else{
-				fs.readdir(userSpecifiedPath, (err, files) => { 
-					if(files){
-						files.forEach(file => {
+				console.log({"specified path ": userSpecifiedPath});
+				let allFiles = getAllFiles(userSpecifiedPath, []);
+				// console.log(allFiles);
+
+				allFiles.forEach(file => {
+				
+					try {
+						if(file.includes(".git") == false && file.includes("test") == false){
+							file = userSpecifiedPath+file.split(userSpecifiedPath)[1];
+							console.log(file);
+						
 							if(getFileExtension(file) === 'py'){
-
-								let sourceCode = getFileContentsFromPath(path.join(userSpecifiedPath, file));
+								
+								let sourceCode = getFileContentsFromPath(file);
+								console.log("no problem here!");
 								let fileHashValue = crypto.createHash('md5').update(sourceCode).digest("hex");
-
+			
 								if (sourceCode != null) {
-									analyzeSourceFile(sourceCode, path.join(userSpecifiedPath, file));
+									analyzeSourceFile(sourceCode, file);
 									setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
 								}
 							}
-						});
-					} else vscode.window.showErrorMessage("Error while reading files!");
-					setTimeout(generateReport, 4000, "CustomScan.pdf");
-				});
+						}
+					} catch(error){ vscode.window.showErrorMessage("could not read file - "+ file);}
+				});	
+				setTimeout(generateReport, 4000, "CustomScan.pdf");
 			}
 		});
 	});
@@ -125,6 +145,23 @@ function activate(context) {
 	context.subscriptions.push(completeScan);
 }
 
+const getAllFiles = function(dirPath, arrayOfFiles) {
+	let files = fs.readdirSync(dirPath)
+  
+	arrayOfFiles = arrayOfFiles || []
+  
+	files.forEach(function(file) {
+	  if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+		arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+	  } else {
+		arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+	  }
+	})
+  
+	return arrayOfFiles
+  }
+
+
 
 const analyzeSourceFile = (sourceCode, fileName) => {
 
@@ -145,7 +182,11 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 }
 
 const getFileContentsFromPath = (userSpecifiedPath) => {
-	return fs.readFileSync(userSpecifiedPath, {encoding:'utf8', flag:'r'});
+	try{
+		let code = fs.readFileSync(userSpecifiedPath);
+		return code;
+	}
+	catch(e){console.log(e);}
 }
 
 const checkIfFilePath = (value) => {
@@ -205,7 +246,7 @@ const clearPreviousDetectionLog = () => {
 
 const startSmellInvestigation = (tokens, fileName) => {
 	let splittedTokens = tokens.split("\n");
-	// console.log({'splitted tokens': splittedTokens});
+	console.log({'splitted tokens': splittedTokens});
 	
 	let importedPackages = getImportedPackagesInSourceCode(splittedTokens);
 	detection.detect(fileName, splittedTokens, importedPackages);
