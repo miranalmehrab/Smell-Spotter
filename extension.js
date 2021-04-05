@@ -228,8 +228,8 @@ const storeDetectionInDB = (fileName , hash) => {
 	store.add(smellLog, (err) => err? console.log(err): "successfully added to store");
 }
 
-const showWarningsInOutputChannel = (warnings) => {
-	let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
+const showWarningsInOutputChannel = (warnings, outputChannel) => {
+	
 	warnings.forEach(warning => {
 		try{
 			if(!warning.includes("filename")){
@@ -265,8 +265,10 @@ const generateReport = (reportFileName) => {
 		porjectWarnings.pop(); //null array item removal due to new line split
 		
 		// console.log({'projectkwarnings ': porjectWarnings});
-		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, "smell-spotter");
-		showWarningsInOutputChannel(porjectWarnings);
+		
+		let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
+		showWarningsInOutputChannel(porjectWarnings, outputChannel);
+		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, "smell-spotter", outputChannel);
 			
 		}
 	catch (e) {
