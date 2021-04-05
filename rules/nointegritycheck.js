@@ -6,7 +6,7 @@ var smell = {
     detect: (fileName, token, imports) => {
         try{
             let lineno = token.line;
-            const MSG = 'possible presence of omitting of integrity check'
+            const MSG = 'Integrity check skipped'
             
             const WARNING_MSG = MSG+' at line '+ lineno;
             const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;

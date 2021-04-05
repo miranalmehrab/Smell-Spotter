@@ -7,7 +7,7 @@ var smell = {
             if(token.hasOwnProperty("line")) var lineno = token.line;
             if(token.hasOwnProperty("type")) var tokenType = token.type;
 
-            const MSG = 'possible presence of cross-site scripting'
+            const MSG = 'possible cross-site scripting'
             
             const WARNING_MSG = MSG+' at line '+ lineno;
             const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;

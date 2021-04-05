@@ -10,7 +10,7 @@ var smell = {
             if(token.hasOwnProperty("name")) var name = token.name;
             if (token.hasOwnProperty("value")) var value = token.value;
     
-            const MSG = 'possible hardcoded temporary directory'
+            const MSG = 'hardcoded temporary directory'
             const WARNING_MSG = MSG+' at line '+ lineno;
             const unwantedDirNames = ['folder', 'directory', 'dir', 'path', 'root', 'tmp', 'temp', 'temporary', 'site', 'log', 'save'];
     

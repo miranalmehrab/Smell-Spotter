@@ -10,7 +10,7 @@ var smell = {
             if(token.hasOwnProperty("name")) var name= token.name;
             if(token.hasOwnProperty("args")) var args= token.args;
             
-            const MSG = 'possible harcoded ip address binding'
+            const MSG = 'harcoded ip address binding'
             const WARNING_MSG = MSG+' at line '+ lineno;
             
             const bindingMethods = ['socket.socket.bind', 'socket.socket.connect'];

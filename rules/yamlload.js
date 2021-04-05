@@ -8,7 +8,7 @@ var smell = {
             if(token.hasOwnProperty("line")) var lineno = token.line;
             if(token.hasOwnProperty("type")) var tokenType = token.type;
             
-            const MSG = 'possible use of insecure yaml operations'
+            const MSG = 'insecure yaml operations'
             
             const WARNING_MSG = MSG+' at line '+ lineno;
             const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;

@@ -9,7 +9,7 @@ var smell = {
             if(token.hasOwnProperty("line")) var lineno = token.line;
             if(token.hasOwnProperty("args")) var args = token.args;
     
-            const MSG = 'possible use of HTTP without TLS'
+            const MSG = 'HTTP without TLS used'
             
             const WARNING_MSG = MSG+' at line '+ lineno;
             const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;

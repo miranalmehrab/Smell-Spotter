@@ -7,7 +7,7 @@ var smell = {
         try{
             let lineno = token.line;
         
-            const MSG = 'possible room for SQL injection'
+            const MSG = 'possible SQL injection'
             const WARNING_MSG = MSG+' at line '+ lineno;
             const WARNING_MSG_ON_RETURN = token.hasOwnProperty("returnLine") ? WARNING_MSG+ token.returnLine : null;
             

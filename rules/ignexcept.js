@@ -9,7 +9,7 @@ var smell = {
             if(token.hasOwnProperty("type")) var tokenType = token.type;
             if(token.hasOwnProperty("exceptionHandler")) var handler = token.exceptionHandler;
             
-            const MSG = 'exception might have been suppressed'
+            const MSG = 'exception has been suppressed'
             const WARNING_MSG = MSG+' at line '+ lineno;
 
             const unwantedHandlers = ['continue','pass'];

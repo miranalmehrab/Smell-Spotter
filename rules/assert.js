@@ -7,7 +7,7 @@ var smell = {
             if(token.hasOwnProperty("line")) var lineno = token.line;
             if(token.hasOwnProperty("type")) var tokenType = token.type;
             
-            const MSG = 'possible use of assert statement'
+            const MSG = 'assert statement used'
             const WARNING_MSG = MSG+ ' at line '+ lineno;
             
             if (tokenType == "assert") {

@@ -10,7 +10,7 @@ var smell = {
             if(token.hasOwnProperty("name")) var name = token.name;
             if(token.hasOwnProperty("value")) var value = token.value;
     
-            const MSG = 'possible presence of debug set true'        
+            const MSG = 'debug facility turned on'        
             const WARNING_MSG = MSG+' at line '+ lineno;
             const restrictedNames = ['debug','debug_propagate_exceptions','propagate_exceptions'];
     
