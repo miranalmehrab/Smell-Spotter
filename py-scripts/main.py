@@ -2,9 +2,10 @@ import ast
 import sys
 import json
 
+from engine import RuleEngine
 from analyzer import Analyzer
 
-def parse_code(code):
+def parse_code(code, src_file_name):
     try:
         tree = ast.parse(code, type_comments=True)
         # print(ast.dump(tree,include_attributes=True))
@@ -13,7 +14,12 @@ def parse_code(code):
         analyzer = Analyzer()
         analyzer.visit(tree)
         analyzer.refine_tokens()        
-        analyzer.print_statements()
+        # analyzer.print_statements()
+
+        tokens = analyzer.return_statements()
+        
+        engine = RuleEngine(tokens, src_file_name)
+        engine.filter() 
         
     except Exception as error:
         print(str(error)) 
@@ -21,7 +27,9 @@ def parse_code(code):
 
 def main():
     code = sys.argv[1]
-    parse_code(code)
+    src_file_name = sys.argv[2]
+    
+    parse_code(code, src_file_name)
     
     
 if __name__ == "__main__":

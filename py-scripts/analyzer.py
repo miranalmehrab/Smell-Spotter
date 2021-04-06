@@ -1064,3 +1064,10 @@ class Analyzer(ast.NodeVisitor):
         for statement in self.statements:
             if len(types) == 0: print(json.dumps(statement))
             elif statement["type"] in types: print(json.dumps(statement))
+
+    def return_statements(self):
+        json_converted_statements = []
+        for statement in self.statements:
+            json_converted_statements.append(json.dumps(statement))
+        
+        return json_converted_statements
