@@ -2,7 +2,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const vscode = require('vscode');
 
-var path = require('path');
+const path = require('path');
 const store = require('json-fs-store')();
 const { spawn } = require('child_process');
 
@@ -53,14 +53,15 @@ function activate(context) {
 	
 						if (sourceCode != null) {
 							analyzeSourceFile(sourceCode, file);
-							setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
 						}
+						setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
 					}
 				}
 			} catch(error){ vscode.window.showErrorMessage("could not read file - "+ file); }
 		});
-				
-		setTimeout(generateReport, 4000, "CompleteScan.pdf");
+
+		setTimeout(showWarningsInOutputChannel, 10000);
+		setTimeout(generateReport, 20000, "CompleteScan.pdf");
 	});
 
 
@@ -163,7 +164,7 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 
 		if(error) {
 			const script = spawn('python3.8', [__dirname + '/py-scripts/main.py', sourceCode, fileName]);
-			script.stdout.on('data', data => data ? saveDetectionResultsToLog(data.toString(), fileName): console.log('No data from script!'));
+			script.stdout.on('data', warnings => warnings ? saveDetectionResultsToLog(warnings.toString(), fileName): console.log('No data from script!'));
 			script.on('close', (exitCode) => exitCode ? console.log(`main script exit code ${exitCode}`) : 'main script exit code not found');
 			script.on('error', (err) => console.log(err));
 		}
@@ -201,7 +202,8 @@ const showWarningsInNotification = (warnings) => {
 
 		warnings.forEach(warning => {
 			try{
-				if(!warning.includes("filename")){
+				if(!warning.includes("filename") && !warning.includes("error")){
+					
 					let filepath = warning.split(",")[0].trim()
 					filepath = filepath.split("/")[filepath.split("/").length - 1]
 					vscode.window.showWarningMessage(filepath+" "+warning.split(",")[1]);
@@ -240,55 +242,26 @@ const storeDetectionInDB = (fileName , hash) => {
 
 	let dbRow = {id: hash, name: fileName, warnings: filenameSpecificWarnings};
 	store.add(dbRow, (err) => err? console.log(err): "successfully added to store");
+
+	console.log("storing the warnings in db is done");
 }
 
-const showWarningsInOutputChannel = (warnings, outputChannel) => {
+const showWarningsInOutputChannel = () => {
+	let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
+	let buffer = fs.readFileSync('smell-spotter/warning-logs/project_warnings.csv');
+	let warnings = buffer.toString().split("\n");
 	
-	warnings.forEach(warning => {
-		try{
-			if(!warning.includes("filename")){
+	warnings.forEach(warning => warning.includes("filename")? outputChannel.append("\n" + warning + "\n"): outputChannel.append( warning)); 
 
-				let tmpWarning = warning.split(",")[1];
-				tmpWarning = tmpWarning.split(" ");
-				let splittedWarnigLength = tmpWarning.length;
-				let lineNumber = tmpWarning[splittedWarnigLength - 1];
-				warning = warning.split(",")[0].trim() +":"+ lineNumber+","+ warning.split(",")[1];
-
-				outputChannel.appendLine(warning)
-			}
-			else{;
-				outputChannel.append("\n" + warning + "\n");
-			}
-			
-		} catch(e){ console.log(e);}
-	
-		outputChannel.show();
-	
-	});
+	outputChannel.show();
 }
+
 
 const generateReport = (reportFileName) => {
-		
-	try {
-		if (!fs.existsSync("smell-spotter")){
-			fs.mkdirSync("smell-spotter");
-		}
-		
-		let data = fs.readFileSync('smell-spotter/warning-logs/project_warnings.csv');
-		let porjectWarnings = data.toString().split("\n");
-		porjectWarnings.pop(); //null array item removal due to new line split
-		
-		console.log({'projectkwarnings ': porjectWarnings});
-		
-		let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
-		showWarningsInOutputChannel(porjectWarnings, outputChannel);
-		createPDFDocument.createPDFDocument(reportFileName, porjectWarnings, "smell-spotter", outputChannel);
-			
-		}
-	catch (e) {
-		console.log("Error here in generate report");
-		console.log(e);
-	}
+
+	let warnings = fs.readFileSync('smell-spotter/warning-logs/project_warnings.csv');
+	console.log({'project warnings ': warnings});
+	createPDFDocument.createPDFDocument(reportFileName, warnings);
 }  
 
 
