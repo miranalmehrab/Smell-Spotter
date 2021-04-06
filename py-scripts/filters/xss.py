@@ -40,7 +40,7 @@ class Xss:
                         self.trigger_alarm(src_file, lineno)
 
                 
-        except Exception as error: print(str(error))
+        except Exception as error: print("xss error:"+str(error))
 
 
     def is_insecure_method(self, name):

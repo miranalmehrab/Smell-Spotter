@@ -31,7 +31,7 @@ class DebugFlag:
                         self.trigger_alarm(src_file, lineno)
         
         except Exception as error: 
-            print(str(error))
+            print("debug error:"+str(error))
 
     def has_debug_in_name(self, var_name):
         for name in self.restricted_names:

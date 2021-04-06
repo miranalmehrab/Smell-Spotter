@@ -32,7 +32,7 @@ class YamlOperations:
                         self.trigger_alarm(src_file, lineno)
 
         except Exception as error: 
-            print(str(error))    
+            print("yaml op error:"+str(error))    
 
 
     def trigger_alarm(self, src_file, lineno):

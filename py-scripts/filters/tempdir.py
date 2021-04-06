@@ -44,7 +44,9 @@ class TmpDirectory:
                 for pair in token['pairs']:
                     for dir_name in self.unwanted_dir_names:
                         if(
-                            (re.match(r'[_A-Za-z0-9-]*{dir}\b'.format(dir = dir_name), pair[0].lower().strip()) or re.match(r'\b{dir}[_A-Za-z0-9-]*'.format(dir = dir_name), pair[0].lower().strip()))
+                            isinstance(pair[0], str) 
+                            and isinstance(pair[1], str)
+                            and (re.match(r'[_A-Za-z0-9-]*{dir}\b'.format(dir = dir_name), pair[0].lower().strip()) or re.match(r'\b{dir}[_A-Za-z0-9-]*'.format(dir = dir_name), pair[0].lower().strip()))
                             and self.is_valid_path(pair[1])
                         ):
                                 self.trigger_alarm(src_file, lineno)
@@ -64,7 +66,9 @@ class TmpDirectory:
                             self.trigger_alarm(src_file, lineno)
                             break
 
-        except Exception as error: print(str(error))
+        except Exception as error: 
+            print("tmp dir error:"+str(error))
+            print(token)
 
     def is_valid_path(self, value):
 

@@ -43,7 +43,7 @@ class Deserialization:
                         self.trigger_alarm(src_file, lineno)
         
         except Exception as error:
-            print(str(error))
+            print("deserialization error:"+str(error))
 
     def is_sublist_of_another_list(self, smaller_list, bigger_list):
         for item in smaller_list:

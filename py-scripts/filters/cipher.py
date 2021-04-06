@@ -56,7 +56,7 @@ class Cipher:
                         if arg in self.insecure_methods:
                             self.trigger_alarm(src_file, lineno)
 
-        except Exception as error: print(str(error))
+        except Exception as error: print("cipher error: "+str(error))
 
 
     def trigger_alarm(self, src_file, lineno):

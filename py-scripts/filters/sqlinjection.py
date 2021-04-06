@@ -50,7 +50,7 @@ class SqlInjection:
 
 
         except Exception as error: 
-            print(str(error))
+            print("sql injection error:"+str(error))
 
 
 

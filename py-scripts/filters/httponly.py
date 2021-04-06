@@ -58,7 +58,7 @@ class HttpWithoutTLS:
                         self.trigger_alarm(src_file, lineno)
 
         except Exception as error: 
-            print(str(error))
+            print("httponly error:"+str(error))
 
 
     def is_valid_http_url(self, url): 

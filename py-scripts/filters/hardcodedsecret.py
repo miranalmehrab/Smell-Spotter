@@ -92,7 +92,7 @@ class HardcodedSecret:
                     
                 
         except Exception as error: 
-            print(str(error))
+            print("harcoded secret error:"+str(error))
 
 
     def contains_suspicious_strings(self, value):

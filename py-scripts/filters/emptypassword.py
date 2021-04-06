@@ -78,7 +78,7 @@ class EmptyPassword:
                                 break
 
         except Exception as error:
-            print(str(error))
+            print("empty password error:"+str(error))
 
     def trigger_alarm(self, src_file, lineno):
         print(src_file +":"+ str(lineno)+" ,"+self.warning_message)

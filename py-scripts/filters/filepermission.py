@@ -33,7 +33,7 @@ class FilePermission:
                                 self.trigger_alarm(src_file, lineno)
                 
         except Exception as error:
-            print(str(error))
+            print("file permission error:"+str(error))
 
     def has_dangerous_parameters_in_function_call(self, args):
         for arg in args:

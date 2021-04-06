@@ -32,7 +32,7 @@ class CommandInjection:
                         self.trigger_alarm(src_file, lineno)
             
         except Exception as error: 
-            print(str(error))
+            print("command injection error"+str(error))
         
     def is_extended_shell_command_names(self, method_name):
         

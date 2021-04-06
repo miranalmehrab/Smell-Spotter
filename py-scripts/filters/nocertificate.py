@@ -46,7 +46,7 @@ class NoCertificate:
                 
             
         except Exception as error: 
-            print(str(error))
+            print("no certificate error:"+str(error))
 
 
     def is_http_call_relaxed(self, method_name):

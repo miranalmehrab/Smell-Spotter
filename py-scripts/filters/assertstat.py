@@ -13,7 +13,7 @@ class AssertStatement:
                 self.trigger_alarm(src_file, lineno)
 
         except Exception as error: 
-            print(str(error))
+            print("assert: "+str(error))
     
     def trigger_alarm(self, src_file, lineno):
         print(src_file +":"+ str(lineno)+" ,"+self.warning_message)

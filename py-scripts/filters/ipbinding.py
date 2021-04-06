@@ -55,8 +55,8 @@ class IpBinding:
                             break       
                     
 
-        except Exception as error: 
-            print(str(error))
+        except Exception as error:
+            print("ip binding error:"+str(error))
             
 
     def is_valid_ip(self, ip):
@@ -65,8 +65,8 @@ class IpBinding:
         elif ip == '8.8.8.8': return True
         elif ':' in ip: ip = ip.split(':')[0]
         
-        elif re.match(r'[_A-Za-z-]+', ip): return False
-        elif re.match(r'[!\?@#\$%\^&\*\(\)\{\}\[\]_=?<>:\.\'\"-\+\/]+', ip): return False
+        elif re.search(r'[_A-Za-z-]+', ip): return False
+        elif re.search(r'[!\?@#\$%\^&\*\(\)\{\}\[\]_=?<>:\.\'\"-\+\/\\n]+', ip): return False
         else:
             parts = ip.split('.')
             if len(parts) != 4: return False
@@ -76,12 +76,6 @@ class IpBinding:
 
             return True
         
-
-    def is_valid_port(self, port):
-        if isinstance(port, str) and port.isdigit() is False: return False
-        elif int(port) > 0 and int(port) < 65536: return True
-        else: return False
-
 
     def trigger_alarm(self, src_file, lineno):
         print(src_file +":"+ str(lineno)+" ,"+self.warning_message)
