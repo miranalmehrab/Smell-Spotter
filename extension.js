@@ -28,6 +28,7 @@ function activate(context) {
 			if (sourceCode != null){		
 				analyzeSourceFile(sourceCode, fileName);
 				setTimeout(storeDetectionInDB, 4000, fileName, fileHashValue);
+				setTimeout(showWarningsInOutputChannel, 4000);
 				setTimeout(generateReport, 4000, "QuickScan.pdf");
 
 			} else vscode.window.showErrorMessage("Empty source code!");
@@ -54,11 +55,14 @@ function activate(context) {
 						if (sourceCode != null) {
 							analyzeSourceFile(sourceCode, file);
 						}
+						// storeDetectionInDB(file, fileHashValue);
 						setTimeout(storeDetectionInDB, 4000, file, fileHashValue);
 					}
 				}
 			} catch(error){ vscode.window.showErrorMessage("could not read file - "+ file); }
 		});
+		// showWarningsInOutputChannel();
+		// generateReport("CompleteScan.pdf");
 
 		setTimeout(showWarningsInOutputChannel, 10000);
 		setTimeout(generateReport, 20000, "CompleteScan.pdf");
@@ -80,6 +84,7 @@ function activate(context) {
 					if (sourceCode != null) {
 						analyzeSourceFile(sourceCode, userSpecifiedPath);
 						setTimeout(storeDetectionInDB, 4000, fileName, userSpecifiedPath);
+						setTimeout(showWarningsInOutputChannel, 4000);
 						setTimeout(generateReport, 4000, "CustomScan.pdf");
 					} 
 					else vscode.window.showErrorMessage("Empty source code!");
@@ -111,8 +116,9 @@ function activate(context) {
 							}
 						}
 					} catch(error){ vscode.window.showErrorMessage("could not read file - "+ file);}
-				});	
-				setTimeout(generateReport, 4000, "CustomScan.pdf");
+				});
+				setTimeout(showWarningsInOutputChannel, 10000);	
+				setTimeout(generateReport, 20000, "CustomScan.pdf");
 			}
 		});
 	});
@@ -122,15 +128,14 @@ function activate(context) {
 		const directory =  homedir+"/store";
 
 		fs.readdir(directory, (err, files) => {
-		if (err) console.log(err);
-
-		for (const file of files) {
-			fs.unlink(path.join(directory, file), err => {
-				if (!err) vscode.window.showInformationMessage(file+" cleared!");
-			});
-		}
+			if (err) console.log(err);
+			else if(files.length == 0) vscode.window.showInformationMessage("database is empty!");
+			else {
+				for (const file of files) {
+					fs.unlink(path.join(directory, file), err => err? vscode.window.showErrorMessage("error while removing "+file): vscode.window.showInformationMessage(file+" cleared!"));
+				}
+			}
 		});	
-	
 	});
 
 	context.subscriptions.push(cleardb);
@@ -170,7 +175,7 @@ const analyzeSourceFile = (sourceCode, fileName) => {
 		}
 		else {
 			fs.appendFileSync("smell-spotter/warning-logs/project_warnings.csv", object.warnings);
-			showWarningsInNotification(object.warnings);
+			makeWarningsVisibleInNotification(object.warnings);
 		}
 	});		
 }
@@ -194,7 +199,7 @@ const getFileExtension = (value) => {
 	return pathSplits[pathSplits.length - 1]? pathSplits[pathSplits.length - 1]: undefined;
 }
 
-const showWarningsInNotification = (warnings) => {
+const makeWarningsVisibleInNotification = (warnings) => {
 	
 	try{
 		warnings = warnings.split("\n");
@@ -222,9 +227,9 @@ const clearPreviousDetectionLog = () => {
 
 const saveDetectionResultsToLog = (warnings, fileName) => {
 	warnings = "filename: "+fileName+"\n"+warnings;
-	
-	showWarningsInNotification(warnings);
 	fs.appendFileSync('smell-spotter/warning-logs/project_warnings.csv', warnings);
+	
+	makeWarningsVisibleInNotification(warnings);
 }
 
 const storeDetectionInDB = (fileName , hash) => {
@@ -249,11 +254,13 @@ const storeDetectionInDB = (fileName , hash) => {
 const showWarningsInOutputChannel = () => {
 	let outputChannel = vscode.window.createOutputChannel("Smell-Spotter");
 	let buffer = fs.readFileSync('smell-spotter/warning-logs/project_warnings.csv');
-	let warnings = buffer.toString().split("\n");
+	let bufferToString = buffer.toString();
+	let warnings = bufferToString.split("\n");
 	
-	warnings.forEach(warning => warning.includes("filename")? outputChannel.append("\n" + warning + "\n"): outputChannel.append( warning)); 
+	warnings.forEach(warning => warning.includes("filename")? outputChannel.append(warning + "\n"+ "\n"): outputChannel.append( warning+ "\n")); 
 
 	outputChannel.show();
+	console.log("output channel flushed");
 }
 
 
